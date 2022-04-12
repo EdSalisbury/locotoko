@@ -1,0 +1,114 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LocoToko API",
+    "description": "Inventory Manager for Online Listings",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://example.com/api/v1"
+    }
+  ],
+  "paths": {
+    "/items": {
+      "post": {
+        "summary": "Adds an inventory item",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/item"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inventory item added successfully."
+          }
+        }
+      },
+      "get": {
+        "summary": "Gets all inventory items",
+        "responses": {
+          "200": {
+            "description": "All inventory items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/items"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the inventory item to get"
+          }
+        ],
+        "summary": "Gets one inventory item",
+        "responses": {
+          "200": {
+            "description": "A single inventory item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "uuid": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "minLength": 36,
+        "maxLength": 36
+      },
+      "item": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          }
+        },
+        "example": {
+          "id": "2599a7ec-fd5b-43b7-bf34-a8b6d48f060b",
+          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1"
+        }
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/item"
+        }
+      }
+    }
+  }
+}
