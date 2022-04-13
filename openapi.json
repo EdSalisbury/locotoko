@@ -16,25 +16,11 @@
   ],
   "paths": {
     "/items": {
-      "post": {
-        "summary": "Adds an inventory item",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/item"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Inventory item added successfully."
-          }
-        }
-      },
       "get": {
         "summary": "Gets all inventory items",
+        "tags": [
+          "items"
+        ],
         "responses": {
           "200": {
             "description": "All inventory items.",
@@ -47,10 +33,38 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "Adds an inventory item",
+        "tags": [
+          "items"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/item"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Inventory item added successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/items/{id}": {
       "get": {
+        "summary": "Gets one inventory item",
         "parameters": [
           {
             "in": "path",
@@ -62,7 +76,9 @@
             "description": "UUID of the inventory item to get"
           }
         ],
-        "summary": "Gets one inventory item",
+        "tags": [
+          "items"
+        ],
         "responses": {
           "200": {
             "description": "A single inventory item.",
@@ -70,6 +86,164 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces one inventory item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the inventory item to replace"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "responses": {
+          "200": {
+            "description": "Replaced an inventory item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates one inventory item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the inventory item to update"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated an inventory item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes one inventory item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the inventory item to delete"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted an inventory item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers": {
+      "post": {
+        "summary": "Adds a supplier",
+        "tags": [
+          "suppliers"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/supplier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplier added successfully."
+          }
+        }
+      },
+      "get": {
+        "summary": "Gets all suppliers",
+        "tags": [
+          "suppliers"
+        ],
+        "responses": {
+          "200": {
+            "description": "All suppliers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/suppliers"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/suppliers/{id}": {
+      "get": {
+        "summary": "Gets one supplier",
+        "tags": [
+          "suppliers"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the supplier to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single supplier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/supplier"
                 }
               }
             }
@@ -96,17 +270,97 @@
             "type": "string",
             "minLength": 3,
             "maxLength": 80
+          },
+          "description": {
+            "type": "string"
+          },
+          "acquisitionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "quantity": {
+            "type": "integer",
+            "default": 1
+          },
+          "weightPounds": {
+            "type": "integer"
+          },
+          "weightOunces": {
+            "type": "integer"
+          },
+          "shipWeightPounds": {
+            "type": "integer"
+          },
+          "shipWeightOunces": {
+            "type": "integer"
+          },
+          "sizeHeightInches": {
+            "type": "integer"
+          },
+          "sizeWidthInches": {
+            "type": "integer"
+          },
+          "sizeDepthInches": {
+            "type": "integer"
+          },
+          "shipSizeHeightInches": {
+            "type": "integer"
+          },
+          "shipSizeWidthInches": {
+            "type": "integer"
+          },
+          "shipSizeDepthInches": {
+            "type": "integer"
           }
         },
         "example": {
           "id": "2599a7ec-fd5b-43b7-bf34-a8b6d48f060b",
-          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1"
+          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
+          "description": "This is the most valuable Magic card - don't miss out!",
+          "acquisitionDate": "2022-04-01",
+          "quantity": 1,
+          "weightPounds": 0,
+          "weightOunces": 1,
+          "shipWeightPounds": 0,
+          "shipWeightOunces": 5,
+          "sizeWidthInches": 4,
+          "sizeHeightInches": 3,
+          "sizeDepthInches": 1,
+          "shipSizeHeightInches": 9,
+          "shipSizewidthInches": 6,
+          "shipSizeDepthInches": 1
         }
       },
       "items": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/item"
+        }
+      },
+      "supplier": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "example": {
+          "id": "20944efa-2cdc-4dea-a24b-aabf2d633141",
+          "name": "Ed Salisbury",
+          "rate": 1.00
+        }
+      },
+      "suppliers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/supplier"
         }
       }
     }
