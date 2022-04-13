@@ -18,9 +18,7 @@
     "/items": {
       "get": {
         "summary": "Gets all inventory items",
-        "tags": [
-          "items"
-        ],
+        "tags": ["items"],
         "responses": {
           "200": {
             "description": "All inventory items.",
@@ -35,10 +33,8 @@
         }
       },
       "post": {
-        "summary": "Adds an inventory item",
-        "tags": [
-          "items"
-        ],
+        "summary": "Adds inventory item",
+        "tags": ["items"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -50,7 +46,7 @@
         },
         "responses": {
           "201": {
-            "description": "Inventory item added successfully.",
+            "description": "Successfully added inventory item.",
             "content": {
               "application/json": {
                 "schema": {
@@ -64,7 +60,7 @@
     },
     "/items/{id}": {
       "get": {
-        "summary": "Gets one inventory item",
+        "summary": "Gets single inventory item",
         "parameters": [
           {
             "in": "path",
@@ -76,9 +72,7 @@
             "description": "UUID of the inventory item to get"
           }
         ],
-        "tags": [
-          "items"
-        ],
+        "tags": ["items"],
         "responses": {
           "200": {
             "description": "A single inventory item.",
@@ -93,7 +87,7 @@
         }
       },
       "put": {
-        "summary": "Replaces one inventory item",
+        "summary": "Replaces inventory item",
         "parameters": [
           {
             "in": "path",
@@ -105,12 +99,10 @@
             "description": "UUID of the inventory item to replace"
           }
         ],
-        "tags": [
-          "items"
-        ],
+        "tags": ["items"],
         "responses": {
           "200": {
-            "description": "Replaced an inventory item.",
+            "description": "Replaced inventory item.",
             "content": {
               "application/json": {
                 "schema": {
@@ -122,7 +114,7 @@
         }
       },
       "patch": {
-        "summary": "Updates one inventory item",
+        "summary": "Updates inventory item",
         "parameters": [
           {
             "in": "path",
@@ -134,12 +126,10 @@
             "description": "UUID of the inventory item to update"
           }
         ],
-        "tags": [
-          "items"
-        ],
+        "tags": ["items"],
         "responses": {
           "200": {
-            "description": "Updated an inventory item.",
+            "description": "Updated inventory item.",
             "content": {
               "application/json": {
                 "schema": {
@@ -151,7 +141,7 @@
         }
       },
       "delete": {
-        "summary": "Deletes one inventory item",
+        "summary": "Deletes inventory item",
         "parameters": [
           {
             "in": "path",
@@ -163,12 +153,10 @@
             "description": "UUID of the inventory item to delete"
           }
         ],
-        "tags": [
-          "items"
-        ],
+        "tags": ["items"],
         "responses": {
           "200": {
-            "description": "Deleted an inventory item.",
+            "description": "Deleted inventory item.",
             "content": {
               "application/json": {
                 "schema": {
@@ -180,39 +168,42 @@
         }
       }
     },
-    "/suppliers": {
+    "/owners": {
+      "get": {
+        "summary": "Gets all owners",
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "All owners.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owners"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
-        "summary": "Adds a supplier",
-        "tags": [
-          "suppliers"
-        ],
+        "summary": "Adds owner",
+        "tags": ["owners"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/supplier"
+                "$ref": "#/components/schemas/owner"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Supplier added successfully."
-          }
-        }
-      },
-      "get": {
-        "summary": "Gets all suppliers",
-        "tags": [
-          "suppliers"
-        ],
-        "responses": {
-          "200": {
-            "description": "All suppliers.",
+          "201": {
+            "description": "Successfully added owner.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/suppliers"
+                  "$ref": "#/components/schemas/owner"
                 }
               }
             }
@@ -220,12 +211,9 @@
         }
       }
     },
-    "/suppliers/{id}": {
+    "/owners/{id}": {
       "get": {
-        "summary": "Gets one supplier",
-        "tags": [
-          "suppliers"
-        ],
+        "summary": "Gets single owner",
         "parameters": [
           {
             "in": "path",
@@ -234,16 +222,98 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the supplier to get"
+            "description": "UUID of the owner to get"
           }
         ],
+        "tags": ["owners"],
         "responses": {
           "200": {
-            "description": "A single supplier.",
+            "description": "A single owner.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/supplier"
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to replace"
+          }
+        ],
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "Replaced owner.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to update"
+          }
+        ],
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "Updated owner.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to delete"
+          }
+        ],
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "Deleted owner.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
                 }
               }
             }
@@ -337,7 +407,7 @@
           "$ref": "#/components/schemas/item"
         }
       },
-      "supplier": {
+      "owner": {
         "type": "object",
         "properties": {
           "id": {
@@ -354,13 +424,13 @@
         "example": {
           "id": "20944efa-2cdc-4dea-a24b-aabf2d633141",
           "name": "Ed Salisbury",
-          "rate": 1.00
+          "rate": 1.0
         }
       },
-      "suppliers": {
+      "owners": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/supplier"
+          "$ref": "#/components/schemas/owner"
         }
       }
     }
