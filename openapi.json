@@ -1,0 +1,1076 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LocoToko API",
+    "description": "Inventory Manager for Online Listings",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://example.com/api/v1"
+    }
+  ],
+  "paths": {
+    "/agents": {
+      "get": {
+        "summary": "Gets all agents",
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "All agents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agents"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds agent",
+        "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added agent successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/agents/{id}": {
+      "get": {
+        "summary": "Gets single agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "A single agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced agent successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated agent successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "204": {
+            "description": "Deleted agent successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    },
+    "/ebayListings": {
+      "get": {
+        "summary": "Gets all ebayListings",
+        "tags": ["ebayListings"],
+        "responses": {
+          "200": {
+            "description": "All ebayListings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListings"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds ebayListing",
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/ebayListings/{id}": {
+      "get": {
+        "summary": "Gets single ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "responses": {
+          "200": {
+            "description": "A single ebayListing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "responses": {
+          "204": {
+            "description": "Deleted ebayListing successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "summary": "Gets all items",
+        "tags": ["items"],
+        "responses": {
+          "200": {
+            "description": "All items.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/items"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds item",
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "summary": "Gets single item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["items"],
+        "responses": {
+          "200": {
+            "description": "A single item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["items"],
+        "responses": {
+          "204": {
+            "description": "Deleted item successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    },
+    "/owners": {
+      "get": {
+        "summary": "Gets all owners",
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "All owners.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owners"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds owner",
+        "tags": ["owners"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ownerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added owner successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/owners/{id}": {
+      "get": {
+        "summary": "Gets single owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["owners"],
+        "responses": {
+          "200": {
+            "description": "A single owner.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["owners"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ownerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced owner successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["owners"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ownerCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated owner successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/owner"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes owner",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the owner to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["owners"],
+        "responses": {
+          "204": {
+            "description": "Deleted owner successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "responses": {
+      "notFound": {
+        "description": "The specified resource was not found"
+      },
+      "badRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"],
+        "example": {
+          "code": "400",
+          "title": "Bad request. Name must be specified."
+        }
+      },
+      "uuid": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "minLength": 36,
+        "maxLength": 36
+      },
+      "itemCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "description": {
+            "type": "string"
+          },
+          "acquisitionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "soldDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "shippedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "ownerId": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "listingAgentId": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "shippingAgentId": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "quantity": {
+            "type": "integer",
+            "default": 1
+          },
+          "weightPounds": {
+            "type": "integer"
+          },
+          "weightOunces": {
+            "type": "integer"
+          },
+          "shipWeightPounds": {
+            "type": "integer"
+          },
+          "shipWeightOunces": {
+            "type": "integer"
+          },
+          "sizeHeightInches": {
+            "type": "integer"
+          },
+          "sizeWidthInches": {
+            "type": "integer"
+          },
+          "sizeDepthInches": {
+            "type": "integer"
+          },
+          "shipSizeHeightInches": {
+            "type": "integer"
+          },
+          "shipSizeWidthInches": {
+            "type": "integer"
+          },
+          "shipSizeDepthInches": {
+            "type": "integer"
+          }
+        },
+        "example": {
+          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
+          "description": "This is the most valuable Magic card - don't miss out!",
+          "acquisitionDate": "2022-04-01",
+          "soldDate": "2022-04-02",
+          "shippedDate": "2022-04-03",
+          "ownerId": "e9b2e893-28a7-4605-9d43-ab221a181ba2",
+          "listingAgentId": "c3af343f-5202-4df9-9ce9-ace6a6c6299f",
+          "shippingAgentId": "b585bbce-7975-4cc5-a751-ff11d2e2e773",
+          "quantity": 1,
+          "weightPounds": 0,
+          "weightOunces": 1,
+          "shipWeightPounds": 0,
+          "shipWeightOunces": 5,
+          "sizeWidthInches": 4,
+          "sizeHeightInches": 3,
+          "sizeDepthInches": 1,
+          "shipSizeHeightInches": 9,
+          "shipSizewidthInches": 6,
+          "shipSizeDepthInches": 1
+        }
+      },
+      "item": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/itemCreate"
+          }
+        ]
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/item"
+        }
+      },
+      "agentCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "name": "Ed Salisbury"
+        }
+      },
+      "agent": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/agentCreate"
+          }
+        ]
+      },
+      "agents": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/agent"
+        }
+      },
+      "ownerCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "example": {
+          "name": "Ed Salisbury",
+          "rate": 1.0
+        }
+      },
+      "owner": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ownerCreate"
+          }
+        ]
+      },
+      "owners": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/owner"
+        }
+      },
+      "ebayListingCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "listedPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "soldPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "quantitySold": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "example": {
+          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
+          "description": "This is the most valuable Magic card - don't miss out!",
+          "startTime": "2022-04-14T00:00:00Z",
+          "endTime": "2022-04-15T00:00:00Z",
+          "soldPrice": 38000,
+          "quantitySold": 1
+        }
+      },
+      "ebayListing": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ebayListingCreate"
+          }
+        ]
+      },
+      "ebayListings": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ebayListing"
+        }
+      }
+    }
+  }
+}
