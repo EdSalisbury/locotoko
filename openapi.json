@@ -168,6 +168,159 @@
         }
       }
     },
+    "/agents": {
+      "get": {
+        "summary": "Gets all agents",
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "All agents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agents"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds agent",
+        "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully added agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents/{id}": {
+      "get": {
+        "summary": "Gets single agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to get"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "A single agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to replace"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "Replaced agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to update"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "Updated agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes agent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the agent to delete"
+          }
+        ],
+        "tags": ["agents"],
+        "responses": {
+          "200": {
+            "description": "Deleted agent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/agent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/owners": {
       "get": {
         "summary": "Gets all owners",
@@ -348,6 +501,23 @@
             "type": "string",
             "format": "date"
           },
+          "soldDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "shippedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "ownerId": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "listingAgentId": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "shippingAgentId": {
+            "$ref": "#/components/schemas/uuid"
+          },
           "quantity": {
             "type": "integer",
             "default": 1
@@ -388,6 +558,11 @@
           "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
           "description": "This is the most valuable Magic card - don't miss out!",
           "acquisitionDate": "2022-04-01",
+          "soldDate": "2022-04-02",
+          "shippedDate": "2022-04-03",
+          "ownerId": "e9b2e893-28a7-4605-9d43-ab221a181ba2",
+          "listingAgentId": "c3af343f-5202-4df9-9ce9-ace6a6c6299f",
+          "shippingAgentId": "b585bbce-7975-4cc5-a751-ff11d2e2e773",
           "quantity": 1,
           "weightPounds": 0,
           "weightOunces": 1,
@@ -405,6 +580,27 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/item"
+        }
+      },
+      "agent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "id": "20944efa-2cdc-4dea-a24b-aabf2d633141",
+          "name": "Ed Salisbury"
+        }
+      },
+      "agents": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/agent"
         }
       },
       "owner": {
@@ -430,7 +626,7 @@
       "owners": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/owner"
+          "$ref": "#/components/schemas/agent"
         }
       }
     }
