@@ -204,6 +204,195 @@
         }
       }
     },
+    "/ebayListings": {
+      "get": {
+        "summary": "Gets all ebayListings",
+        "tags": ["ebayListings"],
+        "responses": {
+          "200": {
+            "description": "All ebayListings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListings"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds ebayListing",
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/ebayListings/{id}": {
+      "get": {
+        "summary": "Gets single ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "responses": {
+          "200": {
+            "description": "A single ebayListing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ebayListingCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated ebayListing successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ebayListing"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes ebayListing",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the ebayListing to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["ebayListings"],
+        "responses": {
+          "204": {
+            "description": "Deleted ebayListing successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    },
     "/items": {
       "get": {
         "summary": "Gets all items",
@@ -808,7 +997,78 @@
       "owners": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/agent"
+          "$ref": "#/components/schemas/owner"
+        }
+      },
+      "ebayListingCreate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "listedPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "soldPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "quantitySold": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "example": {
+          "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
+          "description": "This is the most valuable Magic card - don't miss out!",
+          "startTime": "2022-04-14T00:00:00Z",
+          "endTime": "2022-04-15T00:00:00Z",
+          "soldPrice": 38000,
+          "quantitySold": 1
+        }
+      },
+      "ebayListing": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ebayListingCreate"
+          }
+        ]
+      },
+      "ebayListings": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ebayListing"
         }
       }
     }
