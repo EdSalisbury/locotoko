@@ -15,159 +15,6 @@
     }
   ],
   "paths": {
-    "/items": {
-      "get": {
-        "summary": "Gets all inventory items",
-        "tags": ["items"],
-        "responses": {
-          "200": {
-            "description": "All inventory items.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/items"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Adds inventory item",
-        "tags": ["items"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/item"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully added inventory item.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/item"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/items/{id}": {
-      "get": {
-        "summary": "Gets single inventory item",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "$ref": "#/components/schemas/uuid"
-            },
-            "required": true,
-            "description": "UUID of the inventory item to get"
-          }
-        ],
-        "tags": ["items"],
-        "responses": {
-          "200": {
-            "description": "A single inventory item.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/item"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Replaces inventory item",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "$ref": "#/components/schemas/uuid"
-            },
-            "required": true,
-            "description": "UUID of the inventory item to replace"
-          }
-        ],
-        "tags": ["items"],
-        "responses": {
-          "200": {
-            "description": "Replaced inventory item.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/item"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "summary": "Updates inventory item",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "$ref": "#/components/schemas/uuid"
-            },
-            "required": true,
-            "description": "UUID of the inventory item to update"
-          }
-        ],
-        "tags": ["items"],
-        "responses": {
-          "200": {
-            "description": "Updated inventory item.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/item"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Deletes inventory item",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "id",
-            "schema": {
-              "$ref": "#/components/schemas/uuid"
-            },
-            "required": true,
-            "description": "UUID of the inventory item to delete"
-          }
-        ],
-        "tags": ["items"],
-        "responses": {
-          "200": {
-            "description": "Deleted inventory item.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/item"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/agents": {
       "get": {
         "summary": "Gets all agents",
@@ -192,14 +39,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/agent"
+                "$ref": "#/components/schemas/agentCreate"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Successfully added agent.",
+            "description": "Added agent successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -207,6 +54,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
           }
         }
       }
@@ -222,7 +72,8 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the agent to get"
+            "description": "UUID of the agent to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
           }
         ],
         "tags": ["agents"],
@@ -236,6 +87,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -249,13 +103,23 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the agent to replace"
+            "description": "UUID of the agent to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
           }
         ],
         "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agentCreate"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Replaced agent.",
+            "description": "Replaced agent successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -263,6 +127,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -276,13 +146,23 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the agent to update"
+            "description": "UUID of the agent to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
           }
         ],
         "tags": ["agents"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/agentCreate"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Updated agent.",
+            "description": "Updated agent successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -290,6 +170,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -303,20 +189,206 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the agent to delete"
+            "description": "UUID of the agent to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
           }
         ],
         "tags": ["agents"],
         "responses": {
+          "204": {
+            "description": "Deleted agent successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "summary": "Gets all items",
+        "tags": ["items"],
+        "responses": {
           "200": {
-            "description": "Deleted agent.",
+            "description": "All items.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/agent"
+                  "$ref": "#/components/schemas/items"
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds item",
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    },
+    "/items/{id}": {
+      "get": {
+        "summary": "Gets single item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
+          }
+        ],
+        "tags": ["items"],
+        "responses": {
+          "200": {
+            "description": "A single item.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replaces item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
+          }
+        ],
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Replaced item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
+          }
+        ],
+        "tags": ["items"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated item successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/item"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            },
+            "required": true,
+            "description": "UUID of the item to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
+          }
+        ],
+        "tags": ["items"],
+        "responses": {
+          "204": {
+            "description": "Deleted item successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       }
@@ -345,14 +417,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/owner"
+                "$ref": "#/components/schemas/ownerCreate"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Successfully added owner.",
+            "description": "Added owner successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -360,6 +432,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
           }
         }
       }
@@ -375,7 +450,8 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the owner to get"
+            "description": "UUID of the owner to get",
+            "example": "b12b9265-5808-4849-9702-e1d1a7818d8a"
           }
         ],
         "tags": ["owners"],
@@ -389,6 +465,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -402,13 +481,23 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the owner to replace"
+            "description": "UUID of the owner to replace",
+            "example": "0482b4d7-e5ba-4273-bb8b-7d6e07deba19"
           }
         ],
         "tags": ["owners"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ownerCreate"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Replaced owner.",
+            "description": "Replaced owner successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -416,6 +505,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -429,13 +524,23 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the owner to update"
+            "description": "UUID of the owner to update",
+            "example": "2bdbaae2-4922-46c8-9b4f-023e60163805"
           }
         ],
         "tags": ["owners"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ownerCreate"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Updated owner.",
+            "description": "Updated owner successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -443,6 +548,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       },
@@ -456,39 +567,65 @@
               "$ref": "#/components/schemas/uuid"
             },
             "required": true,
-            "description": "UUID of the owner to delete"
+            "description": "UUID of the owner to delete",
+            "example": "e2b019e9-d456-43ef-bc6b-b7a2492e717a"
           }
         ],
         "tags": ["owners"],
         "responses": {
-          "200": {
-            "description": "Deleted owner.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/owner"
-                }
-              }
-            }
+          "204": {
+            "description": "Deleted owner successfully."
+          },
+          "404": {
+            "$ref": "#/components/responses/notFound"
           }
         }
       }
     }
   },
+
   "components": {
+    "responses": {
+      "notFound": {
+        "description": "The specified resource was not found"
+      },
+      "badRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      }
+    },
     "schemas": {
+      "error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"],
+        "example": {
+          "code": "400",
+          "title": "Bad request. Name must be specified."
+        }
+      },
       "uuid": {
         "type": "string",
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
         "minLength": 36,
         "maxLength": 36
       },
-      "item": {
+      "itemCreate": {
         "type": "object",
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/uuid"
-          },
           "title": {
             "type": "string",
             "minLength": 3,
@@ -554,7 +691,6 @@
           }
         },
         "example": {
-          "id": "2599a7ec-fd5b-43b7-bf34-a8b6d48f060b",
           "title": "Black Lotus - Alpha - MTG - Magic the Gathering - NM/M x1",
           "description": "This is the most valuable Magic card - don't miss out!",
           "acquisitionDate": "2022-04-01",
@@ -576,26 +712,58 @@
           "shipSizeDepthInches": 1
         }
       },
+      "item": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/itemCreate"
+          }
+        ]
+      },
       "items": {
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/item"
         }
       },
-      "agent": {
+      "agentCreate": {
         "type": "object",
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/uuid"
-          },
           "name": {
             "type": "string"
           }
         },
         "example": {
-          "id": "20944efa-2cdc-4dea-a24b-aabf2d633141",
           "name": "Ed Salisbury"
         }
+      },
+      "agent": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/agentCreate"
+          }
+        ]
       },
       "agents": {
         "type": "array",
@@ -603,12 +771,9 @@
           "$ref": "#/components/schemas/agent"
         }
       },
-      "owner": {
+      "ownerCreate": {
         "type": "object",
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -618,10 +783,27 @@
           }
         },
         "example": {
-          "id": "20944efa-2cdc-4dea-a24b-aabf2d633141",
           "name": "Ed Salisbury",
           "rate": 1.0
         }
+      },
+      "owner": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/uuid"
+              }
+            },
+            "example": {
+              "id": "1347830e-880b-4c86-8a28-bb242e34bb7c"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ownerCreate"
+          }
+        ]
       },
       "owners": {
         "type": "array",
