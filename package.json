@@ -1,9 +1,0 @@
-{
-  "name": "locotoko",
-  "version": "0.1.0",
-  "description": "Inventory Manager for online listings",
-  "main": "index.js",
-  "repository": "https://github.com/EdSalisbury/locotoko",
-  "author": "Ed Salisbury",
-  "license": "MIT"
-}
