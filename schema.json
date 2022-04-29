@@ -1,0 +1,108 @@
+{
+    "tables": [
+    {
+    "name": "item",
+    "fields": [
+        {
+            "name": "id",
+            "type": "cuid"
+        },
+        {
+            "name": "title",
+            "type": "string"
+        },
+        {
+            "name": "description",
+            "type": "string",
+            "optional": true
+        },
+        {
+            "name": "acquisitionDate",
+            "type": "date",
+            "optional": true
+        },
+        {
+            "name": "soldDate",
+            "type": "date",
+            "optional": true
+        },
+        {
+            "name": "shippedDate",
+            "type": "date",
+            "optional": true
+        },
+        {
+            "name": "listingAgentId",
+            "type": "string",
+            "format": "cuid"
+        },
+        {
+            "name": "shippingAgentId",
+            "type": "string",
+            "format": "cuid",
+            "optional": true
+        },
+        {
+            "name": "quantity",
+            "type": "integer",
+            "default": 1
+        },
+        {
+            "name": "weightPounds",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "weightPounds",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "weightOunces",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "shipWeightPounds",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "shipWeightOunces",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "sizeHeightInches",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "sizeWidthInches",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "sizeDepthInches",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "shipSizeHeightInches",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "shipSizeWidthInches",
+            "type": "integer",
+            "optional": true
+        },
+        {
+            "name": "shipSizeDepthInches",
+            "type": "integer",
+            "optional": true
+        }
+    ]
+}
+]
+}
