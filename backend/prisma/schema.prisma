@@ -27,9 +27,9 @@ model Item {
   acquisitionDate DateTime?
   soldDate DateTime?
   shippedDate DateTime?
-  listingAgentId String
-  shippingAgentId String?
-  quantity Int
+  listingUserId String?
+  shippingUserId String?
+  quantity Int @default(1)
   weightPounds Int?
   weightOunces Int?
   shipWeightPounds Int?
