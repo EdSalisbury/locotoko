@@ -29,7 +29,7 @@ model Item {
   shippedDate DateTime?
   listingUserId String?
   shippingUserId String?
-  quantity Int @default(1)
+  quantity Int
   weightPounds Int?
   weightOunces Int?
   shipWeightPounds Int?
