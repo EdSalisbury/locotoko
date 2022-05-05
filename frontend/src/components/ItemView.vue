@@ -1,5 +1,10 @@
 <template>
-  <b-table stacked :items="item"> </b-table>
+  <b-card>
+    <b-card-title>Items</b-card-title>
+    <b-card-body>
+      <b-table stacked :items="item"> </b-table>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>

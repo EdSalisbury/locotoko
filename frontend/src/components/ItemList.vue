@@ -1,7 +1,7 @@
 <template>
-  <card>
-    <card-title>Items</card-title>
-    <card-body>
+  <b-card>
+    <b-card-title>Items</b-card-title>
+    <b-card-body>
       <b-table
         hover
         :items="items"
@@ -16,10 +16,12 @@
         </template>
       </b-table>
       <router-link to="/addItem"
-        >Add Item</router-link
+        ><b-button variant="primary"
+          >Add Item</b-button
+        ></router-link
       >
-    </card-body>
-  </card>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
