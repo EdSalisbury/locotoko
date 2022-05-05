@@ -24,9 +24,12 @@ model Item {
   updatedAt DateTime @updatedAt
   title String
   description String?
+  price Decimal? @db.Money
+  soldPrice Decimal? @db.Money
+  cost Decimal? @db.Money
   acquisitionDate DateTime?
-  soldDate DateTime?
-  shippedDate DateTime?
+  soldAt DateTime?
+  shippedAt DateTime?
   listingUserId String?
   shippingUserId String?
   quantity Int
