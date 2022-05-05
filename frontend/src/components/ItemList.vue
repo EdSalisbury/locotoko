@@ -1,39 +1,47 @@
 <template>
-  <v-card
-    class="mx-auto"
-    max-width="300"
-  >
-    <v-list density="compact">
-      <v-list-subheader>REPORTS</v-list-subheader>
-      <v-list-item
-        v-for="(item, i) in items"
-        :key="i"
-        :value="item"
-        active-color="primary"
+  <card>
+    <card-title>Items</card-title>
+    <card-body>
+      <b-table
+        hover
+        :items="items"
+        :fields="fields"
       >
-        <v-list-item-avatar start>
-          <v-icon :icon="item.icon"></v-icon>
-        </v-list-item-avatar>
-        <v-list-item-title v-text="item.text"></v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-card>
+        <template #cell(itemLink)="data">
+          <router-link
+            :to="'/items/' + data.item.id"
+          >
+            {{ data.item.title }}
+          </router-link>
+        </template>
+      </b-table>
+      <router-link to="/addItem"
+        >Add Item</router-link
+      >
+    </card-body>
+  </card>
 </template>
 
-
 <script>
-  export default {
-    data: () => ({
-      items: [
-        { text: 'Real-Time', icon: 'mdi-clock' },
-        { text: 'Audience', icon: 'mdi-account' },
-        { text: 'Conversions', icon: 'mdi-flag' },
+export default {
+  data() {
+    return {
+      items: [],
+      fields: [
+        { key: "itemLink", label: "Title" },
+        "quantity",
       ],
-    }),
-      async mounted() {
-        const response = await fetch("https://randomuser.me/api");
-        console.log(await response.json());
-      }
-    
-  }
+    };
+  },
+  async created() {
+    const token = this.$cookie.get("token");
+    const url = "http://localhost:3333/items";
+    const response = await fetch(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    this.items = await response.json();
+  },
+};
 </script>

@@ -1,14 +1,23 @@
-import 'vuetify/styles'
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router';
-import vuetify from './plugins/vuetify'
-import { loadFonts } from './plugins/webfontloader'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
+import {
+  BootstrapVue,
+  IconsPlugin,
+} from "bootstrap-vue";
 
-loadFonts()
+// Import Bootstrap and BootstrapVue CSS files (order is important)
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+import VueCookie from "vue-cookie";
 
-createApp(App)
-  .use(router)
-  .use(vuetify)
-  .mount('#app')
+Vue.config.productionTip = false;
+
+Vue.use(VueCookie);
+Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
+
+new Vue({
+  router,
+  render: (h) => h(App),
+}).$mount("#app");

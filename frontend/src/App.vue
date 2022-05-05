@@ -1,46 +1,27 @@
 <template>
-  <v-app>
-    <v-toolbar app color="indigo">
-      <v-btn icon>
-        <router-link to="/"
-          ><v-icon icon="mdi-home"
-        /></router-link>
-      </v-btn>
-      <v-toolbar-title
-        ><span>LocoToko</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        ><router-link to="/about"
-          >About</router-link
-        ></v-btn
-      >
-      <v-btn
-        ><router-link to="/login"
-          >Login</router-link
-        ></v-btn
-      >
-      <v-btn
-        ><router-link to="/register"
-          >Register</router-link
-        ></v-btn
-      >
-    </v-toolbar>
-
-    <v-main>
-      <!-- <v-container> -->
-      <router-view></router-view>
-      <!-- </v-container> -->
-    </v-main>
-  </v-app>
+  <div id="app">
+    <b-navbar type="dark" variant="success">
+      <b-navbar-brand>LocoToko</b-navbar-brand>
+      <b-navbar-nav>
+        <b-nav-item to="/">Home</b-nav-item>
+        <b-nav-item to="/items">Items</b-nav-item>
+        <b-nav-item to="/about">About</b-nav-item>
+        <b-nav-item to="/login">Login</b-nav-item>
+        <b-nav-item to="/register"
+          >Register</b-nav-item
+        >
+      </b-navbar-nav>
+    </b-navbar>
+    <router-view />
+  </div>
 </template>
 
 <script>
 export default {
-  name: "App",
-
-  components: {},
-
-  data: () => ({}),
+  computed: {
+    isLoggedIn: function () {
+      return this.$cookie.get("token");
+    },
+  },
 };
 </script>
