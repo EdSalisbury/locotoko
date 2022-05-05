@@ -3,7 +3,12 @@
     <b-card-title>Add Item</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input label="Title" field="title" />
+        <form-input
+          v-model="form.title"
+          label="Title"
+          field="title"
+          required
+        />
         <b-button type="submit" variant="primary"
           >Add</b-button
         >
@@ -31,6 +36,7 @@ export default {
       event.preventDefault();
       const url = "http://localhost:3333/items";
 
+      console.log(this.form);
       const response = await fetch(url, {
         method: "POST",
         headers: {

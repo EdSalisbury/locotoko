@@ -7,24 +7,36 @@
     <b-form-input
       :id="field + '-input'"
       type="text"
-      :placeholder="title"
-      required
+      :placeholder="label"
+      v-model="localValue"
+      :required="required"
     />
   </b-form-group>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      title:
-        this.label.charAt(0).toUpperCase() +
-        this.label.slice(1),
-    };
-  },
   props: {
     label: String,
     field: String,
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    value: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    localValue: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit("input", value);
+      },
+    },
   },
 };
 </script>

@@ -64,7 +64,9 @@ export default {
       });
       const data = await response.json();
       const token = data.access_token;
-      this.$cookie.set("token", token, "24h");
+      this.$cookie.set("token", token, {
+        expires: "24h",
+      });
       this.$router.push({ path: "/" });
     },
   },
