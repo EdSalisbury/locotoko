@@ -40,7 +40,7 @@ export default {
         if (this.type == "number") {
           return this.$emit(
             "input",
-            parseInt(value),
+            parseInt(value) || "",
           );
         }
         this.$emit("input", value);
