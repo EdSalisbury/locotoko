@@ -9,6 +9,13 @@
           field="title"
           required
         />
+        <form-input
+          label="Quantity"
+          field="quantity"
+          v-model="form.quantity"
+          type="number"
+        />
+
         <b-button type="submit" variant="primary"
           >Add</b-button
         >
@@ -25,6 +32,7 @@ export default {
     return {
       form: {
         title: "",
+        quantity: 1,
       },
     };
   },
@@ -35,8 +43,6 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const url = "http://localhost:3333/items";
-
-      console.log(this.form);
       const response = await fetch(url, {
         method: "POST",
         headers: {

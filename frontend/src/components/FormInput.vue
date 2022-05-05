@@ -6,7 +6,7 @@
   >
     <b-form-input
       :id="field + '-input'"
-      type="text"
+      :type="type"
       :placeholder="label"
       v-model="localValue"
       :required="required"
@@ -19,12 +19,15 @@ export default {
   props: {
     label: String,
     field: String,
+    type: {
+      type: String,
+      default: "text",
+    },
     required: {
       type: Boolean,
       default: false,
     },
     value: {
-      type: String,
       required: true,
     },
   },
@@ -34,6 +37,12 @@ export default {
         return this.value;
       },
       set(value) {
+        if (this.type == "number") {
+          return this.$emit(
+            "input",
+            parseInt(value),
+          );
+        }
         this.$emit("input", value);
       },
     },
