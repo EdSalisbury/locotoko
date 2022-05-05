@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-card-title>Login</b-card-title>
+    <b-card-title>Register</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
         <form-input
@@ -44,7 +44,7 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const url =
-        "http://localhost:3333/auth/login";
+        "http://localhost:3333/auth/register";
 
       const response = await fetch(url, {
         method: "POST",

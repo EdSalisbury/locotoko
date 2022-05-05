@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginForm from "@/components/LoginForm";
+import RegisterForm from "@/components/RegisterForm";
 import ItemList from "@/components/ItemList";
 import ItemView from "@/components/ItemView";
 import ItemAdd from "@/components/ItemAdd";
@@ -18,6 +19,11 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginForm,
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: RegisterForm,
   },
   {
     path: "/items/:id",
