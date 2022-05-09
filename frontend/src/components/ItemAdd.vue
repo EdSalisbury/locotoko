@@ -118,7 +118,7 @@
 
         <button
           v-show="!this.camera"
-          @click="addPhoto"
+          @click="addImage"
         >
           Add Photo
         </button>
@@ -156,7 +156,7 @@ export default {
         shipSizeWidthInches: 0,
         shipSizeHeightInches: 0,
         shipSizeDepthInches: 0,
-        photos: [],
+        images: [],
       },
     };
   },
@@ -165,13 +165,13 @@ export default {
     PhotoCamera,
   },
   methods: {
-    addPhoto(event) {
+    addImage(event) {
       event.preventDefault();
       this.camera = true;
     },
 
     photoTaken(value) {
-      this.form.photos.push(value);
+      this.form.images.push(value);
       this.camera = false;
     },
     async onSubmit(event) {

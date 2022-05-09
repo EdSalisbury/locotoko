@@ -1,8 +1,22 @@
 <template>
   <b-card>
-    <b-card-title>Items</b-card-title>
+    <b-card-title>Item</b-card-title>
     <b-card-body>
-      <b-table stacked :items="item"> </b-table>
+      <b-table
+        stacked
+        :items="item"
+        :fields="fields"
+      >
+        <template #cell(itemImage)="data">
+          <div
+            v-for="(image, index) in data.item
+              .images"
+            :key="index"
+          >
+            <img :src="image" />
+          </div>
+        </template>
+      </b-table>
     </b-card-body>
   </b-card>
 </template>
@@ -12,6 +26,14 @@ export default {
   data() {
     return {
       item: [{}],
+      fields: [
+        { key: "title", label: "Title" },
+        {
+          key: "description",
+          label: "Description",
+        },
+        { key: "itemImage", label: "Images" },
+      ],
     };
   },
   async created() {
