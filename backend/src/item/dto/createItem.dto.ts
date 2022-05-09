@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsDecimal,
   IsNotEmpty,
@@ -91,4 +92,7 @@ export class CreateItemDto {
   @IsNumber()
   @IsOptional()
   shipSizeDepthInches: number;
+
+  @IsArray()
+  images: [string];
 }

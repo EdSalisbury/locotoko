@@ -44,5 +44,7 @@ model Item {
   shipSizeWidthInches Int?
   shipSizeDepthInches Int?
 
+  images String[]
+
   @@map("items")
 }
