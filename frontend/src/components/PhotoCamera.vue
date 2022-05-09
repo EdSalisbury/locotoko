@@ -1,24 +1,7 @@
 <template>
   <div id="app" class="web-camera-container">
-    <div class="camera-button">
-      <button
-        type="button"
-        class="button is-rounded"
-        :class="{
-          'is-primary': !isCameraOpen,
-          'is-danger': isCameraOpen,
-        }"
-        @click="toggleCamera"
-      >
-        <span v-if="!isCameraOpen"
-          >Open Camera</span
-        >
-        <span v-else>Close Camera</span>
-      </button>
-    </div>
-
     <div
-      v-show="isCameraOpen && isLoading"
+      v-show="isLoading"
       class="camera-loading"
     >
       <ul class="loader-circle">
@@ -29,7 +12,6 @@
     </div>
 
     <div
-      v-if="isCameraOpen"
       v-show="!isLoading"
       class="camera-box"
       :class="{ flash: isShotPhoto }"
@@ -56,10 +38,7 @@
       ></canvas>
     </div>
 
-    <div
-      v-if="isCameraOpen && !isLoading"
-      class="camera-shoot"
-    >
+    <div v-if="!isLoading" class="camera-shoot">
       <button
         type="button"
         class="button"
@@ -70,21 +49,6 @@
         />
       </button>
     </div>
-
-    <div
-      v-if="isPhotoTaken && isCameraOpen"
-      class="camera-download"
-    >
-      <a
-        id="downloadPhoto"
-        download="my-photo.jpg"
-        class="button"
-        role="button"
-        @click="downloadImage"
-      >
-        Download
-      </a>
-    </div>
   </div>
 </template>
 
@@ -92,27 +56,16 @@
 export default {
   data() {
     return {
-      isCameraOpen: false,
       isPhotoTaken: false,
       isShotPhoto: false,
       isLoading: false,
       link: "#",
     };
   },
-
+  created() {
+    this.createCameraElement();
+  },
   methods: {
-    toggleCamera() {
-      if (this.isCameraOpen) {
-        this.isCameraOpen = false;
-        this.isPhotoTaken = false;
-        this.isShotPhoto = false;
-        this.stopCameraStream();
-      } else {
-        this.isCameraOpen = true;
-        this.createCameraElement();
-      }
-    },
-
     createCameraElement() {
       this.isLoading = true;
 
@@ -129,8 +82,8 @@ export default {
         })
         .catch(() => {
           this.isLoading = false;
-          alert(
-            "May the browser didn't support or there is some errors.",
+          console.log(
+            "Error creating camera element",
           );
         });
     },
@@ -166,12 +119,11 @@ export default {
         450,
         337.5,
       );
+      this.stopCameraStream();
+      this.downloadImage();
     },
 
     downloadImage() {
-      const download = document.getElementById(
-        "downloadPhoto",
-      );
       const canvas = document
         .getElementById("photoTaken")
         .toDataURL("image/jpeg")
@@ -179,8 +131,30 @@ export default {
           "image/jpeg",
           "image/octet-stream",
         );
-      download.setAttribute("href", canvas);
+      this.$emit("photoTaken", canvas);
     },
   },
 };
 </script>
+<style scoped>
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.web-camera-container {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 500px;
+}
+.camera-button {
+  margin-bottom: 2rem;
+}
+</style>
