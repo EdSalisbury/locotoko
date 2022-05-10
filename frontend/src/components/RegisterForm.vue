@@ -4,6 +4,13 @@
     <b-card-body>
       <b-form @submit="onSubmit">
         <form-input
+          v-model="form.name"
+          label="Name"
+          field="name"
+          type="text"
+          required
+        />
+        <form-input
           v-model="form.email"
           label="Email Address"
           field="email"
@@ -35,6 +42,7 @@ export default {
   data() {
     return {
       form: {
+        name: "",
         email: "",
         password: "",
       },
@@ -58,6 +66,10 @@ export default {
       this.$cookie.set("token", token, {
         expires: "24h",
       });
+      this.$cookie.set("userId", data.id, {
+        expires: "24h",
+      });
+
       this.$router.push({ path: "/" });
     },
   },

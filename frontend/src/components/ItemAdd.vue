@@ -32,6 +32,18 @@
           v-model="form.cost"
         />
 
+        <b-form-group
+          id="listingUser-input-group"
+          label="Listing User"
+          label-for="listingUser-input"
+        >
+          <b-form-select
+            id="listingUser-input"
+            v-model="form.listingUserId"
+            :options="this.users"
+          ></b-form-select>
+        </b-form-group>
+
         <form-input
           field="acquisitionDate"
           label="Aquisition Date"
@@ -134,18 +146,20 @@
 <script>
 import FormInput from "@/components/FormInput";
 import PhotoCamera from "@/components/PhotoCamera";
+import api from "@/api";
 
 export default {
   data() {
     return {
       camera: false,
+      users: [],
       form: {
         title: "",
         quantity: 1,
         price: 0.0,
         cost: 0.0,
         acquisitionDate: "",
-        listingUserId: "",
+        listingUserId: this.$cookie.get("userId"),
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -163,6 +177,15 @@ export default {
   components: {
     FormInput,
     PhotoCamera,
+  },
+  async created() {
+    const token = this.$cookie.get("token");
+    const users = await api.getUsers(token);
+
+    this.users = users.map((user) => ({
+      value: user.id,
+      text: user.name,
+    }));
   },
   methods: {
     addImage(event) {
