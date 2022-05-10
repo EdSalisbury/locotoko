@@ -104,11 +104,11 @@
         />
 
         <div
-          v-for="(photo, index) in this.form
-            .photos"
+          v-for="(image, index) in this.form
+            .images"
           :key="index"
         >
-          <img :src="photo" />
+          <img :src="image" />
         </div>
 
         <photo-camera
