@@ -6,6 +6,10 @@ import { PrismaService } from "../prisma/prisma.service";
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  getUsers() {
+    return this.prisma.user.findMany();
+  }
+
   async editUser(
     userId: string,
     dto: EditUserDto,

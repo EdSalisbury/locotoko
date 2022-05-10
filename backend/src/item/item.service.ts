@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -28,7 +29,31 @@ export class ItemService {
   async createItem(
     dto: CreateItemDto,
   ) {
-    const item =
+
+
+    const listingUserId = await this.prisma.user.findUnique({
+        where: {
+          id: dto.listingUserId,
+        },
+      });
+   
+      if (!listingUserId) {
+        throw new BadRequestException();
+      }
+      
+      if (dto.shippingUserId) {
+        const shippingUserId = await this.prisma.user.findUnique({
+        where: {
+          id: dto.shippingUserId,
+        },
+      });
+   
+      if (!shippingUserId) {
+        throw new BadRequestException();
+      }
+      }
+   
+      const item =
       await this.prisma.item.create({
         data: {
           ...dto,

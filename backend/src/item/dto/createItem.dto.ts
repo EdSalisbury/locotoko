@@ -46,7 +46,7 @@ export class CreateItemDto {
   shippedAt: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   listingUserId: string;
 
   @IsString()

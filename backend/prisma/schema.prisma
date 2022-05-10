@@ -13,7 +13,10 @@ model User {
   updatedAt DateTime @updatedAt
   email String @unique
   hash String
-  name String?
+  name String
+
+  listedItems Item[] @relation("listingUser")
+  shippedItems Item[] @relation("shippingUser")
 
   @@map("users")
 }
@@ -30,7 +33,9 @@ model Item {
   acquisitionDate DateTime?
   soldAt DateTime?
   shippedAt DateTime?
+  listingUser User? @relation("listingUser", fields: [listingUserId], references: [id])
   listingUserId String?
+  shippingUser User? @relation("shippingUser", fields: [shippingUserId], references: [id])
   shippingUserId String?
   quantity Int
   weightPounds Int?
