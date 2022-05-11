@@ -5,10 +5,9 @@ services:
     ports:
       - 5434:5432
     environment:
-      PHOST: 0.0.0.0
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: locotoko
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
     networks:
       - locotoko
@@ -17,9 +16,9 @@ services:
     ports:
       - 5435:5432
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: locotoko
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - locotoko
   prod-db:
@@ -27,15 +26,14 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_HOST: 0.0.0.0
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: RFpGgmUFJPvw8rZY
-      POSTGRES_DB: locotoko
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
     networks:
       - locotoko
   server:
-    image: locotoko:0.1.3
+    image: locotoko:0.1.4
     ports:
       - 80:3333
     networks:
