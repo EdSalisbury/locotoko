@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -13,52 +12,57 @@ import {
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
-  
+
   getItems() {
     return this.prisma.item.findMany();
   }
 
-  getItemById(
-    itemId: string,
-  ) {
+  getItemById(itemId: string) {
     return this.prisma.item.findUnique({
-      where: {id: itemId },
+      where: { id: itemId },
     });
   }
 
-  async createItem(
-    dto: CreateItemDto,
-  ) {
-
-
-    const listingUserId = await this.prisma.user.findUnique({
+  async createItem(dto: CreateItemDto) {
+    const listingUser =
+      await this.prisma.user.findUnique({
         where: {
           id: dto.listingUserId,
         },
       });
-   
-      if (!listingUserId) {
-        throw new BadRequestException();
-      }
-      
-      if (dto.shippingUserId) {
-        const shippingUserId = await this.prisma.user.findUnique({
+
+    if (!listingUser) {
+      throw new BadRequestException();
+    }
+
+    const owner =
+      await this.prisma.owner.findUnique({
         where: {
-          id: dto.shippingUserId,
+          id: dto.ownerId,
         },
       });
-   
-      if (!shippingUserId) {
+
+    if (!owner) {
+      throw new BadRequestException();
+    }
+
+    if (dto.shippingUserId) {
+      const shippingUser =
+        await this.prisma.user.findUnique({
+          where: {
+            id: dto.shippingUserId,
+          },
+        });
+      if (!shippingUser) {
         throw new BadRequestException();
       }
-      }
-   
-      const item =
-      await this.prisma.item.create({
-        data: {
-          ...dto,
-        },
-      });
+    }
+
+    const item = await this.prisma.item.create({
+      data: {
+        ...dto,
+      },
+    });
     return item;
   }
 
@@ -89,9 +93,7 @@ export class ItemService {
     });
   }
 
-  async deleteItemById(
-    itemId: string,
-  ) {
+  async deleteItemById(itemId: string) {
     // get the item by id
     const item =
       await this.prisma.item.findUnique({

@@ -53,6 +53,10 @@ export class CreateItemDto {
   @IsOptional()
   shippingUserId: string;
 
+  @IsString()
+  @IsNotEmpty()
+  ownerId: string;
+
   @IsNumber()
   @IsOptional()
   weightPounds: number;

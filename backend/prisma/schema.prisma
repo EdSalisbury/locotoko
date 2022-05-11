@@ -33,10 +33,12 @@ model Item {
   acquisitionDate DateTime?
   soldAt DateTime?
   shippedAt DateTime?
-  listingUser User? @relation("listingUser", fields: [listingUserId], references: [id])
-  listingUserId String?
+  listingUser User @relation("listingUser", fields: [listingUserId], references: [id])
+  listingUserId String
   shippingUser User? @relation("shippingUser", fields: [shippingUserId], references: [id])
   shippingUserId String?
+  ownerId String
+  owner Owner @relation(fields: [ownerId], references: [id])
   quantity Int
   weightPounds Int?
   weightOunces Int?
@@ -53,3 +55,14 @@ model Item {
 
   @@map("items")
 }
+
+model Owner {
+  id String @id @default(cuid())
+  name String
+  rate Decimal
+
+  items Item[]
+
+  @@map("owners")
+}
+
