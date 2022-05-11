@@ -135,11 +135,16 @@
           <img :src="image" />
         </div>
 
-        <photo-camera
+        <!-- <photo-camera
           v-if="this.camera"
           @photoTaken="photoTaken"
-        />
+        /> -->
 
+        <input
+          v-if="this.camera"
+          type="file"
+          accept="image/*"
+        />
         <button
           v-show="!this.camera"
           @click="addImage"
@@ -157,7 +162,7 @@
 
 <script>
 import FormInput from "@/components/FormInput";
-import PhotoCamera from "@/components/PhotoCamera";
+//import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
 
 export default {
@@ -190,7 +195,7 @@ export default {
   },
   components: {
     FormInput,
-    PhotoCamera,
+    //PhotoCamera,
   },
   async created() {
     const token = this.$cookie.get("token");
