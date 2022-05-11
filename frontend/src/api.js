@@ -18,4 +18,14 @@ const getUsers = async (token) => {
   return await response.json();
 };
 
-export default { getItems, getUsers };
+const getOwners = async (token) => {
+  const url = "http://localhost:3333/owners";
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  return await response.json();
+};
+
+export default { getItems, getUsers, getOwners };

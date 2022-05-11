@@ -44,6 +44,18 @@
           ></b-form-select>
         </b-form-group>
 
+        <b-form-group
+          id="owner-input-group"
+          label="Owner"
+          label-for="owner-input"
+        >
+          <b-form-select
+            id="owner-input"
+            v-model="form.ownerId"
+            :options="this.owners"
+          ></b-form-select>
+        </b-form-group>
+
         <form-input
           field="acquisitionDate"
           label="Aquisition Date"
@@ -153,6 +165,7 @@ export default {
     return {
       camera: false,
       users: [],
+      owners: [],
       form: {
         title: "",
         quantity: 1,
@@ -160,6 +173,7 @@ export default {
         cost: 0.0,
         acquisitionDate: "",
         listingUserId: this.$cookie.get("userId"),
+        ownerId: "",
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -185,6 +199,12 @@ export default {
     this.users = users.map((user) => ({
       value: user.id,
       text: user.name,
+    }));
+
+    const owners = await api.getOwners(token);
+    this.owners = owners.map((owner) => ({
+      value: owner.id,
+      text: owner.name,
     }));
   },
   methods: {

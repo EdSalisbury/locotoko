@@ -6,6 +6,9 @@ import RegisterForm from "@/components/RegisterForm";
 import ItemList from "@/components/ItemList";
 import ItemView from "@/components/ItemView";
 import ItemAdd from "@/components/ItemAdd";
+import OwnerList from "@/components/OwnerList";
+import OwnerAdd from "@/components/OwnerAdd";
+import OwnerView from "@/components/OwnerView";
 
 Vue.use(VueRouter);
 
@@ -39,6 +42,21 @@ const routes = [
     path: "/addItem",
     name: "add item",
     component: ItemAdd,
+  },
+  {
+    path: "/owners/:id",
+    name: "owner view",
+    component: OwnerView,
+  },
+  {
+    path: "/owners",
+    name: "owners",
+    component: OwnerList,
+  },
+  {
+    path: "/addOwner",
+    name: "add owner",
+    component: OwnerAdd,
   },
   {
     path: "/about",
