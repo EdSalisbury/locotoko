@@ -274,7 +274,7 @@ export default {
         ).toISOString();
       }
 
-      const url = "http://localhost:3333/items";
+      const url = "/api/v1/items";
       const response = await fetch(url, {
         method: "POST",
         headers: {

@@ -48,8 +48,7 @@ export default {
 
       payload.rate = parseFloat(payload.rate);
 
-      const url = "http://localhost:3333/owners";
-
+      const url = "/api/v1/owners";
       const response = await fetch(url, {
         method: "POST",
         headers: {

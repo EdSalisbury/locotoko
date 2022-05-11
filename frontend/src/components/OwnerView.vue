@@ -23,8 +23,7 @@ export default {
   async created() {
     const ownerId = this.$route.params.id;
     const token = this.$cookie.get("token");
-    const url =
-      "http://localhost:3333/owners/" + ownerId;
+    const url = "/api/v1/owners/" + ownerId;
     const response = await fetch(url, {
       headers: {
         Authorization: "Bearer " + token,

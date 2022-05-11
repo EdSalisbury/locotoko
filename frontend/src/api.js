@@ -1,5 +1,5 @@
 const getItems = async (token) => {
-  const url = "http://localhost:3333/items";
+  const url = "/api/v1/items";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -9,7 +9,7 @@ const getItems = async (token) => {
 };
 
 const getUsers = async (token) => {
-  const url = "http://localhost:3333/users";
+  const url = "/api/v1/users";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -19,7 +19,7 @@ const getUsers = async (token) => {
 };
 
 const getOwners = async (token) => {
-  const url = "http://localhost:3333/owners";
+  const url = "/api/v1/owners";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,

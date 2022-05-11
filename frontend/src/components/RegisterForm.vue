@@ -51,9 +51,7 @@ export default {
   methods: {
     async onSubmit(event) {
       event.preventDefault();
-      const url =
-        "http://localhost:3333/auth/register";
-
+      const url = "/api/v1/auth/register";
       const response = await fetch(url, {
         method: "POST",
         headers: {
