@@ -211,7 +211,6 @@ export default {
       },
     });
     this.form = await response.json();
-    console.log(this.form);
   },
   methods: {
     addImages(event) {
