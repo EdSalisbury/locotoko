@@ -1,17 +1,17 @@
-FROM node:17-alpine AS frontend
+FROM node:17-alpine AS client
 
 WORKDIR /build
-ADD frontend .
+ADD client .
 RUN yarn
 RUN yarn build
 
 FROM node:17-alpine
 WORKDIR /app
 
-COPY backend/. .
+COPY . .
 RUN yarn
 
 RUN yarn build
-COPY --from=frontend /build/dist/ ./dist/client/
+COPY --from=client /build/dist/ ./dist/client/
 
 CMD ["yarn", "start:prod"]

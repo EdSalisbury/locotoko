@@ -4,36 +4,29 @@ services:
     image: postgres:13
     ports:
       - 5434:5432
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-
     networks:
       - locotoko
   test-db:
     image: postgres:13
     ports:
       - 5435:5432
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - locotoko
   prod-db:
     image: postgres:13
     ports:
       - 5432:5432
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
 
     networks:
       - locotoko
   server:
-    image: locotoko:0.1.4
+    image: locotoko:0.1.7
     ports:
       - 80:3333
     networks:

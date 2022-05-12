@@ -141,16 +141,18 @@
         /> -->
 
         <input
-          v-if="this.camera"
           type="file"
           accept="image/*"
+          multiple="true"
+          v-on:change="addImages"
         />
-        <button
+
+        <!-- <button
           v-show="!this.camera"
           @click="addImage"
         >
           Add Photo
-        </button>
+        </button> -->
 
         <b-button type="submit" variant="primary"
           >Add</b-button
@@ -213,6 +215,22 @@ export default {
     }));
   },
   methods: {
+    addImages(event) {
+      event.preventDefault();
+      const files = [...event.target.files];
+      files.forEach((file) => {
+        this.createBase64Image(file);
+      });
+    },
+    createBase64Image(fileObject) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const img = e.target.result;
+        this.form.images.push(img);
+      };
+      reader.readAsDataURL(fileObject);
+    },
     addImage(event) {
       event.preventDefault();
       this.camera = true;
