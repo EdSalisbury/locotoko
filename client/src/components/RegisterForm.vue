@@ -51,7 +51,9 @@ export default {
   methods: {
     async onSubmit(event) {
       event.preventDefault();
-      const url = "/api/v1/auth/register";
+      const url =
+        process.env.VUE_APP_API_BASE_URL +
+        "/api/v1/auth/register";
       const response = await fetch(url, {
         method: "POST",
         headers: {

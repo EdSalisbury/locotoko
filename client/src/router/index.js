@@ -5,6 +5,7 @@ import LoginForm from "@/components/LoginForm";
 import RegisterForm from "@/components/RegisterForm";
 import ItemList from "@/components/ItemList";
 import ItemView from "@/components/ItemView";
+import ItemEdit from "@/components/ItemEdit";
 import ItemAdd from "@/components/ItemAdd";
 import OwnerList from "@/components/OwnerList";
 import OwnerAdd from "@/components/OwnerAdd";
@@ -29,9 +30,14 @@ const routes = [
     component: RegisterForm,
   },
   {
-    path: "/items/:id",
+    path: "/viewItem/:id",
     name: "item view",
     component: ItemView,
+  },
+  {
+    path: "/editItem/:id",
+    name: "edit item",
+    component: ItemEdit,
   },
   {
     path: "/items",

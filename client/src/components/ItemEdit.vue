@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-card-title>Add Item</b-card-title>
+    <b-card-title>Edit Item</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
         <form-input
@@ -135,11 +135,6 @@
           <img :src="image" />
         </div>
 
-        <!-- <photo-camera
-          v-if="this.camera"
-          @photoTaken="photoTaken"
-        /> -->
-
         <input
           type="file"
           accept="image/*"
@@ -147,15 +142,8 @@
           v-on:change="addImages"
         />
 
-        <!-- <button
-          v-show="!this.camera"
-          @click="addImage"
-        >
-          Add Photo
-        </button> -->
-
         <b-button type="submit" variant="primary"
-          >Add</b-button
+          >Update</b-button
         >
       </b-form>
     </b-card-body>
@@ -164,7 +152,6 @@
 
 <script>
 import FormInput from "@/components/FormInput";
-//import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
 
 export default {
@@ -197,7 +184,6 @@ export default {
   },
   components: {
     FormInput,
-    //PhotoCamera,
   },
   async created() {
     const token = this.$cookie.get("token");
@@ -213,6 +199,19 @@ export default {
       value: owner.id,
       text: owner.name,
     }));
+
+    const itemId = this.$route.params.id;
+    const url =
+      process.env.VUE_APP_API_BASE_URL +
+      "/api/v1/items/" +
+      itemId;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    this.form = await response.json();
+    console.log(this.form);
   },
   methods: {
     addImages(event) {
@@ -231,15 +230,7 @@ export default {
       };
       reader.readAsDataURL(fileObject);
     },
-    addImage(event) {
-      event.preventDefault();
-      this.camera = true;
-    },
 
-    photoTaken(value) {
-      this.form.images.push(value);
-      this.camera = false;
-    },
     async onSubmit(event) {
       event.preventDefault();
 
@@ -296,11 +287,14 @@ export default {
           this.payload.acquisitionDate,
         ).toISOString();
       }
+
+      const itemId = this.$route.params.id;
       const url =
         process.env.VUE_APP_API_BASE_URL +
-        "/api/v1/items";
+        "/api/v1/items/" +
+        itemId;
       const response = await fetch(url, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization:
@@ -309,7 +303,9 @@ export default {
         body: JSON.stringify(this.payload),
       });
       await response.json();
-      this.$router.push({ path: "/items" });
+      this.$router.push({
+        path: "/viewItem/" + itemId,
+      });
     },
   },
 };

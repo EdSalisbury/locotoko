@@ -9,9 +9,19 @@
       >
         <template #cell(itemLink)="data">
           <router-link
-            :to="'/items/' + data.item.id"
+            :to="'/viewItem/' + data.item.id"
           >
             {{ data.item.title }}
+          </router-link>
+        </template>
+
+        <template #cell(actions)="data">
+          <router-link
+            :to="'/editItem/' + data.item.id"
+          >
+            <b-button variant="primary">
+              <b-icon-pencil-fill />
+            </b-button>
           </router-link>
         </template>
       </b-table>
@@ -34,6 +44,7 @@ export default {
       fields: [
         { key: "itemLink", label: "Title" },
         "quantity",
+        "actions",
       ],
     };
   },

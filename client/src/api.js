@@ -1,5 +1,7 @@
 const getItems = async (token) => {
-  const url = "/api/v1/items";
+  const url =
+    process.env.VUE_APP_API_BASE_URL +
+    "/api/v1/items";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -9,7 +11,9 @@ const getItems = async (token) => {
 };
 
 const getUsers = async (token) => {
-  const url = "/api/v1/users";
+  const url =
+    process.env.VUE_APP_API_BASE_URL +
+    "/api/v1/users";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -19,7 +23,9 @@ const getUsers = async (token) => {
 };
 
 const getOwners = async (token) => {
-  const url = "/api/v1/owners";
+  const url =
+    process.env.VUE_APP_API_BASE_URL +
+    "/api/v1/owners";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,

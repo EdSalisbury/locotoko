@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import {
   BootstrapVue,
-  IconsPlugin,
+  BootstrapVueIcons,
 } from "bootstrap-vue";
 
 // Import Bootstrap and BootstrapVue CSS files (order is important)
@@ -15,7 +15,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueCookie);
 Vue.use(BootstrapVue);
-Vue.use(IconsPlugin);
+Vue.use(BootstrapVueIcons);
 
 new Vue({
   router,

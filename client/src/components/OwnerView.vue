@@ -23,7 +23,10 @@ export default {
   async created() {
     const ownerId = this.$route.params.id;
     const token = this.$cookie.get("token");
-    const url = "/api/v1/owners/" + ownerId;
+    const url =
+      process.env.VUE_APP_API_BASE_URL +
+      "/api/v1/owners/" +
+      ownerId;
     const response = await fetch(url, {
       headers: {
         Authorization: "Bearer " + token,

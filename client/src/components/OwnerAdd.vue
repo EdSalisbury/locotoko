@@ -47,8 +47,9 @@ export default {
       );
 
       payload.rate = parseFloat(payload.rate);
-
-      const url = "/api/v1/owners";
+      const url =
+        process.env.VUE_APP_API_BASE_URL +
+        "/api/v1/owners";
       const response = await fetch(url, {
         method: "POST",
         headers: {
