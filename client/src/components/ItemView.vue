@@ -32,6 +32,65 @@ export default {
           key: "description",
           label: "Description",
         },
+        { key: "quantity", label: "Quantity" },
+        { key: "price", label: "Price" },
+        { key: "soldPrice", label: "Sold Price" },
+        { key: "cost", label: "Cost" },
+        {
+          key: "acquisitionDate",
+          label: "Acquisition Date",
+        },
+        { key: "soldAt", label: "Sold At" },
+        { key: "shippedAt", label: "Shipped At" },
+        {
+          key: "listingUserId",
+          label: "Listing User",
+        },
+        {
+          key: "shippingUserId",
+          label: "Shipping User",
+        },
+        { key: "ownerId", label: "Owner" },
+        {
+          key: "weightPounds",
+          label: "Weight Pounds",
+        },
+        {
+          key: "weightOunces",
+          label: "Weight Ounces",
+        },
+        {
+          key: "shipWeightPounds",
+          label: "Ship Weight Pounds",
+        },
+        {
+          key: "shipWeightOunces",
+          label: "Ship Weight Ounces",
+        },
+        {
+          key: "sizeHeightInches",
+          label: "Size Height Inches",
+        },
+        {
+          key: "sizeWidthInches",
+          label: "Size Width Inches",
+        },
+        {
+          key: "sizeDepthInches",
+          label: "Size Depth Inches",
+        },
+        {
+          key: "shipSizeHeightInches",
+          label: "Ship Size Height Inches",
+        },
+        {
+          key: "shipSizeWidthInches",
+          label: "Ship Size Width Inches",
+        },
+        {
+          key: "shipSizeDepthInches",
+          label: "Ship Size Depth Inches",
+        },
         { key: "itemImage", label: "Images" },
       ],
     };
