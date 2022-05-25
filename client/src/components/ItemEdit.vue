@@ -16,11 +16,20 @@
           type="number"
         />
 
-        <form-input
-          field="description"
+        <b-form-group
+          id="description-input-group"
           label="Description"
-          v-model="form.description"
-        />
+          label-for="description-input"
+        >
+          <b-form-textarea
+            id="description-input"
+            v-model="form.description"
+            placeholder="Description"
+            rows="3"
+            max-rows="6"
+          ></b-form-textarea>
+        </b-form-group>
+
         <form-input
           field="price"
           label="Price"

@@ -16,6 +16,11 @@
             <img :src="image" />
           </div>
         </template>
+        <template #cell(description)="data">
+          <div style="white-space: pre">
+            {{ data.item.description }}
+          </div>
+        </template>
       </b-table>
     </b-card-body>
   </b-card>
@@ -28,14 +33,14 @@ export default {
       item: [{}],
       fields: [
         { key: "title", label: "Title" },
-        {
-          key: "description",
-          label: "Description",
-        },
         { key: "quantity", label: "Quantity" },
         { key: "price", label: "Price" },
         { key: "soldPrice", label: "Sold Price" },
         { key: "cost", label: "Cost" },
+        {
+          key: "description",
+          label: "Description",
+        },
         {
           key: "acquisitionDate",
           label: "Acquisition Date",
