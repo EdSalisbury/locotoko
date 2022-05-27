@@ -5,6 +5,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { ConfigModule } from "@nestjs/config";
 import { ItemModule } from "./item/item.module";
 import { OwnerModule } from "./owner/owner.module";
+import { EbayModule } from "./ebay/ebay.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 @Module({
@@ -15,6 +16,7 @@ import { join } from "path";
     PrismaModule,
     ItemModule,
     OwnerModule,
+    EbayModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "client"),
     }),
