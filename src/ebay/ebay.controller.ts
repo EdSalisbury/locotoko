@@ -20,4 +20,9 @@ export class EbayController {
   refreshCategories() {
     this.ebayService.refreshCategories();
   }
+
+  @Get("categories")
+  getCategories() {
+    return this.ebayService.getCategories();
+  }
 }
