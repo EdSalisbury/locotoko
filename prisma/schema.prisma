@@ -66,3 +66,11 @@ model Owner {
   @@map("owners")
 }
 
+model EbayCategory {
+  id Int @id
+  name String
+  parentId Int
+
+  @@map("ebayCategories")
+}
+
