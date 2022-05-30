@@ -8,6 +8,9 @@ import { OwnerModule } from "./owner/owner.module";
 import { EbayModule } from "./ebay/ebay.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { TemplateModule } from "./template/template.module";
+import { EbayListingModule } from "./ebay-listing/ebay-listing.module";
+import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,6 +23,9 @@ import { join } from "path";
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "client"),
     }),
+    TemplateModule,
+    EbayListingModule,
+    EbayCategoryModule,
   ],
 })
 export class AppModule {}

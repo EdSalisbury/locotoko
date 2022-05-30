@@ -74,3 +74,18 @@ model EbayCategory {
   @@map("ebayCategories")
 }
 
+model Template {
+  id String @id @default(cuid())
+  name String
+  categoryId Int
+
+  @@map("templates")
+}
+
+model EbayListing {
+  id String @id
+  title String
+
+  @@map("ebayListings")
+}
+
