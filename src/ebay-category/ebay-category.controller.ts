@@ -1,11 +1,18 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayCategoryService } from "./ebay-category.service";
 
 @UseGuards(JwtGuard)
-@Controller('ebayCategories')
+@Controller("ebayCategories")
 export class EbayCategoryController {
-  constructor(private ebayCategoryService: EbayCategoryService) {};
+  constructor(
+    private ebayCategoryService: EbayCategoryService,
+  ) {}
 
   @Get()
   getCategories() {
@@ -14,7 +21,6 @@ export class EbayCategoryController {
 
   @Post("refresh")
   refreshCategories() {
-    return this.refreshCategories();
+    return this.ebayCategoryService.refreshCategories();
   }
-
 }

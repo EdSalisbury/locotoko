@@ -8,7 +8,7 @@ export class EbayService extends ebayApi {
     super({
       appId: config.get("EBAY_APP_ID"),
       certId: config.get("EBAY_CERT_ID"),
-      sandbox: config.get("EBAY_SANDBOX"),
+      sandbox: false,
       devId: config.get("EBAY_DEV_ID"),
       authToken: config.get("EBAY_AUTH_TOKEN"),
     });

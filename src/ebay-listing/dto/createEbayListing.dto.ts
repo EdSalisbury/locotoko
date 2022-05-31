@@ -4,4 +4,6 @@ import {
   IsString,
 } from "class-validator";
 
-export class CreateEbayListingDto {}
+export class CreateEbayListingDto {
+  title: string;
+}

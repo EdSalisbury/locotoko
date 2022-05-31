@@ -1,4 +1,28 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+} from "@nestjs/common";
+import { JwtGuard } from "../auth/guard";
+import { EbayListingService } from "./ebay-listing.service";
 
-@Controller('ebay-listing')
-export class EbayListingController {}
+import { CreateEbayListingDto } from "./dto";
+
+@UseGuards(JwtGuard)
+@Controller("ebayListings")
+export class EbayListingController {
+  constructor(
+    private ebayListingService: EbayListingService,
+  ) {}
+
+  @Post("")
+  createEbayListing(
+    @Body() dto: CreateEbayListingDto,
+  ) {
+    return this.ebayListingService.createEbayListing(
+      dto,
+    );
+  }
+}
