@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Param,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayListingService } from "./ebay-listing.service";
@@ -23,6 +24,13 @@ export class EbayListingController {
   ) {
     return this.ebayListingService.createEbayListing(
       dto,
+    );
+  }
+
+  @Get(":id")
+  getEbayListing(@Param("id") itemID: string) {
+    return this.ebayListingService.getEbayListing(
+      itemID,
     );
   }
 }
