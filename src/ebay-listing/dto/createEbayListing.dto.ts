@@ -5,5 +5,6 @@ import {
 } from "class-validator";
 
 export class CreateEbayListingDto {
-  title: string;
+  @IsString()
+  itemId: string;
 }

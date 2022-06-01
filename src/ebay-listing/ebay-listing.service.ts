@@ -1,8 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { EbayService } from "../ebay/ebay.service";
 import { CreateEbayListingDto } from "./dto";
+import * as FormData from "form-data";
+
+const fs = require("fs");
+
 @Injectable()
 export class EbayListingService {
   constructor(
@@ -14,30 +21,49 @@ export class EbayListingService {
   async createEbayListing(
     dto: CreateEbayListingDto,
   ) {
+    // Get the item
+    const item =
+      await this.prisma.item.findUnique({
+        where: {
+          id: dto.itemId,
+        },
+      });
+
+    // Throw if the owner doesn't exist
+    if (!item) {
+      throw new NotFoundException();
+    }
+
+    let imageUrls = [];
+    // Upload the images
+    for (const image of item.images) {
+      const url = await this.uploadImage(image);
+      imageUrls.push(url);
+    }
+
     return this.ebay.trading.AddItem({
       Item: {
-        Title: "Test Item",
-        Description: "This is a test item",
+        Title: item.title,
+        Description: item.description,
         Currency: this.config.get("CURRENCY"),
         Country: this.config.get("COUNTRY"),
         PrimaryCategory: {
-          CategoryID: 29223,
+          CategoryID: item.ebayCategoryId,
         },
         PostalCode: this.config.get(
           "POSTAL_CODE",
         ),
+        Quantity: item.quantity,
         ButItNowPrice: {
-          "#value": 74.99,
+          "#value": item.price.toString(),
           "@_currencyID": "USD",
         },
         StartPrice: {
-          "#value": 74.99,
+          "#value": item.price.toString(),
           "@_currencyID": "USD",
         },
         PictureDetails: {
-          PictureURL: [
-            "https://i.ebayimg.com/00/s/MTM2MVgxMDM4/z/uzoAAOSw4GlifUei/$_12.JPG?set_id=880000500F",
-          ],
+          PictureURL: imageUrls,
         },
         ListingDuration: "GTC",
         ListingType: "FixedPriceItem",
@@ -63,22 +89,22 @@ export class EbayListingService {
           ShippingPackage: "PackageThickEnvelope",
           PackageDepth: {
             "@_unit": "inches",
-            "#value": 5,
+            "#value": item.shipSizeDepthInches,
           },
           PackageHeight: {
             "@_unit": "inches",
-            "#value": 5,
+            "#value": item.shipSizeHeightInches,
           },
           PackageWidth: {
             "@_unit": "inches",
-            "#value": 5,
+            "#value": item.shipSizeWidthInches,
           },
           WeightMajor: {
-            "#value": 1,
+            "#value": item.shipWeightPounds,
             "@_unit": "lbs",
           },
           WeightMinor: {
-            "#value": 0,
+            "#value": item.shipWeightOunces,
             "@_unit": "oz",
           },
         },
@@ -90,5 +116,35 @@ export class EbayListingService {
     return this.ebay.trading.GetItem({
       ItemID: itemId,
     });
+  }
+
+  async uploadImage(image: string) {
+    // Strip off metadata
+    var img = Buffer.from(
+      image.split(",")[1],
+      "base64",
+    );
+
+    const response =
+      await this.ebay.trading.UploadSiteHostedPictures(
+        { ExtensionInDays: 1 },
+        {
+          hook: (xml: string) => {
+            const form = new FormData();
+            form.append(
+              "XML Payload",
+              xml,
+              "payload.xml",
+            );
+            form.append("dummy", img);
+            return {
+              body: form,
+              headers: form.getHeaders(),
+            };
+          },
+        },
+      );
+    return response.SiteHostedPictureDetails
+      .FullURL;
   }
 }
