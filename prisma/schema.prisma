@@ -27,6 +27,8 @@ model Item {
   updatedAt DateTime @updatedAt
   title String
   description String?
+  ebayCategory EbayCategory @relation("itemEbayCategory", fields: [ebayCategoryId], references: [id])
+  ebayCategoryId Int
   price Decimal? @db.Money
   soldPrice Decimal? @db.Money
   cost Decimal? @db.Money
@@ -70,6 +72,8 @@ model EbayCategory {
   id Int @id
   name String
   parentId Int
+
+  items Item[] @relation("itemEbayCategory")
 
   @@map("ebayCategories")
 }
