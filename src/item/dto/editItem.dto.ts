@@ -3,6 +3,7 @@ import {
   IsDecimal,
   IsNotEmpty,
   IsNumber,
+  IsArray,
   IsOptional,
   IsString,
 } from "class-validator";
@@ -94,4 +95,7 @@ export class EditItemDto {
   @IsNumber()
   @IsOptional()
   shipSizeDepthInches: number;
+
+  @IsArray()
+  images: [string];
 }

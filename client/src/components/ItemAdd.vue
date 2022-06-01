@@ -152,7 +152,11 @@
             .images"
           :key="index"
         >
-          <img :src="image" />
+          <img
+            :src="image"
+            width="100"
+            height="100"
+          />
         </div>
 
         <!-- <photo-camera

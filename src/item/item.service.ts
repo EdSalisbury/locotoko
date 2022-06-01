@@ -13,8 +13,12 @@ import {
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  getItems() {
-    return this.prisma.item.findMany();
+  async getItems() {
+    const items =
+      await this.prisma.item.findMany();
+    return items.map(
+      ({ images, ...keepAttrs }) => keepAttrs,
+    );
   }
 
   getItemById(itemId: string) {
