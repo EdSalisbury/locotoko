@@ -63,7 +63,7 @@ export class EbayCategoryService {
       }
 
       const cat = {
-        name: name,
+        name: name.replaceAll("&amp;", "&"),
         id: parseInt(catId),
       };
       output.push(cat);
@@ -72,6 +72,10 @@ export class EbayCategoryService {
     output.sort((a, b) =>
       a.name > b.name ? 1 : -1,
     );
-    return output;
+
+    return output.filter((category) =>
+      category.name.includes("Comic"),
+    );
+    //return output;
   }
 }

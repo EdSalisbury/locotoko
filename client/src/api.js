@@ -34,4 +34,21 @@ const getOwners = async (token) => {
   return await response.json();
 };
 
-export default { getItems, getUsers, getOwners };
+const getEbayCategories = async (token) => {
+  const url =
+    process.env.VUE_APP_API_BASE_URL +
+    "/api/v1/ebayCategories";
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  return await response.json();
+};
+
+export default {
+  getItems,
+  getUsers,
+  getOwners,
+  getEbayCategories,
+};

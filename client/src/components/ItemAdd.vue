@@ -41,6 +41,18 @@
         />
 
         <b-form-group
+          id="ebayCategory-input-group"
+          label="eBay Category"
+          label-for="ebayCategory-input"
+        >
+          <b-form-select
+            id="ebayCategory-input"
+            v-model="form.ebayCategoryId"
+            :options="this.ebayCategories"
+          ></b-form-select>
+        </b-form-group>
+
+        <b-form-group
           id="listingUser-input-group"
           label="Listing User"
           label-for="listingUser-input"
@@ -181,6 +193,7 @@ export default {
       camera: false,
       users: [],
       owners: [],
+      ebayCategories: [],
       form: {
         title: "",
         quantity: 1,
@@ -189,6 +202,7 @@ export default {
         description: "",
         acquisitionDate: "",
         listingUserId: this.$cookie.get("userId"),
+        ebayCategoryId: 0,
         ownerId: "",
         weightPounds: 0,
         weightOunces: 0,
@@ -210,8 +224,8 @@ export default {
   },
   async created() {
     const token = this.$cookie.get("token");
-    const users = await api.getUsers(token);
 
+    const users = await api.getUsers(token);
     this.users = users.map((user) => ({
       value: user.id,
       text: user.name,
@@ -222,6 +236,15 @@ export default {
       value: owner.id,
       text: owner.name,
     }));
+
+    const ebayCategories =
+      await api.getEbayCategories(token);
+    this.ebayCategories = ebayCategories.map(
+      (ebayCategory) => ({
+        value: ebayCategory.id,
+        text: ebayCategory.name,
+      }),
+    );
   },
   methods: {
     addImages(event) {

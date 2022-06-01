@@ -42,6 +42,18 @@
         />
 
         <b-form-group
+          id="ebayCategory-input-group"
+          label="eBay Category"
+          label-for="ebayCategory-input"
+        >
+          <b-form-select
+            id="ebayCategory-input"
+            v-model="form.ebayCategoryId"
+            :options="this.ebayCategories"
+          ></b-form-select>
+        </b-form-group>
+
+        <b-form-group
           id="listingUser-input-group"
           label="Listing User"
           label-for="listingUser-input"
@@ -169,6 +181,7 @@ export default {
       camera: false,
       users: [],
       owners: [],
+      ebayCategories: [],
       form: {
         title: "",
         quantity: 1,
@@ -176,6 +189,7 @@ export default {
         cost: 0.0,
         acquisitionDate: "",
         listingUserId: this.$cookie.get("userId"),
+        ebayCategoryId: 0,
         ownerId: "",
         weightPounds: 0,
         weightOunces: 0,
@@ -208,6 +222,15 @@ export default {
       value: owner.id,
       text: owner.name,
     }));
+
+    const ebayCategories =
+      await api.getEbayCategories(token);
+    this.ebayCategories = ebayCategories.map(
+      (ebayCategory) => ({
+        value: ebayCategory.id,
+        text: ebayCategory.name,
+      }),
+    );
 
     const itemId = this.$route.params.id;
     const url =

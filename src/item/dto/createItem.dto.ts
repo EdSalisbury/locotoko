@@ -18,6 +18,9 @@ export class CreateItemDto {
   description?: string;
 
   @IsNumber()
+  ebayCategoryId: number;
+
+  @IsNumber()
   @IsNotEmpty()
   quantity: number;
 

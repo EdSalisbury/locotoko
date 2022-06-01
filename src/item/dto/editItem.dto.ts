@@ -17,6 +17,9 @@ export class EditItemDto {
   description?: string;
 
   @IsNumber()
+  ebayCategoryId: number;
+
+  @IsNumber()
   @IsNotEmpty()
   quantity: number;
 
@@ -91,5 +94,4 @@ export class EditItemDto {
   @IsNumber()
   @IsOptional()
   shipSizeDepthInches: number;
-
 }
