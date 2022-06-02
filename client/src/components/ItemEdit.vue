@@ -152,12 +152,24 @@
           v-for="(image, index) in this.form
             .images"
           :key="index"
+          style="position: relative"
         >
-          <img
+          <b-img
+            style="z-index: 0"
             :src="image"
-            width="100"
-            height="100"
+            v-on:click="previewImage"
+            fluid
           />
+          <b-btn
+            style="
+              position: absolute;
+              z-index: 9999;
+              top: 5px;
+              right: 5px;
+            "
+            v-on:click.stop="deleteImage(index)"
+            ><b-icon-trash-fill
+          /></b-btn>
         </div>
 
         <input
@@ -249,6 +261,13 @@ export default {
     this.form = await response.json();
   },
   methods: {
+    previewImage(event) {
+      event.preventDefault();
+      alert("Preview");
+    },
+    deleteImage(index) {
+      this.form.images.splice(index, 1);
+    },
     addImages(event) {
       event.preventDefault();
       const files = [...event.target.files];
