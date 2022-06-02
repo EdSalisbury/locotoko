@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -20,7 +20,7 @@
     "db:prod:up": "docker compose up prod-db -d",
     "db:prod:restart": "yarn db:prod:rm && yarn db:dev:up && sleep 1 && yarn prisma:prod:deploy",
     "prebuild": "rimraf dist",
-    "deploy": "yarn version && cd client && yarn version --no-git-tag-version --new-version $npm_package_version && cd .. && docker build -t edsalisbury/locotoko:$npm_package_version . && docker push edsalisbury/locotoko:$npm_package_version",
+    "deploy": "yarn version && cd client && yarn version --no-git-tag-version --new-version $npm_package_version && cd .. && docker build -t edsalisbury/locotoko:$npm_package_version . && docker tag edsalisbury/locotoko:$npm_package_version edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$npm_package_version && docker push edsalisbury/locotoko:latest",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
