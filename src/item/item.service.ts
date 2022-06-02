@@ -9,8 +9,6 @@ import {
   EditItemDto,
 } from "./dto";
 
-const fs = require("fs");
-
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
@@ -63,12 +61,6 @@ export class ItemService {
         throw new BadRequestException();
       }
     }
-
-    var img = Buffer.from(
-      dto.images[0].split(",")[1],
-      "base64",
-    );
-    fs.writeFileSync("test0.jpg", img);
 
     const item = await this.prisma.item.create({
       data: {
