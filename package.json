@@ -20,6 +20,7 @@
     "db:prod:up": "docker compose up prod-db -d",
     "db:prod:restart": "yarn db:prod:rm && yarn db:dev:up && sleep 1 && yarn prisma:prod:deploy",
     "prebuild": "rimraf dist",
+    "deploy": "yarn version && cd client && yarn version --no-git-tag-version --new-version $npm_package_version && cd .. && docker build -t edsalisbury/locotoko:$npm_package_version . && docker push edsalisbury/locotoko:$npm_package_version",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
