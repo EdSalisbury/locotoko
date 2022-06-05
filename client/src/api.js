@@ -46,9 +46,47 @@ const getEbayCategories = async (token) => {
   return await response.json();
 };
 
+const getTemplates = async (token) => {
+  const url =
+    process.env.VUE_APP_API_BASE_URL +
+    "/api/v1/templates";
+  const response = await fetch(url, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  return await response.json();
+};
+
+const apiUrl = (resource, id = "") => {
+  return (
+    process.env.VUE_APP_API_BASE_URL +
+    `/api/v1/${resource}` +
+    (id ? `/${id}` : "")
+  );
+};
+
+const apiHeaders = (token) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
+const getTemplate = async (token, id) => {
+  const response = await fetch(
+    apiUrl("templates", id),
+    apiHeaders(token),
+  );
+  return await response.json();
+};
+
 export default {
   getItems,
   getUsers,
   getOwners,
   getEbayCategories,
+  getTemplates,
+  getTemplate,
 };

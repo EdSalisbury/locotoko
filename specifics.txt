@@ -1,0 +1,87 @@
+<ItemSpecifics>
+      <NameValueList>
+        <Name>Character</Name>
+        <Value>Ghost Rider</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Country/Region of Manufacture</Name>
+        <Value>United States</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Issue Number</Name>
+        <Value>15</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Style</Name>
+        <Value>Color</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Format</Name>
+        <Value>Single Issue</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Series</Name>
+        <Value>Ghost Rider</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Grade</Name>
+        <Value>6.0 Fine</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Type</Name>
+        <Value>Comic Book</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Title</Name>
+        <Value>Ghost Rider</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Universe</Name>
+        <Value>Marvel (MCU)</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Vintage</Name>
+        <Value>Yes</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Publication Year</Name>
+        <Value>1991</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Publisher</Name>
+        <Value>Marvel Comics</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Tradition</Name>
+        <Value>US Comics</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Genre</Name>
+        <Value>Action/Adventure</Value>
+        <Value>Horror &amp; Sci-Fi</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Unit of Sale</Name>
+        <Value>Single Unit</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>
+      <NameValueList>
+        <Name>Era</Name>
+        <Value>Copper Age (1984-1991)</Value>
+        <Source>ItemSpecific</Source>
+      </NameValueList>

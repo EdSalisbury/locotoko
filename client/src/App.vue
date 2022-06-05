@@ -8,6 +8,9 @@
         <b-nav-item to="/owners"
           >Owners</b-nav-item
         >
+        <b-nav-item to="/templates"
+          >Templates</b-nav-item
+        >
         <b-nav-item to="/about">About</b-nav-item>
         <b-nav-item to="/login">Login</b-nav-item>
         <b-nav-item to="/register"
