@@ -15,6 +15,18 @@
           </router-link>
         </template>
 
+        <template #cell(ebayListingId)="data">
+          <a
+            v-bind:href="
+              'https://www.ebay.com/itm/' +
+              data.item.ebayListingId
+            "
+            target="_blank"
+          >
+            {{ data.item.ebayListingId }}
+          </a>
+        </template>
+
         <template #cell(actions)="data">
           <router-link
             :to="'/editItem/' + data.item.id"
@@ -26,6 +38,14 @@
               <b-icon-pencil-fill />
             </b-button>
           </router-link>
+          <b-button
+            class="p-1 m-1"
+            variant="primary"
+            @click="listItem(data.item.id)"
+          >
+            eBay</b-button
+          >
+
           <b-button
             class="p-1 m-1"
             variant="danger"
@@ -54,6 +74,10 @@ export default {
       fields: [
         { key: "itemLink", label: "Title" },
         "quantity",
+        {
+          key: "ebayListingId",
+          label: "eBay Listing ID",
+        },
         "actions",
       ],
     };
@@ -63,6 +87,31 @@ export default {
     this.items = await api.getItems(token);
   },
   methods: {
+    async listItem(id) {
+      const token = this.$cookie.get("token");
+      const url =
+        process.env.VUE_APP_API_BASE_URL +
+        "/api/v1/ebayListings";
+      const response = await fetch(url, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " + this.$cookie.get("token"),
+        },
+        body: JSON.stringify({
+          itemId: id,
+        }),
+      });
+      if (response.status == 201) {
+        // TODO: Make this only get the appropriate item
+        this.items = await api.getItems(token);
+      } else {
+        console.error(await response.json());
+      }
+    },
+
     async deleteItem(id) {
       const url =
         process.env.VUE_APP_API_BASE_URL +

@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
@@ -34,82 +35,117 @@ export class EbayListingService {
       throw new NotFoundException();
     }
 
-    let imageUrls = [];
-    // Upload the images
-    for (const image of item.images) {
-      const url = await this.uploadImage(image);
-      imageUrls.push(url);
-    }
+    try {
+      let imageUrls = [];
+      // Upload the images
+      for (const image of item.images) {
+        const url = await this.uploadImage(image);
+        imageUrls.push(url);
+      }
 
-    return this.ebay.trading.AddItem({
-      Item: {
-        Title: item.title,
-        Description: item.description,
-        Currency: this.config.get("CURRENCY"),
-        Country: this.config.get("COUNTRY"),
-        PrimaryCategory: {
-          CategoryID: item.ebayCategoryId,
-        },
-        PostalCode: this.config.get(
-          "POSTAL_CODE",
-        ),
-        Quantity: item.quantity,
-        ButItNowPrice: {
-          "#value": item.price.toString(),
-          "@_currencyID": "USD",
-        },
-        StartPrice: {
-          "#value": item.price.toString(),
-          "@_currencyID": "USD",
-        },
-        PictureDetails: {
-          PictureURL: imageUrls,
-        },
-        ListingDuration: "GTC",
-        ListingType: "FixedPriceItem",
-        SellerProfiles: {
-          SellerPaymentProfile: {
-            PaymentProfileID: this.config.get(
-              "EBAY_PAYMENT_POLICY_ID",
+      const response =
+        await this.ebay.trading.AddItem({
+          Item: {
+            Title: item.title,
+            Description: item.description,
+            Currency: this.config.get("CURRENCY"),
+            Country: this.config.get("COUNTRY"),
+            PrimaryCategory: {
+              CategoryID: item.ebayCategoryId,
+            },
+            PostalCode: this.config.get(
+              "POSTAL_CODE",
             ),
+            Quantity: item.quantity,
+            ButItNowPrice: {
+              "#value": item.price.toString(),
+              "@_currencyID": "USD",
+            },
+            StartPrice: {
+              "#value": item.price.toString(),
+              "@_currencyID": "USD",
+            },
+            PictureDetails: {
+              PictureURL: imageUrls,
+            },
+            ListingDuration: "GTC",
+            ListingType: "FixedPriceItem",
+            SellerProfiles: {
+              SellerPaymentProfile: {
+                PaymentProfileID: this.config.get(
+                  "EBAY_PAYMENT_POLICY_ID",
+                ),
+              },
+              SellerReturnProfile: {
+                ReturnProfileID: this.config.get(
+                  "EBAY_RETURN_POLICY_ID",
+                ),
+              },
+              SellerShippingProfile: {
+                ShippingProfileID:
+                  this.config.get(
+                    "EBAY_SHIPPING_POLICY_ID",
+                  ),
+              },
+            },
+            ShippingPackageDetails: {
+              ShippingIrregular: false,
+              ShippingPackage:
+                "PackageThickEnvelope",
+              PackageDepth: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeDepthInches,
+              },
+              PackageHeight: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeHeightInches,
+              },
+              PackageWidth: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeWidthInches,
+              },
+              WeightMajor: {
+                "#value": item.shipWeightPounds,
+                "@_unit": "lbs",
+              },
+              WeightMinor: {
+                "#value": item.shipWeightOunces,
+                "@_unit": "oz",
+              },
+            },
           },
-          SellerReturnProfile: {
-            ReturnProfileID: this.config.get(
-              "EBAY_RETURN_POLICY_ID",
-            ),
-          },
-          SellerShippingProfile: {
-            ShippingProfileID: this.config.get(
-              "EBAY_SHIPPING_POLICY_ID",
-            ),
-          },
+        });
+
+      const ebayListingId = response.ItemID;
+
+      // Create ebay listing
+      await this.prisma.ebayListing.create({
+        data: {
+          id: ebayListingId,
+          itemId: item.id,
         },
-        ShippingPackageDetails: {
-          ShippingIrregular: false,
-          ShippingPackage: "PackageThickEnvelope",
-          PackageDepth: {
-            "@_unit": "inches",
-            "#value": item.shipSizeDepthInches,
-          },
-          PackageHeight: {
-            "@_unit": "inches",
-            "#value": item.shipSizeHeightInches,
-          },
-          PackageWidth: {
-            "@_unit": "inches",
-            "#value": item.shipSizeWidthInches,
-          },
-          WeightMajor: {
-            "#value": item.shipWeightPounds,
-            "@_unit": "lbs",
-          },
-          WeightMinor: {
-            "#value": item.shipWeightOunces,
-            "@_unit": "oz",
-          },
+      });
+
+      // Update item with eBay listing ID
+      item.ebayListingId = ebayListingId;
+
+      return this.prisma.item.update({
+        where: {
+          id: item.id,
         },
-      },
-    });
+        data: {
+          ...item,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      throw new BadRequestException(
+        e.meta.Errors,
+      );
+    }
   }
 
   async getEbayListing(itemId: string) {

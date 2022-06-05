@@ -29,6 +29,8 @@ model Item {
   description String?
   ebayCategory EbayCategory @relation("itemEbayCategory", fields: [ebayCategoryId], references: [id])
   ebayCategoryId Int
+  ebayListingId String?
+  ebayListing EbayListing? @relation("itemEbayListing", fields: [ebayListingId], references: [id])
   price Decimal? @db.Money
   soldPrice Decimal? @db.Money
   cost Decimal? @db.Money
@@ -88,7 +90,8 @@ model Template {
 
 model EbayListing {
   id String @id
-  title String
+  itemId String
+  item Item? @relation("itemEbayListing")
 
   @@map("ebayListings")
 }
