@@ -17,8 +17,14 @@ const getEbayCategoryOptions = async (token) => {
   return ebayCategories.map(optionsMap);
 };
 
+const getTemplateOptions = async (token) => {
+  const templates = await api.getTemplates(token);
+  return templates.map(optionsMap);
+};
+
 export default {
   getOwnerOptions,
   getUserOptions,
   getEbayCategoryOptions,
+  getTemplateOptions,
 };

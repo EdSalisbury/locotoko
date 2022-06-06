@@ -102,4 +102,7 @@ export class CreateItemDto {
 
   @IsArray()
   images: [string];
+
+  @IsOptional()
+  specifics: string;
 }

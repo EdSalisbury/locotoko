@@ -54,6 +54,7 @@ model Item {
   shipSizeHeightInches Int?
   shipSizeWidthInches Int?
   shipSizeDepthInches Int?
+  specifics String?
 
   images String[]
 

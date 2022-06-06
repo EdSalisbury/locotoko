@@ -3,25 +3,29 @@
     <b-card-title>Edit Item</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
+        <form-input
+          label="Template"
+          field="template"
+          :options="this.templateOptions"
+          type="select"
+          v-model="form.template"
+          @input="changeTemplate"
+        />
+
+        <form-input
+          v-for="name in this.specifics"
+          :key="name"
+          :label="name"
+          :field="name"
+          v-model="form.specifics[name]"
+          type="text"
+        />
+
         <form-input v-model="form.title" label="Title" field="title" required />
-        <form-input
-          label="Quantity"
-          field="quantity"
-          v-model="form.quantity"
-          type="number"
-        />
-
-        <form-input
-          label="Description"
-          field="description"
-          v-model="form.description"
-          type="textarea"
-        />
-
+        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
+        <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input field="price" label="Price" v-model="form.price" />
-
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-
         <form-input
           label="eBay Category"
           field="ebayCategoryId"
@@ -38,33 +42,11 @@
           type="select"
         />
 
-        <form-input
-          label="Owner"
-          field="ownerId"
-          v-model="form.ownerId"
-          :options="this.owners"
-          type="select"
-        />
+        <form-input label="Owner" field="ownerId" v-model="form.ownerId" :options="this.owners" type="select" />
+        <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 
-        <form-input
-          field="acquisitionDate"
-          label="Aquisition Date"
-          v-model="form.acquisitionDate"
-          type="date"
-        />
-
-        <form-input
-          field="weightPounds"
-          label="Weight (Lbs.)"
-          v-model="form.weightPounds"
-          type="number"
-        />
-        <form-input
-          field="weightOunces"
-          label="Weight (Oz.)"
-          v-model="form.weightOunces"
-          type="number"
-        />
+        <form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
+        <form-input field="weightOunces" label="Weight (Oz.)" v-model="form.weightOunces" type="number" />
 
         <form-input
           field="shipWeightPounds"
@@ -79,24 +61,9 @@
           type="number"
         />
 
-        <form-input
-          field="sizeWidthInches"
-          label="Width (In.)"
-          v-model="form.sizeWidthInches"
-          type="number"
-        />
-        <form-input
-          field="sizeHeightInches"
-          label="Height (In.)"
-          v-model="form.sizeHeightInches"
-          type="number"
-        />
-        <form-input
-          field="sizeDepthInches"
-          label="Depth (In.)"
-          v-model="form.sizeDepthInches"
-          type="number"
-        />
+        <form-input field="sizeWidthInches" label="Width (In.)" v-model="form.sizeWidthInches" type="number" />
+        <form-input field="sizeHeightInches" label="Height (In.)" v-model="form.sizeHeightInches" type="number" />
+        <form-input field="sizeDepthInches" label="Depth (In.)" v-model="form.sizeDepthInches" type="number" />
 
         <form-input
           field="shipSizeWidthInches"
@@ -117,30 +84,14 @@
           type="number"
         />
 
-        <div
-          v-for="(image, index) in this.form.images"
-          :key="index"
-          style="position: relative"
-        >
-          <b-img
-            style="z-index: 0"
-            :src="image"
-            v-on:click="previewImage"
-            fluid
-          />
-          <b-btn
-            style="position: absolute; z-index: 9999; top: 5px; right: 5px"
-            v-on:click.stop="deleteImage(index)"
+        <div v-for="(image, index) in this.form.images" :key="index" style="position: relative">
+          <b-img style="z-index: 0" :src="image" v-on:click="previewImage" fluid />
+          <b-btn style="position: absolute; z-index: 9999; top: 5px; right: 5px" v-on:click.stop="deleteImage(index)"
             ><b-icon-trash-fill
           /></b-btn>
         </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          multiple="true"
-          v-on:change="addImages"
-        />
+        <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
 
         <b-button type="submit" variant="primary">Update</b-button>
       </b-form>
@@ -160,6 +111,9 @@ export default {
       users: [],
       owners: [],
       ebayCategories: [],
+      templates: [],
+      templateOptions: [],
+      specifics: [],
       form: {
         title: "",
         quantity: 1,
@@ -169,6 +123,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ownerId: "",
+        template: "",
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -180,6 +135,7 @@ export default {
         shipSizeHeightInches: 0,
         shipSizeDepthInches: 0,
         images: [],
+        specifics: {},
       },
     };
   },
@@ -187,20 +143,16 @@ export default {
     FormInput,
   },
   async created() {
+    const itemId = this.$route.params.id;
     const token = this.$cookie.get("token");
 
+    this.templates = await api.getTemplates(token);
+    this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
     this.ebayCategories = await util.getEbayCategoryOptions(token);
 
-    const itemId = this.$route.params.id;
-    const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
-    const response = await fetch(url, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-    this.form = await response.json();
+    this.form = await api.getItem(token, itemId);
   },
   methods: {
     previewImage(event) {
@@ -215,6 +167,18 @@ export default {
       const files = [...event.target.files];
       files.forEach((file) => {
         this.createBase64Image(file);
+      });
+    },
+    changeTemplate(event) {
+      if (!event) {
+        return;
+      }
+      const template = this.templates.filter((template) => template.id === event)[0];
+      this.form.ebayCategoryId = template.ebayCategoryId;
+      this.specifics = JSON.parse(template.specifics);
+      this.form.specifics = {};
+      this.specifics.forEach((name) => {
+        this.form.specifics[name] = "";
       });
     },
     createBase64Image(fileObject) {
@@ -240,15 +204,9 @@ export default {
       this.payload.sizeWidthInches = parseInt(this.payload.sizeWidthInches);
       this.payload.sizeHeightInches = parseInt(this.payload.sizeHeightInches);
       this.payload.sizeDepthInches = parseInt(this.payload.sizeDepthInches);
-      this.payload.shipSizeWidthInches = parseInt(
-        this.payload.shipSizeWidthInches,
-      );
-      this.payload.shipSizeHeightInches = parseInt(
-        this.payload.shipSizeHeightInches,
-      );
-      this.payload.shipSizeDepthInches = parseInt(
-        this.payload.shipSizeDepthInches,
-      );
+      this.payload.shipSizeWidthInches = parseInt(this.payload.shipSizeWidthInches);
+      this.payload.shipSizeHeightInches = parseInt(this.payload.shipSizeHeightInches);
+      this.payload.shipSizeDepthInches = parseInt(this.payload.shipSizeDepthInches);
 
       this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
@@ -256,14 +214,14 @@ export default {
       if (this.payload.acquisitionDate == "") {
         delete this.payload.acquisitionDate;
       } else {
-        this.payload.acquisitionDate = new Date(
-          this.payload.acquisitionDate,
-        ).toISOString();
+        this.payload.acquisitionDate = new Date(this.payload.acquisitionDate).toISOString();
       }
 
       const token = this.$cookie.get("token");
 
       const itemId = this.$route.params.id.toString();
+
+      this.payload.specifics = JSON.stringify(this.payload.specifics);
 
       const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
       const response = await fetch(url, {

@@ -1,7 +1,5 @@
 const getItems = async (token) => {
-  const url =
-    process.env.VUE_APP_API_BASE_URL +
-    "/api/v1/items";
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -11,9 +9,7 @@ const getItems = async (token) => {
 };
 
 const getUsers = async (token) => {
-  const url =
-    process.env.VUE_APP_API_BASE_URL +
-    "/api/v1/users";
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/users";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -23,9 +19,7 @@ const getUsers = async (token) => {
 };
 
 const getOwners = async (token) => {
-  const url =
-    process.env.VUE_APP_API_BASE_URL +
-    "/api/v1/owners";
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/owners";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -35,21 +29,7 @@ const getOwners = async (token) => {
 };
 
 const getEbayCategories = async (token) => {
-  const url =
-    process.env.VUE_APP_API_BASE_URL +
-    "/api/v1/ebayCategories";
-  const response = await fetch(url, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  return await response.json();
-};
-
-const getTemplates = async (token) => {
-  const url =
-    process.env.VUE_APP_API_BASE_URL +
-    "/api/v1/templates";
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayCategories";
   const response = await fetch(url, {
     headers: {
       Authorization: "Bearer " + token,
@@ -59,11 +39,7 @@ const getTemplates = async (token) => {
 };
 
 const apiUrl = (resource, id = "") => {
-  return (
-    process.env.VUE_APP_API_BASE_URL +
-    `/api/v1/${resource}` +
-    (id ? `/${id}` : "")
-  );
+  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "");
 };
 
 const apiHeaders = (token) => {
@@ -75,19 +51,22 @@ const apiHeaders = (token) => {
   };
 };
 
-const getTemplate = async (token, id) => {
-  const response = await fetch(
-    apiUrl("templates", id),
-    apiHeaders(token),
-  );
+const getItem = async (token, id) => {
+  const response = await fetch(apiUrl("items", id), apiHeaders(token));
   return await response.json();
 };
 
-const updateEbayListing = async (
-  token,
-  id,
-  body,
-) => {
+const getTemplates = async (token) => {
+  const response = await fetch(apiUrl("templates"), apiHeaders(token));
+  return await response.json();
+};
+
+const getTemplate = async (token, id) => {
+  const response = await fetch(apiUrl("templates", id), apiHeaders(token));
+  return await response.json();
+};
+
+const updateEbayListing = async (token, id, body) => {
   return await fetch(apiUrl("ebayListings", id), {
     method: "PATCH",
     ...apiHeaders(token),
@@ -103,4 +82,5 @@ export default {
   getTemplates,
   getTemplate,
   updateEbayListing,
+  getItem,
 };

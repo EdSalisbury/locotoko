@@ -1,9 +1,5 @@
 <template>
-  <b-form-group
-    :id="field + '-input-group'"
-    :label="label"
-    :label-for="field + '-input'"
-  >
+  <b-form-group :id="field + '-input-group'" :label="label" :label-for="field + '-input'">
     <b-form-select
       v-if="type === 'select'"
       :id="field + '-input'"
