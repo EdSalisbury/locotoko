@@ -17,7 +17,11 @@ export default {
   data() {
     return {
       template: [{}],
-      fields: ["name", "ebayCategoryId"],
+      fields: [
+        "name",
+        "ebayCategoryId",
+        "specifics",
+      ],
     };
   },
   async created() {

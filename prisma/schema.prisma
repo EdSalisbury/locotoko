@@ -84,7 +84,7 @@ model Template {
   id String @id @default(cuid())
   name String
   ebayCategoryId Int
-  fields String[]
+  specifics String?
 
   @@map("templates")
 }

@@ -4,7 +4,18 @@
     :label="label"
     :label-for="field + '-input'"
   >
+    <b-form-textarea
+      v-if="type === 'textarea'"
+      :id="field + '-input'"
+      :type="type"
+      :placeholder="label"
+      v-model="localValue"
+      :required="required"
+      :rows="rows"
+      :max-rows="maxRows"
+    />
     <b-form-input
+      v-else
       :id="field + '-input'"
       :type="type"
       :placeholder="label"
@@ -20,6 +31,14 @@ export default {
     label: String,
     field: String,
     format: String,
+    rows: {
+      type: Number,
+      default: 3,
+    },
+    maxRows: {
+      type: Number,
+      default: 6,
+    },
     type: {
       type: String,
       default: "text",
@@ -35,7 +54,7 @@ export default {
   computed: {
     localValue: {
       get() {
-        return this.value;
+        return this.value.toString();
       },
       set(value) {
         this.$emit("input", value);

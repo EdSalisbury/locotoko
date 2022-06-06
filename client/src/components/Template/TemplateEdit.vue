@@ -22,6 +22,12 @@
           ></b-form-select>
         </b-form-group>
 
+        <form-input
+          v-model="form.specifics"
+          label="Specifics"
+          field="specifics"
+          type="textarea"
+        />
         <b-button type="submit" variant="primary"
           >Update</b-button
         >
@@ -42,6 +48,7 @@ export default {
       form: {
         name: "",
         ebayCategoryId: 0,
+        specifics: "[\n]",
       },
       ebayCategories: [],
     };

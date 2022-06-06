@@ -11,4 +11,7 @@ export class EditTemplateDto {
 
   @IsNumber()
   ebayCategoryId: number;
+
+  @IsString()
+  specifics: string;
 }

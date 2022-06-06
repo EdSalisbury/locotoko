@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "templates" ALTER COLUMN "specifics" DROP NOT NULL,
+ALTER COLUMN "specifics" DROP DEFAULT,
+ALTER COLUMN "specifics" SET DATA TYPE TEXT;

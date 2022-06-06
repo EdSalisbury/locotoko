@@ -22,6 +22,13 @@
           ></b-form-select>
         </b-form-group>
 
+        <form-input
+          v-model="form.specifics"
+          label="Specifics"
+          field="specifics"
+          type="textarea"
+        />
+
         <b-button type="submit" variant="primary"
           >Add</b-button
         >
@@ -42,6 +49,7 @@ export default {
       form: {
         name: "",
         ebayCategoryId: 0,
+        specifics: "[\n]",
       },
       ebayCategories: [],
     };
@@ -62,8 +70,8 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
 
-      const payload = JSON.parse(
-        JSON.stringify(this.form),
+      const payload = JSON.stringify(
+        JSON.parse(JSON.stringify(this.form)),
       );
 
       const url =
@@ -76,7 +84,7 @@ export default {
           Authorization:
             "Bearer " + this.$cookie.get("token"),
         },
-        body: JSON.stringify(payload),
+        body: payload,
       });
       const res = await response.json();
       console.log(res);
