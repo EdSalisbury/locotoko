@@ -3,13 +3,17 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   UseGuards,
   Param,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayListingService } from "./ebay-listing.service";
 
-import { CreateEbayListingDto } from "./dto";
+import {
+  CreateEbayListingDto,
+  UpdateEbayListingDto,
+} from "./dto";
 
 @UseGuards(JwtGuard)
 @Controller("ebayListings")
@@ -31,6 +35,15 @@ export class EbayListingController {
   getEbayListing(@Param("id") itemID: string) {
     return this.ebayListingService.getEbayListing(
       itemID,
+    );
+  }
+
+  @Patch(":id")
+  updateEbayListing(
+    @Body() dto: UpdateEbayListingDto,
+  ) {
+    return this.ebayListingService.updateEbayListing(
+      dto,
     );
   }
 }

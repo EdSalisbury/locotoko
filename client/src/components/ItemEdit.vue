@@ -342,7 +342,11 @@ export default {
         ).toISOString();
       }
 
-      const itemId = this.$route.params.id;
+      const token = this.$cookie.get("token");
+
+      const itemId =
+        this.$route.params.id.toString();
+
       const url =
         process.env.VUE_APP_API_BASE_URL +
         "/api/v1/items/" +
@@ -357,6 +361,11 @@ export default {
         body: JSON.stringify(this.payload),
       });
       await response.json();
+
+      await api.updateEbayListing(token, itemId, {
+        itemId: itemId,
+      });
+
       this.$router.push({
         path: "/viewItem/" + itemId,
       });

@@ -6,7 +6,10 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { EbayService } from "../ebay/ebay.service";
-import { CreateEbayListingDto } from "./dto";
+import {
+  CreateEbayListingDto,
+  UpdateEbayListingDto,
+} from "./dto";
 import * as FormData from "form-data";
 
 const fs = require("fs");
@@ -47,7 +50,11 @@ export class EbayListingService {
         await this.ebay.trading.AddItem({
           Item: {
             Title: item.title,
-            Description: item.description,
+            Description:
+              item.description.replaceAll(
+                "\n",
+                "&lt;br&gt;\n",
+              ),
             Currency: this.config.get("CURRENCY"),
             Country: this.config.get("COUNTRY"),
             PrimaryCategory: {
@@ -124,13 +131,14 @@ export class EbayListingService {
       // Create ebay listing
       await this.prisma.ebayListing.create({
         data: {
-          id: ebayListingId,
+          id: ebayListingId.toString(),
           itemId: item.id,
         },
       });
 
       // Update item with eBay listing ID
-      item.ebayListingId = ebayListingId;
+      item.ebayListingId =
+        ebayListingId.toString();
 
       return this.prisma.item.update({
         where: {
@@ -140,6 +148,118 @@ export class EbayListingService {
           ...item,
         },
       });
+    } catch (e) {
+      console.error(e);
+      throw new BadRequestException(
+        e.meta.Errors,
+      );
+    }
+  }
+
+  async updateEbayListing(
+    dto: UpdateEbayListingDto,
+  ) {
+    // Get the item
+    const item =
+      await this.prisma.item.findUnique({
+        where: {
+          id: dto.itemId,
+        },
+      });
+
+    // Throw if the owner doesn't exist
+    if (!item) {
+      throw new NotFoundException();
+    }
+
+    try {
+      let imageUrls = [];
+      // Upload the images
+      for (const image of item.images) {
+        const url = await this.uploadImage(image);
+        imageUrls.push(url);
+      }
+
+      const response =
+        await this.ebay.trading.ReviseItem({
+          Item: {
+            ItemID: item.ebayListingId,
+            Title: item.title,
+            Description:
+              item.description.replaceAll(
+                "\n",
+                "&lt;br&gt;\n",
+              ),
+            Currency: this.config.get("CURRENCY"),
+            Country: this.config.get("COUNTRY"),
+            PrimaryCategory: {
+              CategoryID: item.ebayCategoryId,
+            },
+            PostalCode: this.config.get(
+              "POSTAL_CODE",
+            ),
+            Quantity: item.quantity,
+            ButItNowPrice: {
+              "#value": item.price.toString(),
+              "@_currencyID": "USD",
+            },
+            StartPrice: {
+              "#value": item.price.toString(),
+              "@_currencyID": "USD",
+            },
+            PictureDetails: {
+              PictureURL: imageUrls,
+            },
+            ListingDuration: "GTC",
+            ListingType: "FixedPriceItem",
+            SellerProfiles: {
+              SellerPaymentProfile: {
+                PaymentProfileID: this.config.get(
+                  "EBAY_PAYMENT_POLICY_ID",
+                ),
+              },
+              SellerReturnProfile: {
+                ReturnProfileID: this.config.get(
+                  "EBAY_RETURN_POLICY_ID",
+                ),
+              },
+              SellerShippingProfile: {
+                ShippingProfileID:
+                  this.config.get(
+                    "EBAY_SHIPPING_POLICY_ID",
+                  ),
+              },
+            },
+            ShippingPackageDetails: {
+              ShippingIrregular: false,
+              ShippingPackage:
+                "PackageThickEnvelope",
+              PackageDepth: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeDepthInches,
+              },
+              PackageHeight: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeHeightInches,
+              },
+              PackageWidth: {
+                "@_unit": "inches",
+                "#value":
+                  item.shipSizeWidthInches,
+              },
+              WeightMajor: {
+                "#value": item.shipWeightPounds,
+                "@_unit": "lbs",
+              },
+              WeightMinor: {
+                "#value": item.shipWeightOunces,
+                "@_unit": "oz",
+              },
+            },
+          },
+        });
     } catch (e) {
       console.error(e);
       throw new BadRequestException(

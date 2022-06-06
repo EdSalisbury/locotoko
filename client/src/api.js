@@ -69,6 +69,7 @@ const apiUrl = (resource, id = "") => {
 const apiHeaders = (token) => {
   return {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   };
@@ -82,6 +83,18 @@ const getTemplate = async (token, id) => {
   return await response.json();
 };
 
+const updateEbayListing = async (
+  token,
+  id,
+  body,
+) => {
+  return await fetch(apiUrl("ebayListings", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(body),
+  });
+};
+
 export default {
   getItems,
   getUsers,
@@ -89,4 +102,5 @@ export default {
   getEbayCategories,
   getTemplates,
   getTemplate,
+  updateEbayListing,
 };
