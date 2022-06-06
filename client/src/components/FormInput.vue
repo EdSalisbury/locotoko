@@ -4,8 +4,17 @@
     :label="label"
     :label-for="field + '-input'"
   >
+    <b-form-select
+      v-if="type === 'select'"
+      :id="field + '-input'"
+      :type="type"
+      :placeholder="label"
+      :options="options"
+      v-model="localValue"
+      :required="required"
+    />
     <b-form-textarea
-      v-if="type === 'textarea'"
+      v-else-if="type === 'textarea'"
       :id="field + '-input'"
       :type="type"
       :placeholder="label"
@@ -31,6 +40,7 @@ export default {
     label: String,
     field: String,
     format: String,
+    options: Array,
     rows: {
       type: Number,
       default: 3,

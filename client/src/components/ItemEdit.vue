@@ -3,12 +3,7 @@
     <b-card-title>Edit Item</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input
-          v-model="form.title"
-          label="Title"
-          field="title"
-          required
-        />
+        <form-input v-model="form.title" label="Title" field="title" required />
         <form-input
           label="Quantity"
           field="quantity"
@@ -16,66 +11,40 @@
           type="number"
         />
 
-        <b-form-group
-          id="description-input-group"
+        <form-input
           label="Description"
-          label-for="description-input"
-        >
-          <b-form-textarea
-            id="description-input"
-            v-model="form.description"
-            placeholder="Description"
-            rows="3"
-            max-rows="6"
-          ></b-form-textarea>
-        </b-form-group>
-
-        <form-input
-          field="price"
-          label="Price"
-          v-model="form.price"
-        />
-        <form-input
-          field="cost"
-          label="Acquisition Cost"
-          v-model="form.cost"
+          field="description"
+          v-model="form.description"
+          type="textarea"
         />
 
-        <b-form-group
-          id="ebayCategory-input-group"
+        <form-input field="price" label="Price" v-model="form.price" />
+
+        <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
+
+        <form-input
           label="eBay Category"
-          label-for="ebayCategory-input"
-        >
-          <b-form-select
-            id="ebayCategory-input"
-            v-model="form.ebayCategoryId"
-            :options="this.ebayCategories"
-          ></b-form-select>
-        </b-form-group>
+          field="ebayCategoryId"
+          v-model="form.ebayCategoryId"
+          :options="this.ebayCategories"
+          type="select"
+        />
 
-        <b-form-group
-          id="listingUser-input-group"
+        <form-input
           label="Listing User"
-          label-for="listingUser-input"
-        >
-          <b-form-select
-            id="listingUser-input"
-            v-model="form.listingUserId"
-            :options="this.users"
-          ></b-form-select>
-        </b-form-group>
+          field="listingUserId"
+          v-model="form.listingUserId"
+          :options="this.users"
+          type="select"
+        />
 
-        <b-form-group
-          id="owner-input-group"
+        <form-input
           label="Owner"
-          label-for="owner-input"
-        >
-          <b-form-select
-            id="owner-input"
-            v-model="form.ownerId"
-            :options="this.owners"
-          ></b-form-select>
-        </b-form-group>
+          field="ownerId"
+          v-model="form.ownerId"
+          :options="this.owners"
+          type="select"
+        />
 
         <form-input
           field="acquisitionDate"
@@ -149,8 +118,7 @@
         />
 
         <div
-          v-for="(image, index) in this.form
-            .images"
+          v-for="(image, index) in this.form.images"
           :key="index"
           style="position: relative"
         >
@@ -161,12 +129,7 @@
             fluid
           />
           <b-btn
-            style="
-              position: absolute;
-              z-index: 9999;
-              top: 5px;
-              right: 5px;
-            "
+            style="position: absolute; z-index: 9999; top: 5px; right: 5px"
             v-on:click.stop="deleteImage(index)"
             ><b-icon-trash-fill
           /></b-btn>
@@ -179,9 +142,7 @@
           v-on:change="addImages"
         />
 
-        <b-button type="submit" variant="primary"
-          >Update</b-button
-        >
+        <b-button type="submit" variant="primary">Update</b-button>
       </b-form>
     </b-card-body>
   </b-card>
@@ -190,6 +151,7 @@
 <script>
 import FormInput from "@/components/FormInput";
 import api from "@/api";
+import util from "@/util";
 
 export default {
   data() {
@@ -226,33 +188,13 @@ export default {
   },
   async created() {
     const token = this.$cookie.get("token");
-    const users = await api.getUsers(token);
 
-    this.users = users.map((user) => ({
-      value: user.id,
-      text: user.name,
-    }));
-
-    const owners = await api.getOwners(token);
-    this.owners = owners.map((owner) => ({
-      value: owner.id,
-      text: owner.name,
-    }));
-
-    const ebayCategories =
-      await api.getEbayCategories(token);
-    this.ebayCategories = ebayCategories.map(
-      (ebayCategory) => ({
-        value: ebayCategory.id,
-        text: ebayCategory.name,
-      }),
-    );
+    this.users = await util.getUserOptions(token);
+    this.owners = await util.getOwnerOptions(token);
+    this.ebayCategories = await util.getEbayCategoryOptions(token);
 
     const itemId = this.$route.params.id;
-    const url =
-      process.env.VUE_APP_API_BASE_URL +
-      "/api/v1/items/" +
-      itemId;
+    const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
     const response = await fetch(url, {
       headers: {
         Authorization: "Bearer " + token,
@@ -288,51 +230,28 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
 
-      this.payload = JSON.parse(
-        JSON.stringify(this.form),
-      );
+      this.payload = JSON.parse(JSON.stringify(this.form));
 
-      this.payload.quantity = parseInt(
-        this.payload.quantity,
-      );
-      this.payload.weightPounds = parseInt(
-        this.payload.weightPounds,
-      );
-      this.payload.weightOunces = parseInt(
-        this.payload.weightOunces,
-      );
-      this.payload.shipWeightPounds = parseInt(
-        this.payload.shipWeightPounds,
-      );
-      this.payload.shipWeightOunces = parseInt(
-        this.payload.shipWeightOunces,
-      );
-      this.payload.sizeWidthInches = parseInt(
-        this.payload.sizeWidthInches,
-      );
-      this.payload.sizeHeightInches = parseInt(
-        this.payload.sizeHeightInches,
-      );
-      this.payload.sizeDepthInches = parseInt(
-        this.payload.sizeDepthInches,
-      );
+      this.payload.quantity = parseInt(this.payload.quantity);
+      this.payload.weightPounds = parseInt(this.payload.weightPounds);
+      this.payload.weightOunces = parseInt(this.payload.weightOunces);
+      this.payload.shipWeightPounds = parseInt(this.payload.shipWeightPounds);
+      this.payload.shipWeightOunces = parseInt(this.payload.shipWeightOunces);
+      this.payload.sizeWidthInches = parseInt(this.payload.sizeWidthInches);
+      this.payload.sizeHeightInches = parseInt(this.payload.sizeHeightInches);
+      this.payload.sizeDepthInches = parseInt(this.payload.sizeDepthInches);
       this.payload.shipSizeWidthInches = parseInt(
         this.payload.shipSizeWidthInches,
       );
-      this.payload.shipSizeHeightInches =
-        parseInt(
-          this.payload.shipSizeHeightInches,
-        );
+      this.payload.shipSizeHeightInches = parseInt(
+        this.payload.shipSizeHeightInches,
+      );
       this.payload.shipSizeDepthInches = parseInt(
         this.payload.shipSizeDepthInches,
       );
 
-      this.payload.cost = parseFloat(
-        this.payload.cost,
-      ).toFixed(2);
-      this.payload.price = parseFloat(
-        this.payload.price,
-      ).toFixed(2);
+      this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
+      this.payload.price = parseFloat(this.payload.price).toFixed(2);
 
       if (this.payload.acquisitionDate == "") {
         delete this.payload.acquisitionDate;
@@ -344,19 +263,14 @@ export default {
 
       const token = this.$cookie.get("token");
 
-      const itemId =
-        this.$route.params.id.toString();
+      const itemId = this.$route.params.id.toString();
 
-      const url =
-        process.env.VUE_APP_API_BASE_URL +
-        "/api/v1/items/" +
-        itemId;
+      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
       const response = await fetch(url, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer " + this.$cookie.get("token"),
+          Authorization: "Bearer " + this.$cookie.get("token"),
         },
         body: JSON.stringify(this.payload),
       });

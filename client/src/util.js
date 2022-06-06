@@ -1,0 +1,24 @@
+import api from "@/api";
+
+const optionsMap = (item) => ({ value: item.id, text: item.name });
+
+const getUserOptions = async (token) => {
+  const users = await api.getUsers(token);
+  return users.map(optionsMap);
+};
+
+const getOwnerOptions = async (token) => {
+  const owners = await api.getOwners(token);
+  return owners.map(optionsMap);
+};
+
+const getEbayCategoryOptions = async (token) => {
+  const ebayCategories = await api.getEbayCategories(token);
+  return ebayCategories.map(optionsMap);
+};
+
+export default {
+  getOwnerOptions,
+  getUserOptions,
+  getEbayCategoryOptions,
+};
