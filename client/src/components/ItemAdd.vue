@@ -22,7 +22,7 @@
           @input="changeSpecifics"
         />
 
-        <form-input v-model="form.title" label="Title" field="title" required />
+        <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
         <b-form-group id="description-input-group" label="Description" label-for="description-input">
           <b-form-textarea
@@ -36,7 +36,7 @@
 
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-<form-input
+        <form-input
           label="eBay Category"
           field="ebayCategoryId"
           v-model="form.ebayCategoryId"
@@ -54,7 +54,14 @@
           required
         />
 
-        <form-input label="Owner" field="ownerId" v-model="form.ownerId" :options="this.owners" type="select" required />
+        <form-input
+          label="Owner"
+          field="ownerId"
+          v-model="form.ownerId"
+          :options="this.owners"
+          type="select"
+          required
+        />
 
         <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 

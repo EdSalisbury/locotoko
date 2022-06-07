@@ -22,7 +22,7 @@
           @input="changeSpecifics"
         />
 
-        <form-input v-model="form.title" label="Title" field="title" required />
+        <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input field="price" label="Price" v-model="form.price" />

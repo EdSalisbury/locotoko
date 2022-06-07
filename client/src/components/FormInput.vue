@@ -26,7 +26,9 @@
       :placeholder="label"
       v-model="localValue"
       :required="required"
+      :state="this.maxLength < 9999 ? lengthCheck : null"
     />
+    <b-form-invalid-feedback id="input-live-feedback"> Invalid Entry </b-form-invalid-feedback>
   </b-form-group>
 </template>
 
@@ -37,13 +39,17 @@ export default {
     field: String,
     format: String,
     options: Array,
+    maxLength: {
+      type: String,
+      default: "9999",
+    },
     rows: {
-      type: Number,
-      default: 3,
+      type: String,
+      default: "3",
     },
     maxRows: {
-      type: Number,
-      default: 6,
+      type: String,
+      default: "6",
     },
     type: {
       type: String,
@@ -65,6 +71,9 @@ export default {
       set(value) {
         this.$emit("input", value);
       },
+    },
+    lengthCheck() {
+      return this.value.length > this.maxLength ? false : true;
     },
   },
 };
