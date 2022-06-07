@@ -88,6 +88,17 @@ model Template {
   ebayCategoryId Int
   specifics String?
 
+  weightPounds Int?
+  weightOunces Int?
+  shipWeightPounds Int?
+  shipWeightOunces Int?
+  sizeHeightInches Int?
+  sizeWidthInches Int?
+  sizeDepthInches Int?
+  shipSizeHeightInches Int?
+  shipSizeWidthInches Int?
+  shipSizeDepthInches Int?
+  
   items Item[] @relation("itemTemplate")
 
   @@map("templates")

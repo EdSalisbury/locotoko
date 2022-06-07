@@ -200,6 +200,17 @@ export default {
       const template = this.templates.filter((template) => template.id === event)[0];
       this.form.ebayCategoryId = template.ebayCategoryId;
       this.specifics = JSON.parse(template.specifics);
+
+      this.form.weightPounds = template.weightPounds || 0;
+      this.form.weightOunces = template.weightOunces || 0;
+      this.form.shipWeightPounds = template.shipWeightPounds || 0;
+      this.form.shipWeightOunces = template.shipWeightOunces || 0;
+      this.form.sizeWidthInches = template.sizeWidthInches || 0;
+      this.form.sizeHeightInches = template.sizeHeightInches || 0;
+      this.form.sizeDepthInches = template.sizeDepthInches || 0;
+      this.form.shipSizeWidthInches = template.shipSizeWidthInches || 0;
+      this.form.shipSizeHeightInches = template.shipSizeHeightInches || 0;
+      this.form.shipSizeDepthInches = template.shipSizeDepthInches || 0;
     },
     photoTaken(value) {
       this.form.images.push(value);

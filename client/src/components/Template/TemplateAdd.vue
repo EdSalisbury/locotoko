@@ -29,6 +29,45 @@
           type="textarea"
         />
 
+<form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
+        <form-input field="weightOunces" label="Weight (Oz.)" v-model="form.weightOunces" type="number" />
+
+        <form-input
+          field="shipWeightPounds"
+          label="Shipping Weight (Lbs.)"
+          v-model="form.shipWeightPounds"
+          type="number"
+        />
+        <form-input
+          field="shipWeightOunces"
+          label="Shipping Weight (Oz.)"
+          v-model="form.shipWeightOunces"
+          type="number"
+        />
+
+        <form-input field="sizeWidthInches" label="Width (In.)" v-model="form.sizeWidthInches" type="number" />
+        <form-input field="sizeHeightInches" label="Height (In.)" v-model="form.sizeHeightInches" type="number" />
+        <form-input field="sizeDepthInches" label="Depth (In.)" v-model="form.sizeDepthInches" type="number" />
+
+        <form-input
+          field="shipSizeWidthInches"
+          label="Ship Width (In.)"
+          v-model="form.shipSizeWidthInches"
+          type="number"
+        />
+        <form-input
+          field="shipSizeHeightInches"
+          label="Ship Height (In.)"
+          v-model="form.shipSizeHeightInches"
+          type="number"
+        />
+        <form-input
+          field="shipSizeDepthInches"
+          label="Ship Depth (In.)"
+          v-model="form.shipSizeDepthInches"
+          type="number"
+        />
+
         <b-button type="submit" variant="primary"
           >Add</b-button
         >
@@ -50,6 +89,16 @@ export default {
         name: "",
         ebayCategoryId: 0,
         specifics: "[\n]",
+        weightPounds: 0,
+        weightOunces: 0,
+        shipWeightPounds: 0,
+        shipWeightOunces: 0,
+        sizeWidthInches: 0,
+        sizeHeightInches: 0,
+        sizeDepthInches: 0,
+        shipSizeWidthInches: 0,
+        shipSizeHeightInches: 0,
+        shipSizeDepthInches: 0,
       },
       ebayCategories: [],
     };
@@ -70,9 +119,18 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
 
-      const payload = JSON.stringify(
-        JSON.parse(JSON.stringify(this.form)),
-      );
+      let payload = JSON.parse(JSON.stringify(this.form));
+
+      payload.weightPounds = parseInt(payload.weightPounds);
+      payload.weightOunces = parseInt(payload.weightOunces);
+      payload.shipWeightPounds = parseInt(payload.shipWeightPounds);
+      payload.shipWeightOunces = parseInt(payload.shipWeightOunces);
+      payload.sizeWidthInches = parseInt(payload.sizeWidthInches);
+      payload.sizeHeightInches = parseInt(payload.sizeHeightInches);
+      payload.sizeDepthInches = parseInt(payload.sizeDepthInches);
+      payload.shipSizeWidthInches = parseInt(payload.shipSizeWidthInches);
+      payload.shipSizeHeightInches = parseInt(payload.shipSizeHeightInches);
+      payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
 
       const url =
         process.env.VUE_APP_API_BASE_URL +
