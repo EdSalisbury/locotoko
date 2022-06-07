@@ -34,24 +34,27 @@
           ></b-form-textarea>
         </b-form-group>
 
-        <form-input field="price" label="Price" v-model="form.price" />
+        <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
+<form-input
+          label="eBay Category"
+          field="ebayCategoryId"
+          v-model="form.ebayCategoryId"
+          :options="this.ebayCategories"
+          type="select"
+          required
+        />
 
-        <b-form-group id="ebayCategory-input-group" label="eBay Category" label-for="ebayCategory-input">
-          <b-form-select
-            id="ebayCategory-input"
-            v-model="form.ebayCategoryId"
-            :options="this.ebayCategories"
-          ></b-form-select>
-        </b-form-group>
+        <form-input
+          label="Listing User"
+          field="listingUserId"
+          v-model="form.listingUserId"
+          :options="this.users"
+          type="select"
+          required
+        />
 
-        <b-form-group id="listingUser-input-group" label="Listing User" label-for="listingUser-input">
-          <b-form-select id="listingUser-input" v-model="form.listingUserId" :options="this.users"></b-form-select>
-        </b-form-group>
-
-        <b-form-group id="owner-input-group" label="Owner" label-for="owner-input">
-          <b-form-select id="owner-input" v-model="form.ownerId" :options="this.owners"></b-form-select>
-        </b-form-group>
+        <form-input label="Owner" field="ownerId" v-model="form.ownerId" :options="this.owners" type="select" required />
 
         <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 
@@ -236,6 +239,7 @@ export default {
 
       this.payload = JSON.parse(JSON.stringify(this.form));
 
+      this.payload.ebayCategoryId = parseInt(this.payload.ebayCategoryId);
       this.payload.quantity = parseInt(this.payload.quantity);
       this.payload.weightPounds = parseInt(this.payload.weightPounds);
       this.payload.weightOunces = parseInt(this.payload.weightOunces);

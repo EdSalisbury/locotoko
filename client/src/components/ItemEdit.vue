@@ -33,6 +33,7 @@
           v-model="form.ebayCategoryId"
           :options="this.ebayCategories"
           type="select"
+          required
         />
 
         <form-input
@@ -41,9 +42,17 @@
           v-model="form.listingUserId"
           :options="this.users"
           type="select"
+          required
         />
 
-        <form-input label="Owner" field="ownerId" v-model="form.ownerId" :options="this.owners" type="select" />
+        <form-input
+          label="Owner"
+          field="ownerId"
+          v-model="form.ownerId"
+          :options="this.owners"
+          type="select"
+          required
+        />
         <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 
         <form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
@@ -226,6 +235,7 @@ export default {
 
       this.payload = JSON.parse(JSON.stringify(this.form));
 
+      this.payload.ebayCategoryId = parseInt(this.payload.ebayCategoryId);
       this.payload.quantity = parseInt(this.payload.quantity);
       this.payload.weightPounds = parseInt(this.payload.weightPounds);
       this.payload.weightOunces = parseInt(this.payload.weightOunces);
@@ -264,7 +274,7 @@ export default {
       });
       await response.json();
 
-      if (this.form.ebayListingId !== "") {
+      if (this.form.ebayListingId !== null) {
         await api.updateEbayListing(token, itemId, {
           itemId: itemId,
         });

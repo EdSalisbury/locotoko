@@ -13,8 +13,8 @@
             {{ data.item.description }}
           </div>
         </template>
-        <template #cell(specifics)="data">
-          <div v-for="(value, index) in Object.entries(JSON.parse(data.item.specifics))" :key="index">
+        <template #cell(specifics)>
+          <div v-for="(value, index) in Object.entries(itemSpecifics)" :key="index">
             {{ value }}
           </div>
         </template>
@@ -115,7 +115,10 @@ export default {
   },
   computed: {
     itemSpecifics() {
-      return this.item[0].specifics;
+      if (!this.item[0].specifics) {
+        return {};
+      }
+      return JSON.parse(this.item[0].specifics);
     },
   },
 };
