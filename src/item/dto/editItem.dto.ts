@@ -101,4 +101,7 @@ export class EditItemDto {
 
   @IsOptional()
   specifics: string;
+
+  @IsOptional()
+  templateId: string;
 }

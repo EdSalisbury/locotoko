@@ -100,7 +100,6 @@ export class EbayListingService {
         },
       };
 
-      console.log(request);
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
 
@@ -213,8 +212,6 @@ export class EbayListingService {
           },
         },
       };
-      console.log(JSON.stringify(request));
-
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);

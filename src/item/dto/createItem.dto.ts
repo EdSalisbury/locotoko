@@ -105,4 +105,7 @@ export class CreateItemDto {
 
   @IsOptional()
   specifics: string;
+
+  @IsOptional()
+  templateId: string;
 }

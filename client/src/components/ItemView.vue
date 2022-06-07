@@ -13,6 +13,11 @@
             {{ data.item.description }}
           </div>
         </template>
+        <template #cell(specifics)="data">
+          <div v-for="(value, index) in Object.entries(JSON.parse(data.item.specifics))" :key="index">
+            {{ value }}
+          </div>
+        </template>
       </b-table>
     </b-card-body>
   </b-card>
@@ -107,6 +112,11 @@ export default {
       },
     });
     this.item = [await response.json()];
+  },
+  computed: {
+    itemSpecifics() {
+      return this.item[0].specifics;
+    },
   },
 };
 </script>

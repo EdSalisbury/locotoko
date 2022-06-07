@@ -8,7 +8,7 @@
           field="template"
           :options="this.templateOptions"
           type="select"
-          v-model="form.template"
+          v-model="form.templateId"
           @input="changeTemplate"
         />
 
@@ -123,7 +123,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ownerId: "",
-        template: "",
+        templateId: "",
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -153,6 +153,7 @@ export default {
     this.ebayCategories = await util.getEbayCategoryOptions(token);
 
     this.form = await api.getItem(token, itemId);
+    this.form.specifics = JSON.parse(this.form.specifics);
   },
   methods: {
     previewImage(event) {
@@ -173,13 +174,16 @@ export default {
       if (!event) {
         return;
       }
+
       const template = this.templates.filter((template) => template.id === event)[0];
       this.form.ebayCategoryId = template.ebayCategoryId;
       this.specifics = JSON.parse(template.specifics);
-      this.form.specifics = {};
-      this.specifics.forEach((name) => {
-        this.form.specifics[name] = "";
-      });
+
+      // TODO: Make this work when it makes sense
+      //this.form.specifics = {};
+      //this.specifics.forEach((name) => {
+      //  this.form.specifics[name] = "";
+      //});
     },
     createBase64Image(fileObject) {
       const reader = new FileReader();
@@ -234,9 +238,11 @@ export default {
       });
       await response.json();
 
-      await api.updateEbayListing(token, itemId, {
-        itemId: itemId,
-      });
+      if (this.form.ebayListingId !== "") {
+        await api.updateEbayListing(token, itemId, {
+          itemId: itemId,
+        });
+      }
 
       this.$router.push({
         path: "/viewItem/" + itemId,
