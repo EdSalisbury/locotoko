@@ -19,6 +19,7 @@
           :field="name"
           v-model="form.specifics[name]"
           type="text"
+          @input="changeSpecifics"
         />
 
         <form-input v-model="form.title" label="Title" field="title" required />
@@ -111,6 +112,7 @@ export default {
       users: [],
       owners: [],
       ebayCategories: [],
+      template: undefined,
       templates: [],
       templateOptions: [],
       specifics: [],
@@ -170,30 +172,44 @@ export default {
         this.createBase64Image(file);
       });
     },
+    changeSpecifics() {
+      let title = this.template.title;
+      let description = this.template.description;
+
+      this.specifics.forEach((name) => {
+        title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+      });
+      this.form.title = title;
+      this.form.description = description;
+    },
     changeTemplate(event) {
       if (!event) {
         return;
       }
 
-      const template = this.templates.filter((template) => template.id === event)[0];
-      this.form.ebayCategoryId = template.ebayCategoryId;
-      this.specifics = JSON.parse(template.specifics);
+      this.template = this.templates.filter((template) => template.id === event)[0];
+      this.form.ebayCategoryId = this.template.ebayCategoryId;
+      this.specifics = JSON.parse(this.template.specifics);
 
       // TODO: Make this work when it makes sense
       //this.form.specifics = {};
       //this.specifics.forEach((name) => {
       //  this.form.specifics[name] = "";
       //});
-      this.form.weightPounds = template.weightPounds || 0;
-      this.form.weightOunces = template.weightOunces || 0;
-      this.form.shipWeightPounds = template.shipWeightPounds || 0;
-      this.form.shipWeightOunces = template.shipWeightOunces || 0;
-      this.form.sizeWidthInches = template.sizeWidthInches || 0;
-      this.form.sizeHeightInches = template.sizeHeightInches || 0;
-      this.form.sizeDepthInches = template.sizeDepthInches || 0;
-      this.form.shipSizeWidthInches = template.shipSizeWidthInches || 0;
-      this.form.shipSizeHeightInches = template.shipSizeHeightInches || 0;
-      this.form.shipSizeDepthInches = template.shipSizeDepthInches || 0;
+
+      this.form.weightPounds = this.template.weightPounds || 0;
+      this.form.weightOunces = this.template.weightOunces || 0;
+      this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
+      this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
+      this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
+      this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
+      this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
+      this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
+      this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
+      this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
+
+      this.changeSpecifics();
     },
     createBase64Image(fileObject) {
       const reader = new FileReader();

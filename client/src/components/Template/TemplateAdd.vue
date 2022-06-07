@@ -3,18 +3,9 @@
     <b-card-title>Template</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input
-          v-model="form.name"
-          label="Name"
-          field="name"
-          required
-        />
+        <form-input v-model="form.name" label="Name" field="name" required />
 
-        <b-form-group
-          id="ebayCategory-input-group"
-          label="eBay Category"
-          label-for="ebayCategory-input"
-        >
+        <b-form-group id="ebayCategory-input-group" label="eBay Category" label-for="ebayCategory-input">
           <b-form-select
             id="ebayCategory-input"
             v-model="form.ebayCategoryId"
@@ -22,14 +13,12 @@
           ></b-form-select>
         </b-form-group>
 
-        <form-input
-          v-model="form.specifics"
-          label="Specifics"
-          field="specifics"
-          type="textarea"
-        />
+        <form-input v-model="form.specifics" label="Specifics" field="specifics" type="textarea" />
 
-<form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
+        <form-input v-model="form.title" label="Title" field="title" type="text" />
+
+        <form-input v-model="form.description" label="Description" field="description" type="textarea" />
+        <form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
         <form-input field="weightOunces" label="Weight (Oz.)" v-model="form.weightOunces" type="number" />
 
         <form-input
@@ -68,9 +57,7 @@
           type="number"
         />
 
-        <b-button type="submit" variant="primary"
-          >Add</b-button
-        >
+        <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
     </b-card-body>
   </b-card>
@@ -89,6 +76,8 @@ export default {
         name: "",
         ebayCategoryId: 0,
         specifics: "[\n]",
+        title: "",
+        description: "",
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -105,15 +94,12 @@ export default {
   },
   async created() {
     const token = this.$cookie.get("token");
-    const ebayCategories =
-      await api.getEbayCategories(token);
+    const ebayCategories = await api.getEbayCategories(token);
 
-    this.ebayCategories = ebayCategories.map(
-      (ebayCategory) => ({
-        value: ebayCategory.id,
-        text: ebayCategory.name,
-      }),
-    );
+    this.ebayCategories = ebayCategories.map((ebayCategory) => ({
+      value: ebayCategory.id,
+      text: ebayCategory.name,
+    }));
   },
   methods: {
     async onSubmit(event) {
@@ -132,20 +118,16 @@ export default {
       payload.shipSizeHeightInches = parseInt(payload.shipSizeHeightInches);
       payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
 
-      const url =
-        process.env.VUE_APP_API_BASE_URL +
-        "/api/v1/templates";
+      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/templates";
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer " + this.$cookie.get("token"),
+          Authorization: "Bearer " + this.$cookie.get("token"),
         },
         body: payload,
       });
-      const res = await response.json();
-      console.log(res);
+      await response.json();
 
       this.$router.push({ path: "/templates" });
     },

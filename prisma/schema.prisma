@@ -101,6 +101,9 @@ model Template {
   
   items Item[] @relation("itemTemplate")
 
+  title String?
+  description String?
+  
   @@map("templates")
 }
 

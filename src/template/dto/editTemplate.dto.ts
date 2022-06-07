@@ -51,4 +51,12 @@ export class EditTemplateDto {
   @IsNumber()
   @IsOptional()
   shipSizeDepthInches: number;
+
+  @IsString()
+  @IsOptional()
+  title: string;
+
+  @IsString()
+  @IsOptional()
+  description: string;
 }

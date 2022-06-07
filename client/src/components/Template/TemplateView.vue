@@ -2,7 +2,13 @@
   <b-card>
     <b-card-title>Template</b-card-title>
     <b-card-body>
-      <b-table stacked :items="template" :fields="fields"> </b-table>
+      <b-table stacked :items="template" :fields="fields">
+        <template #cell(description)="data">
+          <div style="white-space: pre">
+            {{ data.item.description }}
+          </div>
+        </template>
+      </b-table>
     </b-card-body>
   </b-card>
 </template>
@@ -16,6 +22,8 @@ export default {
         "name",
         "ebayCategoryId",
         "specifics",
+        "title",
+        "description",
         {
           key: "weightPounds",
           label: "Weight Pounds",
