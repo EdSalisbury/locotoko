@@ -125,7 +125,7 @@ export default {
           "Content-Type": "application/json",
           Authorization: "Bearer " + this.$cookie.get("token"),
         },
-        body: payload,
+        body: JSON.stringify(payload),
       });
       await response.json();
 

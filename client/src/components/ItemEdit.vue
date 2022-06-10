@@ -9,7 +9,8 @@
           :options="this.templateOptions"
           type="select"
           v-model="form.templateId"
-          @input="changeTemplate"
+          :change="clearSpecifics"
+          :input="changeTemplate"
         />
 
         <form-input
@@ -182,30 +183,30 @@ export default {
       });
     },
     changeSpecifics() {
-      let title = this.template.title;
-      let description = this.template.description;
-
-      this.specifics.forEach((name) => {
-        title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
-        description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
-      });
-      this.form.title = title;
-      this.form.description = description;
+      if (this.template.title !== null) {
+        let title = this.template.title;
+        this.specifics.forEach((name) => {
+          title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        });
+        this.form.title = title;
+      }
+      if (this.template.description !== null) {
+        let description = this.template.description;
+        this.specifics.forEach((name) => {
+          description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        });
+        this.form.description = description;
+      }
     },
-    changeTemplate(event) {
+    clearSpecifics(event) {
       if (!event) {
         return;
       }
 
-      this.template = this.templates.filter((template) => template.id === event)[0];
-      this.form.ebayCategoryId = this.template.ebayCategoryId;
-      this.specifics = JSON.parse(this.template.specifics);
-
-      // TODO: Make this work when it makes sense
-      //this.form.specifics = {};
-      //this.specifics.forEach((name) => {
-      //  this.form.specifics[name] = "";
-      //});
+      this.form.specifics = {};
+      this.specifics.forEach((name) => {
+        this.form.specifics[name] = "";
+      });
 
       this.form.weightPounds = this.template.weightPounds || 0;
       this.form.weightOunces = this.template.weightOunces || 0;
@@ -219,6 +220,15 @@ export default {
       this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
 
       this.changeSpecifics();
+    },
+    changeTemplate(event) {
+      if (!event) {
+        return;
+      }
+
+      this.template = this.templates.filter((template) => template.id === event)[0];
+      this.form.ebayCategoryId = this.template.ebayCategoryId;
+      this.specifics = JSON.parse(this.template.specifics);
     },
     createBase64Image(fileObject) {
       const reader = new FileReader();

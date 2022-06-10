@@ -8,6 +8,8 @@
       :options="options"
       v-model="localValue"
       :required="required"
+      @input="input"
+      @change="change"
     />
     <b-form-textarea
       v-else-if="type === 'textarea'"
@@ -18,6 +20,8 @@
       :required="required"
       :rows="rows"
       :max-rows="maxRows"
+      @input="input"
+      @change="change"
     />
     <b-form-input
       v-else
@@ -26,6 +30,8 @@
       :placeholder="label"
       v-model="localValue"
       :required="required"
+      @input="input"
+      @change="change"
       :state="this.maxLength < 9999 ? lengthCheck : null"
     />
     <b-form-invalid-feedback id="input-live-feedback"> Invalid Entry </b-form-invalid-feedback>
@@ -39,6 +45,14 @@ export default {
     field: String,
     format: String,
     options: Array,
+    input: {
+      type: Function,
+      default: function () {},
+    },
+    change: {
+      type: Function,
+      default: function () {},
+    },
     maxLength: {
       type: String,
       default: "9999",
