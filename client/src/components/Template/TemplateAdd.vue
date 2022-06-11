@@ -5,7 +5,7 @@
       <b-form @submit="onSubmit">
         <form-input v-model="form.name" label="Name" field="name" required />
 
-        <ebay-category-chooser />
+        <ebay-category-chooser v-model="form.ebayCategoryId" />
 
         <form-input v-model="form.specifics" label="Specifics" field="specifics" type="textarea" />
 

@@ -21,6 +21,11 @@ import api from "@/api";
 const optionsMap = (item) => ({ value: item.id, text: item.name });
 
 export default {
+  props: {
+    value: {
+      required: true,
+    },
+  },
   data() {
     return {
       ebayCategories: [],
@@ -32,6 +37,16 @@ export default {
     this.resetCategories(0);
     const token = this.$cookie.get("token");
     this.ebayCategories = await api.getEbayCategories(token);
+  },
+  computed: {
+    localVlue: {
+      get() {
+        return this.value?.toString();
+      },
+      set(value) {
+        this.$emit("input", value);
+      },
+    },
   },
   methods: {
     resetCategories(level) {
@@ -45,7 +60,18 @@ export default {
       if (!parentId) {
         return this.ebayCategories.filter((cat) => cat.level === 1).map(optionsMap);
       }
-      return this.ebayCategories.filter((cat) => cat.parentId === parentId).map(optionsMap);
+      const cats = this.ebayCategories.filter((cat) => cat.parentId === parentId).map(optionsMap);
+      if (cats.length === 0) {
+        let lastLevel = -1;
+        for (let level of this.levels) {
+          if (level === 0) {
+            this.$emit("input", lastLevel);
+            return [];
+          }
+          lastLevel = level;
+        }
+      }
+      return cats;
     },
   },
 };
