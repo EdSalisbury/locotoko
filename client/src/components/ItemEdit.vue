@@ -28,14 +28,7 @@
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input field="price" label="Price" v-model="form.price" />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <form-input
-          label="eBay Category"
-          field="ebayCategoryId"
-          v-model="form.ebayCategoryId"
-          :options="this.ebayCategories"
-          type="select"
-          required
-        />
+        <ebay-category-chooser v-model="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
@@ -112,6 +105,7 @@
 
 <script>
 import FormInput from "@/components/FormInput";
+import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import api from "@/api";
 import util from "@/util";
 
@@ -121,7 +115,6 @@ export default {
       camera: false,
       users: [],
       owners: [],
-      ebayCategories: [],
       template: undefined,
       templates: [],
       templateOptions: [],
@@ -153,6 +146,7 @@ export default {
   },
   components: {
     FormInput,
+    EbayCategoryChooser,
   },
   async created() {
     const itemId = this.$route.params.id;
@@ -162,7 +156,6 @@ export default {
     this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
-    this.ebayCategories = await util.getEbayCategoryOptions(token);
 
     this.form = await api.getItem(token, itemId);
     this.form.specifics = JSON.parse(this.form.specifics);

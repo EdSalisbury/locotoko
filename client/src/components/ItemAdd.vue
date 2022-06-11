@@ -36,14 +36,7 @@
 
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <form-input
-          label="eBay Category"
-          field="ebayCategoryId"
-          v-model="form.ebayCategoryId"
-          :options="this.ebayCategories"
-          type="select"
-          required
-        />
+        <ebay-category-chooser v-model="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
@@ -130,6 +123,8 @@
 
 <script>
 import FormInput from "@/components/FormInput";
+import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+
 //import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
 import util from "@/util";
@@ -140,7 +135,6 @@ export default {
       camera: false,
       users: [],
       owners: [],
-      ebayCategories: [],
       templates: [],
       template: undefined,
       templateOptions: [],
@@ -173,6 +167,7 @@ export default {
   },
   components: {
     FormInput,
+    EbayCategoryChooser,
     //PhotoCamera,
   },
   async created() {
@@ -181,7 +176,6 @@ export default {
     this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
-    this.ebayCategories = await util.getEbayCategoryOptions(token);
   },
   methods: {
     addImages(event) {
