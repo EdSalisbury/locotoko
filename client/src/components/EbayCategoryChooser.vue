@@ -37,6 +37,15 @@ export default {
     this.resetCategories(0);
     const token = this.$cookie.get("token");
     this.ebayCategories = await api.getEbayCategories(token);
+    let level = this.value;
+    while (level > 0) {
+      this.levels.unshift(level);
+      const cat = this.ebayCategories.filter((cat) => cat.id === level)[0];
+      level = cat.parentId;
+      if (cat.parentId === cat.id) {
+        level = 0;
+      }
+    }
   },
   computed: {
     localVlue: {
