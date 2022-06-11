@@ -14,7 +14,8 @@ const getOwnerOptions = async (token) => {
 
 const getEbayCategoryOptions = async (token) => {
   const ebayCategories = await api.getEbayCategories(token);
-  return ebayCategories.map(optionsMap);
+  const filteredCategories = ebayCategories.filter((cat) => cat.level === 1);
+  return filteredCategories.map(optionsMap);
 };
 
 const getTemplateOptions = async (token) => {

@@ -76,7 +76,8 @@ model EbayCategory {
   id Int @id
   name String
   parentId Int
-
+  leaf Boolean @default(false)
+  level Int @default(0)
   items Item[] @relation("itemEbayCategory")
 
   @@map("ebayCategories")

@@ -5,13 +5,7 @@
       <b-form @submit="onSubmit">
         <form-input v-model="form.name" label="Name" field="name" required />
 
-        <b-form-group id="ebayCategory-input-group" label="eBay Category" label-for="ebayCategory-input">
-          <b-form-select
-            id="ebayCategory-input"
-            v-model="form.ebayCategoryId"
-            :options="this.ebayCategories"
-          ></b-form-select>
-        </b-form-group>
+        <ebay-category-chooser />
 
         <form-input v-model="form.specifics" label="Specifics" field="specifics" type="textarea" />
 
@@ -66,9 +60,12 @@
 <script>
 import api from "@/api";
 import FormInput from "@/components/FormInput";
+import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+
 export default {
   components: {
     FormInput,
+    EbayCategoryChooser,
   },
   data() {
     return {
