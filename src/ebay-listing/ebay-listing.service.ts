@@ -37,6 +37,13 @@ export class EbayListingService {
         imageUrls.push(url);
       }
 
+      let shippingPolicy = this.config.get(
+        "EBAY_SHIPPING_FIRSTCLASS_POLICY_ID",
+      );
+      if (item.shipWeightPounds > 0) {
+        shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
+      }
+
       const request = {
         Item: {
           Title: item.title,
@@ -71,7 +78,7 @@ export class EbayListingService {
               ReturnProfileID: this.config.get("EBAY_RETURN_POLICY_ID"),
             },
             SellerShippingProfile: {
-              ShippingProfileID: this.config.get("EBAY_SHIPPING_POLICY_ID"),
+              ShippingProfileID: shippingPolicy,
             },
           },
           ShippingPackageDetails: {
@@ -81,7 +88,7 @@ export class EbayListingService {
               "@_unit": "inches",
               "#value": item.shipSizeDepthInches,
             },
-            PackageHeight: {
+            PackageLength: {
               "@_unit": "inches",
               "#value": item.shipSizeHeightInches,
             },
@@ -150,6 +157,13 @@ export class EbayListingService {
         imageUrls.push(url);
       }
 
+      let shippingPolicy = this.config.get(
+        "EBAY_SHIPPING_FIRSTCLASS_POLICY_ID",
+      );
+      if (item.shipWeightPounds > 0) {
+        shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
+      }
+
       const request = {
         Item: {
           ItemID: item.ebayListingId,
@@ -185,7 +199,7 @@ export class EbayListingService {
               ReturnProfileID: this.config.get("EBAY_RETURN_POLICY_ID"),
             },
             SellerShippingProfile: {
-              ShippingProfileID: this.config.get("EBAY_SHIPPING_POLICY_ID"),
+              ShippingProfileID: shippingPolicy,
             },
           },
           ShippingPackageDetails: {
@@ -195,7 +209,7 @@ export class EbayListingService {
               "@_unit": "inches",
               "#value": item.shipSizeDepthInches,
             },
-            PackageHeight: {
+            PackageLength: {
               "@_unit": "inches",
               "#value": item.shipSizeHeightInches,
             },
