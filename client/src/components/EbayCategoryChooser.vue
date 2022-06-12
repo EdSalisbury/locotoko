@@ -32,7 +32,7 @@ export default {
     return {
       ebayCategories: [],
       maxLevels: 10,
-      levels: [],
+      levels: [0],
     };
   },
   async created() {
@@ -54,12 +54,14 @@ export default {
       for (let i = this.levels.length; i < this.maxLevels; i++) {
         this.levels[i] = 0;
       }
+    } else {
+      this.resetCategories(0);
     }
   },
   methods: {
     resetCategories(level) {
       let newLevels = this.levels;
-      for (let i = level; i < this.maxLevels; i++) {
+      for (let i = level + 1; i < this.maxLevels; i++) {
         newLevels[i] = 0;
       }
       this.levels = newLevels;

@@ -38,7 +38,7 @@
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input field="price" label="Price" v-model="form.price" />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" />
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
