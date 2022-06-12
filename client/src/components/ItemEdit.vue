@@ -307,9 +307,7 @@ export default {
         });
       }
 
-      this.$router.push({
-        path: "/viewItem/" + itemId,
-      });
+      this.$router.push({ path: "/items" });
     },
   },
 };
