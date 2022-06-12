@@ -21,6 +21,9 @@ export class EditItemDto {
   ebayCategoryId: number;
 
   @IsNumber()
+  ebayConditionId: number;
+
+  @IsNumber()
   @IsNotEmpty()
   quantity: number;
 

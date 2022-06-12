@@ -37,6 +37,7 @@ model Item {
   acquisitionDate DateTime?
   soldAt DateTime?
   shippedAt DateTime?
+  ebayConditionId Int @default(0)
   listingUser User @relation("listingUser", fields: [listingUserId], references: [id])
   listingUserId String
   shippingUser User? @relation("shippingUser", fields: [shippingUserId], references: [id])

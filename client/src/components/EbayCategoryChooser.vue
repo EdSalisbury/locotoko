@@ -36,33 +36,30 @@ export default {
     };
   },
   async created() {
-    this.resetCategories(0);
     const token = this.$cookie.get("token");
     this.ebayCategories = await api.getEbayCategories(token);
-    let level = this.value;
-    while (level > 0) {
-      this.levels.unshift(level);
-      const cat = this.ebayCategories.filter((cat) => cat.id === level)[0];
-      level = cat.parentId;
-      if (cat.parentId === cat.id) {
-        level = 0;
+
+    if (this.value > 0) {
+      this.levels = [];
+      let level = this.value;
+      while (level > 0) {
+        this.levels.unshift(level);
+        const cat = this.ebayCategories.filter((cat) => cat.id === level)[0];
+        level = cat.parentId;
+        if (cat.parentId === cat.id) {
+          level = 0;
+        }
+      }
+
+      for (let i = this.levels.length; i < this.maxLevels; i++) {
+        this.levels[i] = 0;
       }
     }
   },
-  computed: {
-    localVlue: {
-      get() {
-        return this.value?.toString();
-      },
-      set(value) {
-        this.$emit("input", value);
-      },
-    },
-  },
   methods: {
     resetCategories(level) {
-      let newLevels = [...this.levels];
-      for (let i = level + 1; i < this.maxLevels; i++) {
+      let newLevels = this.levels;
+      for (let i = level; i < this.maxLevels; i++) {
         newLevels[i] = 0;
       }
       this.levels = newLevels;

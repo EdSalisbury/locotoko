@@ -25,7 +25,7 @@ export class TemplateService {
       DetailLevel: "ReturnAll",
       CategoryID: categoryId,
     });
-    return JSON.stringify(JSON.parse(features.Category.ConditionValues));
+    return JSON.stringify(features.Category.ConditionValues.Condition);
   }
 
   async createTemplate(dto: CreateTemplateDto) {

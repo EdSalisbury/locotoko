@@ -24,6 +24,16 @@
 
         <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
+
+        <form-input
+          label="Condition"
+          field="ebayConditionId"
+          v-model="form.ebayConditionId"
+          :options="this.conditions"
+          type="select"
+          required
+        />
+
         <b-form-group id="description-input-group" label="Description" label-for="description-input">
           <b-form-textarea
             id="description-input"
@@ -36,7 +46,7 @@
 
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" />
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
@@ -139,6 +149,7 @@ export default {
       template: undefined,
       templateOptions: [],
       specifics: [],
+      conditions: [],
       form: {
         title: "",
         quantity: 1,
@@ -148,6 +159,7 @@ export default {
         acquisitionDate: "",
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
+        ebayConditionId: 0,
         ownerId: "",
         templateId: "",
         weightPounds: 0,
@@ -229,6 +241,11 @@ export default {
       this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
       this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
 
+      this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
+        value: condition.ID,
+        text: condition.DisplayName,
+      }));
+
       this.changeSpecifics();
     },
     photoTaken(value) {
@@ -241,6 +258,7 @@ export default {
       this.payload = JSON.parse(JSON.stringify(this.form));
 
       this.payload.ebayCategoryId = parseInt(this.payload.ebayCategoryId);
+      this.payload.ebayConditionId = parseInt(this.payload.ebayConditionId);
       this.payload.quantity = parseInt(this.payload.quantity);
       this.payload.weightPounds = parseInt(this.payload.weightPounds);
       this.payload.weightOunces = parseInt(this.payload.weightOunces);
