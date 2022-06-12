@@ -40,6 +40,7 @@ export class EbayListingService {
       const request = {
         Item: {
           Title: item.title,
+          ConditionID: item.ebayConditionId,
           Description: item.description.replaceAll("\n", "&lt;br&gt;\n"),
           Currency: this.config.get("CURRENCY"),
           Country: this.config.get("COUNTRY"),
@@ -153,6 +154,7 @@ export class EbayListingService {
         Item: {
           ItemID: item.ebayListingId,
           Title: item.title,
+          ConditionID: item.ebayConditionId,
           ItemSpecifics: this.getSpecificArray(item.specifics),
           Description: item.description.replaceAll("\n", "&lt;br&gt;\n"),
           Currency: this.config.get("CURRENCY"),
