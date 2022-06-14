@@ -44,6 +44,7 @@ export default {
       fields: [
         { key: "itemLink", label: "Title" },
         "quantity",
+        { key: "templateName", label: "Type" },
         {
           key: "ebayListingId",
           label: "eBay Listing ID",

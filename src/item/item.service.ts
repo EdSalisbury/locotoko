@@ -4,21 +4,21 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import {
-  CreateItemDto,
-  EditItemDto,
-} from "./dto";
+import { CreateItemDto, EditItemDto } from "./dto";
 
 @Injectable()
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
   async getItems() {
-    const items =
-      await this.prisma.item.findMany();
-    return items.map(
-      ({ images, ...keepAttrs }) => keepAttrs,
-    );
+    const templates = await this.prisma.template.findMany();
+
+    const items = await this.prisma.item.findMany();
+    return items.map(({ templateId, images, ...rest }) => ({
+      ...rest,
+      templateName:
+        templates.find((template) => templateId === template.id).name || "",
+    }));
   }
 
   getItemById(itemId: string) {
@@ -28,35 +28,32 @@ export class ItemService {
   }
 
   async createItem(dto: CreateItemDto) {
-    const listingUser =
-      await this.prisma.user.findUnique({
-        where: {
-          id: dto.listingUserId,
-        },
-      });
+    const listingUser = await this.prisma.user.findUnique({
+      where: {
+        id: dto.listingUserId,
+      },
+    });
 
     if (!listingUser) {
       throw new BadRequestException();
     }
 
-    const owner =
-      await this.prisma.owner.findUnique({
-        where: {
-          id: dto.ownerId,
-        },
-      });
+    const owner = await this.prisma.owner.findUnique({
+      where: {
+        id: dto.ownerId,
+      },
+    });
 
     if (!owner) {
       throw new BadRequestException();
     }
 
     if (dto.shippingUserId) {
-      const shippingUser =
-        await this.prisma.user.findUnique({
-          where: {
-            id: dto.shippingUserId,
-          },
-        });
+      const shippingUser = await this.prisma.user.findUnique({
+        where: {
+          id: dto.shippingUserId,
+        },
+      });
       if (!shippingUser) {
         throw new BadRequestException();
       }
@@ -70,17 +67,13 @@ export class ItemService {
     return item;
   }
 
-  async editItemById(
-    itemId: string,
-    dto: EditItemDto,
-  ) {
+  async editItemById(itemId: string, dto: EditItemDto) {
     // get the Item by id
-    const item =
-      await this.prisma.item.findUnique({
-        where: {
-          id: itemId,
-        },
-      });
+    const item = await this.prisma.item.findUnique({
+      where: {
+        id: itemId,
+      },
+    });
 
     // Throw if the item doesn't exist
     if (!item) {
@@ -99,12 +92,11 @@ export class ItemService {
 
   async deleteItemById(itemId: string) {
     // get the item by id
-    const item =
-      await this.prisma.item.findUnique({
-        where: {
-          id: itemId,
-        },
-      });
+    const item = await this.prisma.item.findUnique({
+      where: {
+        id: itemId,
+      },
+    });
 
     // Throw if the Item doesn't exist
     if (!item) {
