@@ -49,6 +49,7 @@ export default {
           key: "ebayListingId",
           label: "eBay Listing ID",
         },
+        { key: "updatedAt", label: "Last Updated" },
         "actions",
       ],
     };
@@ -56,6 +57,7 @@ export default {
   async created() {
     const token = this.$cookie.get("token");
     this.items = await api.getItems(token);
+    this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   },
   methods: {
     async listItem(id) {
