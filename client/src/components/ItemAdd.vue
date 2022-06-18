@@ -251,11 +251,6 @@ export default {
       this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
       this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
 
-      this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
-        value: condition.ID,
-        text: condition.DisplayName,
-      }));
-
       this.changeSpecifics();
     },
     photoTaken(value) {

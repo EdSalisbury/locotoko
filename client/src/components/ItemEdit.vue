@@ -173,10 +173,6 @@ export default {
     this.form.specifics = JSON.parse(this.form.specifics);
 
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
-    // this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
-    //   value: condition.ID,
-    //   text: condition.DisplayName,
-    // }));
   },
   methods: {
     async changeCategory(event) {
@@ -234,11 +230,6 @@ export default {
       this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
       this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
       this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
-
-      // this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
-      //   value: condition.ID,
-      //   text: condition.DisplayName,
-      // }));
 
       this.changeSpecifics();
     },
