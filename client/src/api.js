@@ -74,6 +74,11 @@ const updateEbayListing = async (token, id, body) => {
   });
 };
 
+const getEbayConditions = async (token, categoryId) => {
+  const response = await fetch(apiUrl("ebayConditions", categoryId), apiHeaders(token));
+  return await response.json();
+};
+
 export default {
   getItems,
   getUsers,
@@ -82,5 +87,6 @@ export default {
   getTemplates,
   getTemplate,
   updateEbayListing,
+  getEbayConditions,
   getItem,
 };

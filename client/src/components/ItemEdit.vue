@@ -24,6 +24,7 @@
         />
 
         <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
 
         <form-input
@@ -38,7 +39,6 @@
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input field="price" label="Price" v-model="form.price" />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
@@ -173,12 +173,15 @@ export default {
     this.form.specifics = JSON.parse(this.form.specifics);
 
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
-    this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
-      value: condition.ID,
-      text: condition.DisplayName,
-    }));
+    // this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
+    //   value: condition.ID,
+    //   text: condition.DisplayName,
+    // }));
   },
   methods: {
+    async changeCategory(event) {
+      this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+    },
     previewImage(event) {
       event.preventDefault();
       alert("Preview");
@@ -208,6 +211,8 @@ export default {
         });
         this.form.description = description;
       }
+      const conditionName = this.template.conditions.filter((cond) => cond.id === this.form.ebayConditionId).name;
+      this.form.title.replaceAll("${Condition}", conditionName);
     },
     clearSpecifics(event) {
       if (!event) {
@@ -230,10 +235,10 @@ export default {
       this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
       this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
 
-      this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
-        value: condition.ID,
-        text: condition.DisplayName,
-      }));
+      // this.conditions = JSON.parse(this.template.conditions).map((condition) => ({
+      //   value: condition.ID,
+      //   text: condition.DisplayName,
+      // }));
 
       this.changeSpecifics();
     },

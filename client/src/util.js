@@ -23,9 +23,15 @@ const getTemplateOptions = async (token) => {
   return templates.map(optionsMap);
 };
 
+const getEbayConditionOptions = async (token, categoryId) => {
+  const ebayConditions = await api.getEbayConditions(token, categoryId);
+  return ebayConditions.map((condition) => ({ value: condition.ID, text: condition.DisplayName }));
+};
+
 export default {
   getOwnerOptions,
   getUserOptions,
   getEbayCategoryOptions,
   getTemplateOptions,
+  getEbayConditionOptions,
 };

@@ -23,6 +23,7 @@
         />
 
         <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
 
         <form-input
@@ -46,7 +47,6 @@
 
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" />
 
         <form-input
           label="Listing User"
@@ -190,6 +190,9 @@ export default {
     this.owners = await util.getOwnerOptions(token);
   },
   methods: {
+    async changeCategory(event) {
+      this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+    },
     addImages(event) {
       event.preventDefault();
       const files = [...event.target.files];
@@ -220,6 +223,13 @@ export default {
       });
       this.form.title = title;
       this.form.description = description;
+
+      console.log(this.template.conditions);
+      const conditions = JSON.parse(this.template.conditions);
+      console.log(conditions);
+      const conditionName = conditions.filter((cond) => cond.ID === this.form.ebayConditionId).DisplayName;
+      console.log(conditionName);
+      this.form.title.replaceAll("${Condition}", conditionName);
     },
     changeTemplate(event) {
       if (!event) {

@@ -11,6 +11,7 @@ import { join } from "path";
 import { TemplateModule } from "./template/template.module";
 import { EbayListingModule } from "./ebay-listing/ebay-listing.module";
 import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
+import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,6 +27,7 @@ import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
     TemplateModule,
     EbayListingModule,
     EbayCategoryModule,
+    EbayConditionModule,
   ],
 })
 export class AppModule {}

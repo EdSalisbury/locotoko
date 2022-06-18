@@ -57,7 +57,6 @@ model Item {
   shipSizeDepthInches Int?
   specifics String?
   templateId String?
-  template Template? @relation("itemTemplate", fields: [templateId], references: [id])
   images String[]
 
   @@map("items")
@@ -100,10 +99,6 @@ model Template {
   shipSizeHeightInches Int?
   shipSizeWidthInches Int?
   shipSizeDepthInches Int?
-  
-  items Item[] @relation("itemTemplate")
-
-  conditions String?
   
   title String?
   description String?

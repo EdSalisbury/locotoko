@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { EbayService } from "../ebay/ebay.service";
 import { CreateTemplateDto, EditTemplateDto } from "./dto";
+import { EbayConditionService } from "../ebay-condition/ebay-condition.service";
 
 @Injectable()
 export class TemplateService {
-  constructor(private prisma: PrismaService, private ebay: EbayService) {}
+  constructor(
+    private prisma: PrismaService,
+  ) {}
 
   getTemplates() {
     return this.prisma.template.findMany();
@@ -17,24 +19,10 @@ export class TemplateService {
     });
   }
 
-  async getConditions(categoryId: number) {
-    if (categoryId === 0) {
-      return "";
-    }
-    const features = await this.ebay.trading.GetCategoryFeatures({
-      DetailLevel: "ReturnAll",
-      CategoryID: categoryId,
-    });
-    return JSON.stringify(features.Category.ConditionValues.Condition);
-  }
-
   async createTemplate(dto: CreateTemplateDto) {
-    const conditions = await this.getConditions(dto.ebayCategoryId);
-
     const template = await this.prisma.template.create({
       data: {
         ...dto,
-        conditions: conditions,
       },
     });
     return template;
@@ -53,15 +41,12 @@ export class TemplateService {
       throw new NotFoundException();
     }
 
-    const conditions = await this.getConditions(dto.ebayCategoryId);
-
     return this.prisma.template.update({
       where: {
         id: templateId,
       },
       data: {
         ...dto,
-        conditions: conditions,
       },
     });
   }

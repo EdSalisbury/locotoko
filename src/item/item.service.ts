@@ -14,10 +14,8 @@ export class ItemService {
     const templates = await this.prisma.template.findMany();
 
     const items = await this.prisma.item.findMany();
-    return items.map(({ templateId, images, ...rest }) => ({
+    return items.map(({ images, ...rest }) => ({
       ...rest,
-      templateName:
-        templates.find((template) => templateId === template.id).name || "",
     }));
   }
 
