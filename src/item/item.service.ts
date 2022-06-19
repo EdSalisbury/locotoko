@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { CategoryType } from "ebay-api/lib/enums";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateItemDto, EditItemDto } from "./dto";
 
@@ -11,18 +12,28 @@ export class ItemService {
   constructor(private prisma: PrismaService) {}
 
   async getItems() {
-    const templates = await this.prisma.template.findMany();
+    const categories = await this.prisma.ebayCategory.findMany();
 
     const items = await this.prisma.item.findMany();
-    return items.map(({ images, ...rest }) => ({
+    return items.map(({ ebayCategoryId, images, ...rest }) => ({
       ...rest,
+      ebayCategoryName:
+        categories.find((category) => ebayCategoryId === category.id).name ||
+        "",
     }));
   }
 
-  getItemById(itemId: string) {
-    return this.prisma.item.findUnique({
+  async getItemById(itemId: string) {
+    const item = await this.prisma.item.findUnique({
       where: { id: itemId },
     });
+    const newItem = Object(item);
+    newItem.ebayCategoryName = (
+      await this.prisma.ebayCategory.findUnique({
+        where: { id: item.ebayCategoryId },
+      })
+    ).name;
+    return item;
   }
 
   async createItem(dto: CreateItemDto) {

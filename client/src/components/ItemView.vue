@@ -65,7 +65,7 @@ export default {
           label: "Acquisition Date",
         },
         {
-          key: "ebayCategoryId",
+          key: "ebayCategoryName",
           label: "eBay Category",
         },
         { key: "soldAt", label: "Sold At" },

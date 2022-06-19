@@ -41,10 +41,12 @@ export default {
   data() {
     return {
       items: [],
+      categories: [],
+      token: "",
       fields: [
         { key: "itemLink", label: "Title" },
         "quantity",
-        { key: "templateName", label: "Type" },
+        { key: "ebayCategoryName", label: "Category" },
         {
           key: "ebayListingId",
           label: "eBay Listing ID",
@@ -55,8 +57,8 @@ export default {
     };
   },
   async created() {
-    const token = this.$cookie.get("token");
-    this.items = await api.getItems(token);
+    this.token = this.$cookie.get("token");
+    this.items = await api.getItems(this.token);
     this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   },
   methods: {

@@ -1,5 +1,6 @@
 import api from "@/api";
 
+let CATEGORIES = [];
 const optionsMap = (item) => ({ value: item.id, text: item.name });
 
 const getUserOptions = async (token) => {
@@ -28,10 +29,18 @@ const getEbayConditionOptions = async (token, categoryId) => {
   return ebayConditions.map((condition) => ({ value: condition.ID, text: condition.DisplayName }));
 };
 
+const getCategoryName = async (token, ebayCategoryId) => {
+  if (CATEGORIES.length === 0) {
+    CATEGORIES = await api.getEbayCategories(token);
+  }
+  return CATEGORIES.find((category) => category.id === ebayCategoryId)?.name;
+};
+
 export default {
   getOwnerOptions,
   getUserOptions,
   getEbayCategoryOptions,
   getTemplateOptions,
   getEbayConditionOptions,
+  getCategoryName,
 };
