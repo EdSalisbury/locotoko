@@ -43,6 +43,9 @@ export class EbayListingService {
       if (item.shipWeightPounds > 0) {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
       }
+      if (item.shipWeightPounds > 10) {
+        shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
+      }
 
       const request = {
         Item: {
@@ -162,6 +165,9 @@ export class EbayListingService {
       );
       if (item.shipWeightPounds > 0) {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
+      }
+      if (item.shipWeightPounds > 10) {
+        shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
       }
 
       const request = {
