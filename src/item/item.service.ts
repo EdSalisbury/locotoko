@@ -17,8 +17,9 @@ export class ItemService {
     return items.map(({ ebayCategoryId, images, ...rest }) => ({
       ...rest,
       ebayCategoryName:
-        categories.find((category) => ebayCategoryId === category.id).name ||
-        "",
+        categories
+          .find((category) => ebayCategoryId === category.id)
+          .name.replaceAll("&amp;", "&") || "",
     }));
   }
 
@@ -31,7 +32,7 @@ export class ItemService {
       await this.prisma.ebayCategory.findUnique({
         where: { id: item.ebayCategoryId },
       })
-    ).name;
+    ).name.replaceAll("&amp;", "&");
     return item;
   }
 

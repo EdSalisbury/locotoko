@@ -70,7 +70,9 @@ export default {
       if (!parentId) {
         return this.ebayCategories.filter((cat) => cat.level === 1).map(optionsMap);
       }
-      const cats = this.ebayCategories.filter((cat) => cat.parentId === parentId).map(optionsMap);
+      const cats = this.ebayCategories
+        .filter((cat) => cat.parentId === parentId && cat.id !== parentId)
+        .map(optionsMap);
       if (cats.length === 0) {
         let lastLevel = -1;
         for (let level of this.levels) {
