@@ -9,8 +9,7 @@
           :options="this.templateOptions"
           type="select"
           v-model="form.templateId"
-          :change="clearSpecifics"
-          :input="changeTemplate"
+          @input="changeTemplate"
         />
         <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
 
@@ -209,38 +208,27 @@ export default {
       const conditionName = this.template.conditions.filter((cond) => cond.id === this.form.ebayConditionId).name;
       this.form.title.replaceAll("${Condition}", conditionName);
     },
-    clearSpecifics(event) {
-      if (!event) {
-        return;
-      }
-
-      this.form.specifics = {};
-      this.specifics.forEach((name) => {
-        this.form.specifics[name] = "";
-      });
-
-      this.form.weightPounds = this.template.weightPounds || 0;
-      this.form.weightOunces = this.template.weightOunces || 0;
-      this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
-      this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
-      this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
-      this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
-      this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
-      this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
-      this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
-      this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
-
-      this.changeSpecifics();
-    },
     changeTemplate(event) {
       if (event === "0") {
         this.template = 0;
         this.form.ebayCategoryId = 0;
         this.conditions = [];
+        this.specifics = [];
+        this.form.specifics = [];
       } else {
         this.template = this.templates.filter((template) => template.id === event)[0];
         this.form.ebayCategoryId = this.template.ebayCategoryId;
         this.specifics = JSON.parse(this.template.specifics);
+        this.form.weightPounds = this.template.weightPounds || 0;
+        this.form.weightOunces = this.template.weightOunces || 0;
+        this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
+        this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
+        this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
+        this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
+        this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
+        this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
+        this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
+        this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
       }
     },
     createBase64Image(fileObject) {

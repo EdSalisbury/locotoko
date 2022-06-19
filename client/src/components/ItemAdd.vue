@@ -233,6 +233,8 @@ export default {
         this.template = 0;
         this.form.ebayCategoryId = 0;
         this.conditions = [];
+        this.specifics = [];
+        this.form.specifics = [];
       } else {
         this.template = this.templates.find((template) => template.id === event);
         this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
