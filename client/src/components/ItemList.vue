@@ -6,7 +6,7 @@
       <b-table hover :items="items" :fields="fields">
         <template #cell(itemLink)="data">
           <router-link :to="'/viewItem/' + data.item.id">
-            {{ data.item.title }}
+            {{ data.item.title }}{{ data.item.ebayListingId ? "-" + data.item.id.slice(-4) : "" }}
           </router-link>
         </template>
 

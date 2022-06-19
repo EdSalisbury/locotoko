@@ -29,7 +29,7 @@
           :options="this.conditions"
           type="select"
         />
-        <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="80" />
+        <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="75" />
 
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
