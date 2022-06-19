@@ -13,12 +13,22 @@ export class ItemService {
   async getItems() {
     const categories = await this.prisma.ebayCategory.findMany();
 
-    const items = await this.prisma.item.findMany();
-    return items.map(({ ebayCategoryId, images, ...rest }) => ({
-      ...rest,
+    const items = await this.prisma.item.findMany({
+      select: {
+        id: true,
+        title: true,
+        ebayCategoryId: true,
+        ebayListingId: true,
+        location: true,
+        quantity: true,
+        updatedAt: true,
+      },
+    });
+    return items.map((item) => ({
+      ...item,
       ebayCategoryName:
         categories
-          .find((category) => ebayCategoryId === category.id)
+          .find((category) => item.ebayCategoryId === category.id)
           .name.replaceAll("&amp;", "&") || "",
     }));
   }
