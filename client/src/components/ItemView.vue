@@ -55,6 +55,7 @@ export default {
         { key: "price", label: "Price" },
         { key: "soldPrice", label: "Sold Price" },
         { key: "cost", label: "Cost" },
+        { key: "location", label: "Location" },
         { key: "ebayConditionId", label: "Condition" },
         {
           key: "description",

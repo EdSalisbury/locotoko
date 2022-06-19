@@ -45,6 +45,7 @@ model Item {
   ownerId String
   owner Owner @relation(fields: [ownerId], references: [id])
   quantity Int
+  location String?
   weightPounds Int?
   weightOunces Int?
   shipWeightPounds Int?

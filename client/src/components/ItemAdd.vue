@@ -43,6 +43,7 @@
         <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
+        <form-input field="location" label="Location" v-model="form.location" />
 
         <form-input
           label="Listing User"
@@ -156,6 +157,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
+        location: "",
         ownerId: "",
         templateId: "",
         weightPounds: 0,

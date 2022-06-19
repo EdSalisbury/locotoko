@@ -36,6 +36,7 @@
 
         <form-input field="price" label="Price" v-model="form.price" />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
+        <form-input field="location" label="Location" v-model="form.location" />
 
         <form-input
           label="Listing User"
@@ -133,6 +134,7 @@ export default {
         price: 0.0,
         cost: 0.0,
         acquisitionDate: "",
+        location: "",
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,

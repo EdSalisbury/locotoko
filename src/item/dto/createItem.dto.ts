@@ -22,7 +22,7 @@ export class CreateItemDto {
 
   @IsNumber()
   ebayConditionId: number;
-  
+
   @IsNumber()
   @IsNotEmpty()
   quantity: number;
@@ -111,4 +111,8 @@ export class CreateItemDto {
 
   @IsOptional()
   templateId: string;
+
+  @IsOptional()
+  @IsString()
+  location: string;
 }
