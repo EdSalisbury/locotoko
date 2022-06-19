@@ -21,7 +21,9 @@ const getEbayCategoryOptions = async (token) => {
 
 const getTemplateOptions = async (token) => {
   const templates = await api.getTemplates(token);
-  return templates.map(optionsMap);
+  let newTemplates = templates.map(optionsMap);
+  newTemplates.unshift({ value: "0", text: "None" });
+  return newTemplates;
 };
 
 const getEbayConditionOptions = async (token, categoryId) => {

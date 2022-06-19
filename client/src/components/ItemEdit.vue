@@ -12,6 +12,7 @@
           :change="clearSpecifics"
           :input="changeTemplate"
         />
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
 
         <form-input
           v-for="name in this.specifics"
@@ -22,11 +23,6 @@
           type="text"
           @input="changeSpecifics"
         />
-
-        <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
-        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
-
         <form-input
           label="Condition"
           field="ebayConditionId"
@@ -35,8 +31,11 @@
           type="select"
           required
         />
+        <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="80" />
 
         <form-input label="Description" field="description" v-model="form.description" type="textarea" />
+        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
+
         <form-input field="price" label="Price" v-model="form.price" />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
 
@@ -234,13 +233,15 @@ export default {
       this.changeSpecifics();
     },
     changeTemplate(event) {
-      if (!event) {
-        return;
+      if (event === "0") {
+        this.template = 0;
+        this.form.ebayCategoryId = 0;
+        this.conditions = [];
+      } else {
+        this.template = this.templates.filter((template) => template.id === event)[0];
+        this.form.ebayCategoryId = this.template.ebayCategoryId;
+        this.specifics = JSON.parse(this.template.specifics);
       }
-
-      this.template = this.templates.filter((template) => template.id === event)[0];
-      this.form.ebayCategoryId = this.template.ebayCategoryId;
-      this.specifics = JSON.parse(this.template.specifics);
     },
     createBase64Image(fileObject) {
       const reader = new FileReader();

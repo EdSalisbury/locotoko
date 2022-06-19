@@ -11,7 +11,7 @@
           v-model="form.templateId"
           @input="changeTemplate"
         />
-
+        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <form-input
           v-for="name in this.specifics"
           :key="name"
@@ -21,11 +21,6 @@
           type="text"
           @input="changeSpecifics"
         />
-
-        <form-input v-model="form.title" label="Title" field="title" required maxLength="80" />
-        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
-        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
-
         <form-input
           label="Condition"
           field="ebayConditionId"
@@ -34,6 +29,8 @@
           type="select"
           required
         />
+
+        <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="75" />
 
         <b-form-group id="description-input-group" label="Description" label-for="description-input">
           <b-form-textarea
@@ -44,7 +41,7 @@
             max-rows="6"
           ></b-form-textarea>
         </b-form-group>
-
+        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
         <form-input field="price" label="Price" v-model="form.price" required />
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
 
@@ -224,34 +221,34 @@ export default {
       this.form.title = title;
       this.form.description = description;
 
-      console.log(this.template.conditions);
-      const conditions = JSON.parse(this.template.conditions);
-      console.log(conditions);
-      const conditionName = conditions.filter((cond) => cond.ID === this.form.ebayConditionId).DisplayName;
-      console.log(conditionName);
-      this.form.title.replaceAll("${Condition}", conditionName);
+      // console.log(this.template.conditions);
+      // const conditions = JSON.parse(this.template.conditions);
+      // console.log(conditions);
+      // const conditionName = conditions.filter((cond) => cond.ID === this.form.ebayConditionId).DisplayName;
+      // console.log(conditionName);
+      // this.form.title.replaceAll("${Condition}", conditionName);
     },
     changeTemplate(event) {
-      if (!event) {
-        return;
+      if (event === "0") {
+        this.template = 0;
+        this.form.ebayCategoryId = 0;
+        this.conditions = [];
+      } else {
+        this.template = this.templates.find((template) => template.id === event);
+        this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
+        this.specifics = JSON.parse(this.template.specifics) || "";
+        this.form.weightPounds = this.template.weightPounds || 0;
+        this.form.weightOunces = this.template.weightOunces || 0;
+        this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
+        this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
+        this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
+        this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
+        this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
+        this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
+        this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
+        this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
+        this.changeSpecifics();
       }
-
-      this.template = this.templates.filter((template) => template.id === event)[0];
-      this.form.ebayCategoryId = this.template.ebayCategoryId;
-      this.specifics = JSON.parse(this.template.specifics);
-
-      this.form.weightPounds = this.template.weightPounds || 0;
-      this.form.weightOunces = this.template.weightOunces || 0;
-      this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
-      this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
-      this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
-      this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
-      this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
-      this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
-      this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
-      this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
-
-      this.changeSpecifics();
     },
     photoTaken(value) {
       this.form.images.push(value);

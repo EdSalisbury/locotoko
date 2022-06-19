@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { CategoryType } from "ebay-api/lib/enums";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateItemDto, EditItemDto } from "./dto";
 
