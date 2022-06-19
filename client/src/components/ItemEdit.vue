@@ -28,7 +28,6 @@
           v-model="form.ebayConditionId"
           :options="this.conditions"
           type="select"
-          required
         />
         <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="80" />
 

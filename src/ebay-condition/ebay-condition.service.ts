@@ -13,6 +13,6 @@ export class EbayConditionService {
       DetailLevel: "ReturnAll",
       CategoryID: categoryId,
     });
-    return JSON.stringify(features.Category.ConditionValues.Condition);
+    return JSON.stringify(features.Category.ConditionValues?.Condition) || [];
   }
 }

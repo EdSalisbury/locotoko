@@ -2,10 +2,10 @@
   <b-form-group id="ebayCategory-input-group" label="eBay Category" label-for="ebayCategory-input'">
     <b-container fluid>
       <b-row>
-        <b-col v-for="(level, index) in levels" :key="'ebayCategoryCol-' + index">
+        <b-col v-for="(level, index) in levels" :key="'ebayCategoryCol-' + index + '-' + keyIndex">
           <b-form-select
             v-if="index === 0 || (levels[index - 1] > 0 && getCategories(levels[index - 1]).length > 0)"
-            :key="'ebayCategory-' + index"
+            :key="'ebayCategory-' + index + '-' + keyIndex"
             :id="'ebayCategory-' + index"
             v-model="levels[index]"
             :options="getCategories(levels[index - 1])"
@@ -33,6 +33,7 @@ export default {
       ebayCategories: [],
       maxLevels: 10,
       levels: [0],
+      keyIndex: 0,
     };
   },
   async created() {
@@ -65,6 +66,7 @@ export default {
         newLevels[i] = 0;
       }
       this.levels = newLevels;
+      this.keyIndex++;
     },
     getCategories(parentId = 0) {
       if (!parentId) {
