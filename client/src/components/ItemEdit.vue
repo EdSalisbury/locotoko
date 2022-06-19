@@ -169,6 +169,11 @@ export default {
     this.form = await api.getItem(token, itemId);
     this.form.specifics = JSON.parse(this.form.specifics);
 
+    // Handle no template issue more gracefully
+    if (this.form.templateId === "0") {
+      this.form.templateId = "";
+    }
+
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
   },
   methods: {
