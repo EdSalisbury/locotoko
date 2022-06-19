@@ -197,22 +197,23 @@ export default {
       });
     },
     changeSpecifics() {
-      if (this.template.title !== null) {
+      const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
+      if (this.template?.title) {
         let title = this.template.title;
         this.specifics.forEach((name) => {
           title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
         });
+        title = title.replaceAll("${Condition}", conditionName || "");
         this.form.title = title;
       }
-      if (this.template.description !== null) {
+      if (this.template?.description) {
         let description = this.template.description;
         this.specifics.forEach((name) => {
           description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
         });
+        description = description.replaceAll("${Condition}", conditionName || "");
         this.form.description = description;
       }
-      const conditionName = this.template.conditions.filter((cond) => cond.id === this.form.ebayConditionId).name;
-      this.form.title.replaceAll("${Condition}", conditionName);
     },
     changeTemplate(event) {
       if (event === "0") {

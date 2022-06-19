@@ -27,6 +27,7 @@
           v-model="form.ebayConditionId"
           :options="this.conditions"
           type="select"
+          @input="changeSpecifics"
         />
 
         <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="75" />
@@ -212,22 +213,23 @@ export default {
       this.camera = true;
     },
     changeSpecifics() {
-      let title = this.template.title;
-      let description = this.template.description;
-
-      this.specifics.forEach((name) => {
-        title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
-        description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
-      });
-      this.form.title = title;
-      this.form.description = description;
-
-      // console.log(this.template.conditions);
-      // const conditions = JSON.parse(this.template.conditions);
-      // console.log(conditions);
-      // const conditionName = conditions.filter((cond) => cond.ID === this.form.ebayConditionId).DisplayName;
-      // console.log(conditionName);
-      // this.form.title.replaceAll("${Condition}", conditionName);
+      const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
+      if (this.template?.title) {
+        let title = this.template.title;
+        this.specifics.forEach((name) => {
+          title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        });
+        title = title.replaceAll("${Condition}", conditionName || "");
+        this.form.title = title;
+      }
+      if (this.template?.description) {
+        let description = this.template.description;
+        this.specifics.forEach((name) => {
+          description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        });
+        description = description.replaceAll("${Condition}", conditionName || "");
+        this.form.description = description;
+      }
     },
     changeTemplate(event) {
       if (event === "0") {
