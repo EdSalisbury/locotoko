@@ -22,9 +22,14 @@
               <b-icon-pencil-fill />
             </b-button>
           </router-link>
-          <b-button class="p-1 m-1" variant="primary" @click="listItem(data.item.id)"> eBay</b-button>
+          <b-button v-if="!data.item.ebayListingId" class="p-1 m-1" variant="primary" @click="listItem(data.item.id)">
+            eBay</b-button
+          >
+          <b-button class="p-1 m-1" variant="success" @click="duplicateItem(data.item.id)">
+            <b-icon-file-earmark-plus-fill />
+          </b-button>
 
-          <b-button class="p-1 m-1" variant="danger" @click="deleteItem(data.item.id)">
+          <b-button v-if="!data.item.ebayListingId" class="p-1 m-1" variant="danger" @click="deleteItem(data.item.id)">
             <b-icon-trash-fill />
           </b-button>
         </template>
@@ -63,38 +68,31 @@ export default {
     this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   },
   methods: {
+    async duplicateItem(id) {
+      const item = await api.getItem(this.token, id);
+      item.id = "";
+      item.title += " Copy";
+      item.ebayListingId = "";
+      await api.createItem(this.token, item);
+      this.items = await api.getItems(this.token);
+      this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+    },
     async listItem(id) {
-      const token = this.$cookie.get("token");
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
-      const response = await fetch(url, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify({
-          itemId: id,
-        }),
-      });
+      const response = await api.createEbayListing(this.token, { itemId: id });
       if (response.status == 201) {
         // TODO: Make this only get the appropriate item
-        this.items = await api.getItems(token);
+        this.items = await api.getItems(this.token);
+        this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
       } else {
         console.error(await response.json());
       }
     },
 
     async deleteItem(id) {
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + id;
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-      });
+      const response = await api.deleteItem(this.token, id);
       if (response.status == 204) {
-        this.items = this.items.filter((item) => item.id !== id);
+        this.items = await api.getItems(this.token);
+        this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
       } else {
         console.error(response);
       }

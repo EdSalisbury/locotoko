@@ -1,11 +1,49 @@
-const getItems = async (token) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
-  const response = await fetch(url, {
+const apiUrl = (resource, id = "") => {
+  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "");
+};
+
+const apiHeaders = (token) => {
+  return {
     headers: {
-      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
+  };
+};
+
+const getItems = async (token) => {
+  const response = await fetch(apiUrl("items"), apiHeaders(token));
+  return await response.json();
+};
+
+const getItem = async (token, id) => {
+  const response = await fetch(apiUrl("items", id), apiHeaders(token));
+  return await response.json();
+};
+
+const createItem = async (token, body) => {
+  const response = await fetch(apiUrl("items"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(body),
   });
   return await response.json();
+};
+
+const updateItem = async (token, id, body) => {
+  const response = await fetch(apiUrl("items", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(body),
+  });
+  return await response.json();
+};
+
+const deleteItem = async (token, id) => {
+  return await fetch(apiUrl("items", id), {
+    method: "DELETE",
+    ...apiHeaders(token),
+  });
 };
 
 const getUsers = async (token) => {
@@ -35,24 +73,6 @@ const getEbayCategories = async (token) => {
       Authorization: "Bearer " + token,
     },
   });
-  return await response.json();
-};
-
-const apiUrl = (resource, id = "") => {
-  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "");
-};
-
-const apiHeaders = (token) => {
-  return {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
-
-const getItem = async (token, id) => {
-  const response = await fetch(apiUrl("items", id), apiHeaders(token));
   return await response.json();
 };
 
@@ -91,6 +111,14 @@ const deleteTemplate = async (token, id) => {
   });
 };
 
+const createEbayListing = async (token, body) => {
+  return await fetch(apiUrl("ebayListings"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(body),
+  });
+};
+
 const updateEbayListing = async (token, id, body) => {
   return await fetch(apiUrl("ebayListings", id), {
     method: "PATCH",
@@ -106,6 +134,10 @@ const getEbayConditions = async (token, categoryId) => {
 
 export default {
   getItems,
+  getItem,
+  createItem,
+  updateItem,
+  deleteItem,
   getUsers,
   getOwners,
   getEbayCategories,
@@ -114,7 +146,7 @@ export default {
   createTemplate,
   updateTemplate,
   deleteTemplate,
+  createEbayListing,
   updateEbayListing,
   getEbayConditions,
-  getItem,
 };
