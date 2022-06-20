@@ -113,16 +113,7 @@ export default {
       payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
 
       const templateId = this.$route.params.id;
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/templates/" + templateId;
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify(payload),
-      });
-      await response.json();
+      await api.updateTemplate(this.token, templateId, payload);
 
       this.$router.push({ path: "/templates" });
     },

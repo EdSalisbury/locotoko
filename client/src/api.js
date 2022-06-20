@@ -66,6 +66,31 @@ const getTemplate = async (token, id) => {
   return await response.json();
 };
 
+const createTemplate = async (token, template) => {
+  const response = await fetch(apiUrl("templates"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(template),
+  });
+  return await response.json();
+};
+
+const updateTemplate = async (token, id, template) => {
+  const response = await fetch(apiUrl("templates", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(template),
+  });
+  return await response.json();
+};
+
+const deleteTemplate = async (token, id) => {
+  return await fetch(apiUrl("templates", id), {
+    method: "DELETE",
+    ...apiHeaders(token),
+  });
+};
+
 const updateEbayListing = async (token, id, body) => {
   return await fetch(apiUrl("ebayListings", id), {
     method: "PATCH",
@@ -86,6 +111,9 @@ export default {
   getEbayCategories,
   getTemplates,
   getTemplate,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
   updateEbayListing,
   getEbayConditions,
   getItem,
