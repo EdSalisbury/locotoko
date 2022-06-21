@@ -90,10 +90,10 @@ export default {
     };
   },
   async created() {
-    const token = this.$cookie.get("token");
+    this.token = this.$cookie.get("token");
 
     const templateId = this.$route.params.id;
-    this.form = await api.getTemplate(token, templateId);
+    this.form = await api.getTemplate(this.token, templateId);
   },
   methods: {
     async onSubmit(event) {

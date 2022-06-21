@@ -90,8 +90,8 @@ export default {
     };
   },
   async created() {
-    const token = this.$cookie.get("token");
-    const ebayCategories = await api.getEbayCategories(token);
+    this.token = this.$cookie.get("token");
+    const ebayCategories = await api.getEbayCategories(this.token);
 
     this.ebayCategories = ebayCategories.map((ebayCategory) => ({
       value: ebayCategory.id,
