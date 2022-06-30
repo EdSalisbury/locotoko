@@ -1,5 +1,5 @@
-const apiUrl = (resource, id = "") => {
-  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "");
+const apiUrl = (resource, id = "", action = "") => {
+  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "") + (action ? `/${action}` : "");
 };
 
 const apiHeaders = (token) => {
@@ -28,6 +28,13 @@ const createItem = async (token, body) => {
     body: JSON.stringify(body),
   });
   return await response.json();
+};
+
+const printItemLabel = async (token, id) => {
+  return await fetch(apiUrl("items", id, "printItemLabel"), {
+    method: "POST",
+    ...apiHeaders(token),
+  });
 };
 
 const updateItem = async (token, id, body) => {
@@ -138,6 +145,7 @@ export default {
   createItem,
   updateItem,
   deleteItem,
+  printItemLabel,
   getUsers,
   getOwners,
   getEbayCategories,

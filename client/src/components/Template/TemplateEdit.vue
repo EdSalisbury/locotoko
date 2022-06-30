@@ -7,7 +7,7 @@
 
         <ebay-category-chooser v-model="form.ebayCategoryId" />
 
-        <form-input v-model="form.specifics" label="Specifics" field="specifics" type="textarea" />
+        <SpecificsInput v-model="form.specifics" />
 
         <form-input v-model="form.title" label="Title" field="title" type="text" />
 
@@ -62,11 +62,13 @@ import api from "@/api";
 import FormInput from "@/components/FormInput";
 
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+import SpecificsInput from "./SpecificsInput";
 
 export default {
   components: {
     FormInput,
     EbayCategoryChooser,
+    SpecificsInput,
   },
   data() {
     return {

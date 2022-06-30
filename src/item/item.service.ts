@@ -4,11 +4,17 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { PtouchService } from "../ptouch/ptouch.service";
+import { ConfigService } from "@nestjs/config";
 import { CreateItemDto, EditItemDto } from "./dto";
 
 @Injectable()
 export class ItemService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private ptouch: PtouchService,
+    private config: ConfigService,
+  ) {}
 
   async getItems() {
     const categories = await this.prisma.ebayCategory.findMany();
@@ -44,6 +50,20 @@ export class ItemService {
       })
     ).name.replaceAll("&amp;", "&");
     return item;
+  }
+
+  async printItemLabel(itemId: string) {
+    const item = await this.prisma.item.findUnique({
+      where: { id: itemId },
+    });
+    // Throw if the item doesn't exist
+    if (!item) {
+      throw new NotFoundException();
+    }
+
+    const base_url = this.config.get("VUE_APP_API_BASE_URL");
+    const url = `${base_url}/viewItem/${item.id}`;
+    this.ptouch.printItemLabel(url, item.id, item.title);
   }
 
   async createItem(dto: CreateItemDto) {

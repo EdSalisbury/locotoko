@@ -29,6 +29,10 @@
             <b-icon-file-earmark-plus-fill />
           </b-button>
 
+          <b-button class="p-1 m-1" variant="primary" @click="printItemLabel(data.item.id)">
+            <b-icon-printer-fill />
+          </b-button>
+
           <b-button v-if="!data.item.ebayListingId" class="p-1 m-1" variant="danger" @click="deleteItem(data.item.id)">
             <b-icon-trash-fill />
           </b-button>
@@ -95,6 +99,15 @@ export default {
         this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
       } else {
         console.error(response);
+      }
+    },
+
+    async printItemLabel(id) {
+      const response = await api.printItemLabel(this.token, id);
+      if (response.status == 201) {
+        alert("Item Label Printed");
+      } else {
+        alert("Error printing item label");
       }
     },
   },

@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { PrismaModule } from "./prisma/prisma.module";
+import { PtouchModule } from "./ptouch/ptouch.module";
 import { ConfigModule } from "@nestjs/config";
 import { ItemModule } from "./item/item.module";
 import { OwnerModule } from "./owner/owner.module";
@@ -18,6 +19,7 @@ import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
     AuthModule,
     UserModule,
     PrismaModule,
+    PtouchModule,
     ItemModule,
     OwnerModule,
     EbayModule,
