@@ -12,15 +12,7 @@
           @input="changeTemplate"
         />
         <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
-        <form-input
-          v-for="name in this.specifics"
-          :key="name"
-          :label="name"
-          :field="name"
-          v-model="form.specifics[name]"
-          type="text"
-          @input="changeSpecifics"
-        />
+        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
         <form-input
           label="Condition"
           field="ebayConditionId"
@@ -132,6 +124,7 @@
 <script>
 import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+import SpecificInput from "@/components/SpecificInput";
 
 //import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
@@ -146,7 +139,6 @@ export default {
       templates: [],
       template: undefined,
       templateOptions: [],
-      specifics: [],
       conditions: [],
       form: {
         title: "",
@@ -172,13 +164,14 @@ export default {
         shipSizeHeightInches: 0,
         shipSizeDepthInches: 0,
         images: [],
-        specifics: {},
+        specifics: [],
       },
     };
   },
   components: {
     FormInput,
     EbayCategoryChooser,
+    SpecificInput,
     //PhotoCamera,
   },
   async created() {
@@ -216,16 +209,16 @@ export default {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
       if (this.template?.title) {
         let title = this.template.title;
-        this.specifics.forEach((name) => {
-          title = title.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        this.form.specifics.forEach((specific) => {
+          title = title.replaceAll("${" + specific.key + "}", specific.value || "");
         });
         title = title.replaceAll("${Condition}", conditionName || "");
         this.form.title = title;
       }
       if (this.template?.description) {
         let description = this.template.description;
-        this.specifics.forEach((name) => {
-          description = description.replaceAll("${" + name + "}", this.form.specifics[name] || "");
+        this.form.specifics.forEach((specific) => {
+          description = description.replaceAll("${" + specific.key + "}", specific.value || "");
         });
         description = description.replaceAll("${Condition}", conditionName || "");
         this.form.description = description;
@@ -236,12 +229,11 @@ export default {
         this.template = 0;
         this.form.ebayCategoryId = 0;
         this.conditions = [];
-        this.specifics = [];
         this.form.specifics = [];
       } else {
         this.template = this.templates.find((template) => template.id === event);
         this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
-        this.specifics = JSON.parse(this.template.specifics) || "";
+        this.form.specifics = JSON.parse(this.template.specifics) || [];
         this.form.weightPounds = this.template.weightPounds || 0;
         this.form.weightOunces = this.template.weightOunces || 0;
         this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
