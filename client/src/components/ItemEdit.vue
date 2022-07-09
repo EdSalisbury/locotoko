@@ -13,15 +13,8 @@
         />
         <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
 
-        <form-input
-          v-for="name in this.specifics"
-          :key="name"
-          :label="name"
-          :field="name"
-          v-model="form.specifics[name]"
-          type="text"
-          @input="changeSpecifics"
-        />
+        <SpecificInput v-model="form.specifics" />
+
         <form-input
           label="Condition"
           field="ebayConditionId"
@@ -114,6 +107,8 @@
 <script>
 import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+import SpecificInput from "@/components/SpecificInput";
+
 import api from "@/api";
 import util from "@/util";
 
@@ -126,7 +121,6 @@ export default {
       template: undefined,
       templates: [],
       templateOptions: [],
-      specifics: [],
       conditions: [],
       form: {
         title: "",
@@ -151,13 +145,14 @@ export default {
         shipSizeHeightInches: 0,
         shipSizeDepthInches: 0,
         images: [],
-        specifics: {},
+        specifics: [],
       },
     };
   },
   components: {
     FormInput,
     EbayCategoryChooser,
+    SpecificInput,
   },
   async created() {
     const itemId = this.$route.params.id;
@@ -167,9 +162,7 @@ export default {
     this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
-
     this.form = await api.getItem(token, itemId);
-    this.form.specifics = JSON.parse(this.form.specifics);
 
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {

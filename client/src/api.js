@@ -18,7 +18,19 @@ const getItems = async (token) => {
 
 const getItem = async (token, id) => {
   const response = await fetch(apiUrl("items", id), apiHeaders(token));
-  return await response.json();
+  const item = await response.json();
+  item.specifics = JSON.parse(item.specifics);
+
+  // Handle legacy specifics
+  if (!Array.isArray(item.specifics)) {
+    const specifics = [];
+    for (const [key, value] of Object.entries(item.specifics)) {
+      specifics.push({ key: key, value: value });
+    }
+    item.specifics = specifics;
+  }
+
+  return item;
 };
 
 const createItem = async (token, body) => {

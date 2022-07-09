@@ -21,10 +21,15 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      specifics: [{ key: "", value: "" }],
-    };
+  props: {
+    value: {
+      required: true,
+    },
+  },
+  computed: {
+    specifics() {
+      return this.value;
+    },
   },
   methods: {
     addItem() {
