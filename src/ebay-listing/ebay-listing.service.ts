@@ -271,16 +271,11 @@ export class EbayListingService {
   getSpecificArray(specifics: string) {
     const specObj = JSON.parse(specifics);
 
-    let data = [];
+    const data = specObj.map((specific) => ({
+      Name: specific.key,
+      Value: specific.value,
+    }));
 
-    for (const [key, value] of Object.entries(specObj)) {
-      if (value !== "") {
-        data.push({
-          Name: key,
-          Value: value,
-        });
-      }
-    }
     return {
       NameValueList: data,
     };
