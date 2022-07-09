@@ -19,17 +19,7 @@ const getItems = async (token) => {
 const getItem = async (token, id) => {
   const response = await fetch(apiUrl("items", id), apiHeaders(token));
   const item = await response.json();
-  item.specifics = JSON.parse(item.specifics);
-
-  // Handle legacy specifics
-  if (!Array.isArray(item.specifics)) {
-    const specifics = [];
-    for (const [key, value] of Object.entries(item.specifics)) {
-      specifics.push({ key: key, value: value });
-    }
-    item.specifics = specifics;
-  }
-
+  item.specifics = parseSpecifics(item.specifics);
   return item;
 };
 
@@ -97,12 +87,27 @@ const getEbayCategories = async (token) => {
 
 const getTemplates = async (token) => {
   const response = await fetch(apiUrl("templates"), apiHeaders(token));
+
   return await response.json();
+};
+
+const parseSpecifics = (specificsString) => {
+  let specifics = JSON.parse(specificsString) || [];
+  if (specifics.length > 0 && !Object.prototype.hasOwnProperty.call(specifics[0], "key")) {
+    const specificsArray = [];
+    for (const key of specifics) {
+      specificsArray.push({ key: key, value: "" });
+    }
+    specifics = specificsArray;
+  }
+  return specifics;
 };
 
 const getTemplate = async (token, id) => {
   const response = await fetch(apiUrl("templates", id), apiHeaders(token));
-  return await response.json();
+  const template = await response.json();
+  template.specifics = parseSpecifics(template.specifics);
+  return template;
 };
 
 const createTemplate = async (token, template) => {

@@ -8,12 +8,19 @@
             {{ data.item.description }}
           </div>
         </template>
+        <template #cell(specifics)="data">
+          <div v-for="(item, index) in data.item.specifics" :key="'specific_' + index">
+            {{ item.key }}: {{ item.value }}
+          </div>
+        </template>
       </b-table>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
+import api from "@/api";
+
 export default {
   data() {
     return {
@@ -70,13 +77,7 @@ export default {
   async created() {
     const templateId = this.$route.params.id;
     const token = this.$cookie.get("token");
-    const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/templates/" + templateId;
-    const response = await fetch(url, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-    this.template = [await response.json()];
+    this.template = [await api.getTemplate(token, templateId)];
   },
 };
 </script>

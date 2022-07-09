@@ -75,7 +75,7 @@ export default {
       form: {
         name: "",
         ebayCategoryId: 0,
-        specifics: "[\n]",
+        specifics: [],
         weightPounds: 0,
         weightOunces: 0,
         shipWeightPounds: 0,
@@ -113,6 +113,8 @@ export default {
       payload.shipSizeWidthInches = parseInt(payload.shipSizeWidthInches);
       payload.shipSizeHeightInches = parseInt(payload.shipSizeHeightInches);
       payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
+
+      payload.specifics = JSON.stringify(this.form.specifics);
 
       const templateId = this.$route.params.id;
       await api.updateTemplate(this.token, templateId, payload);

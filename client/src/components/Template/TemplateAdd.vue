@@ -6,8 +6,7 @@
         <form-input v-model="form.name" label="Name" field="name" required />
 
         <ebay-category-chooser v-model="form.ebayCategoryId" />
-
-        <form-input v-model="form.specifics" label="Specifics" field="specifics" type="textarea" />
+        <SpecificInput v-model="form.specifics" />
 
         <form-input v-model="form.title" label="Title" field="title" type="text" />
 
@@ -61,18 +60,20 @@
 import api from "@/api";
 import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
+import SpecificInput from "@/components/SpecificInput";
 
 export default {
   components: {
     FormInput,
     EbayCategoryChooser,
+    SpecificInput,
   },
   data() {
     return {
       form: {
         name: "",
         ebayCategoryId: 0,
-        specifics: "[\n]",
+        specifics: [],
         title: "",
         description: "",
         weightPounds: 0,
@@ -115,6 +116,7 @@ export default {
       payload.shipSizeHeightInches = parseInt(payload.shipSizeHeightInches);
       payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
 
+      payload.specifics = JSON.stringify(this.form.specifics);
       await api.createTemplate(this.token, payload);
 
       this.$router.push({ path: "/templates" });
