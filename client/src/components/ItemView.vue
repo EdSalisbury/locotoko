@@ -19,9 +19,9 @@
             {{ data.item.description }}
           </div>
         </template>
-        <template #cell(specifics)>
-          <div v-for="(value, index) in Object.entries(itemSpecifics)" :key="index">
-            {{ value }}
+        <template #cell(specifics)="data">
+          <div v-for="(item, index) in data.item.specifics" :key="'specific_' + index">
+            {{ item.key }}: {{ item.value }}
           </div>
         </template>
         <template #cell(actions)="data">
@@ -49,7 +49,6 @@ export default {
     return {
       item: [{}],
       fields: [
-        { key: "specifics", label: "Specifics" },
         { key: "title", label: "Title" },
         { key: "quantity", label: "Quantity" },
         { key: "price", label: "Price" },
@@ -61,6 +60,8 @@ export default {
           key: "description",
           label: "Description",
         },
+        { key: "specifics", label: "Specifics" },
+
         {
           key: "acquisitionDate",
           label: "Acquisition Date",
@@ -129,21 +130,7 @@ export default {
   async created() {
     const itemId = this.$route.params.id;
     const token = this.$cookie.get("token");
-    const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
-    const response = await fetch(url, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-    this.item = [await response.json()];
-  },
-  computed: {
-    itemSpecifics() {
-      if (!this.item[0].specifics) {
-        return {};
-      }
-      return JSON.parse(this.item[0].specifics);
-    },
+    this.item = [await api.getItem(token, itemId)];
   },
   methods: {
     async listItem(id) {
