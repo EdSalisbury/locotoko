@@ -93,7 +93,13 @@ const getTemplates = async (token) => {
 
 const parseSpecifics = (specificsString) => {
   let specifics = JSON.parse(specificsString) || [];
-  if (specifics.length > 0 && !Object.prototype.hasOwnProperty.call(specifics[0], "key")) {
+  if (!Array.isArray(specifics)) {
+    const specificsArray = [];
+    for (const [key, value] of Object.entries(specifics)) {
+      specificsArray.push({ key: key, value: value });
+    }
+    specifics = specificsArray;
+  } else if (specifics.length > 0 && !Object.prototype.hasOwnProperty.call(specifics[0], "key")) {
     const specificsArray = [];
     for (const key of specifics) {
       specificsArray.push({ key: key, value: "" });
