@@ -96,6 +96,7 @@ export default {
         ebayCategoryId: 0,
         ebayConditionId: 0,
         ownerId: "",
+        oldTemplateId: "",
         templateId: "",
         weight: {
           pounds: 0,
@@ -126,7 +127,7 @@ export default {
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
     this.form = await api.getItem(token, itemId);
-
+    this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {
       this.form.templateId = "";
@@ -178,15 +179,15 @@ export default {
         this.conditions = [];
         this.specifics = [];
         this.form.specifics = [];
-      } else {
+      } else if (event !== this.form.oldTemplateId) {
         this.template = this.templates.filter((template) => template.id === event)[0];
         this.form.ebayCategoryId = this.template.ebayCategoryId;
-        this.specifics = JSON.parse(this.template.specifics);
+        this.form.oldTemplateId = this.template.id;
         this.form.weight.pounds = this.template.shipWeightPounds || 0;
         this.form.weight.ounces = this.template.shipWeightOunces || 0;
         this.form.size.width = this.template.shipSizeWidthInches || 0;
         this.form.size.height = this.template.shipSizeHeightInches || 0;
-        this.form.size.length = this.template.shipSizeLengthInches;
+        this.form.size.length = this.template.shipSizeDepthInches || 0;
       }
     },
     createBase64Image(fileObject) {
