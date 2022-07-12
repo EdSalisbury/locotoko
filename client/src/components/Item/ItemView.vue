@@ -43,6 +43,7 @@
 
 <script>
 import api from "../../api";
+import itemUtils from "./itemUtils";
 
 export default {
   data() {
@@ -81,14 +82,7 @@ export default {
           label: "Shipping User",
         },
         { key: "ownerId", label: "Owner" },
-        {
-          key: "weightPounds",
-          label: "Weight Pounds",
-        },
-        {
-          key: "weightOunces",
-          label: "Weight Ounces",
-        },
+
         {
           key: "shipWeightPounds",
           label: "Ship Weight Pounds",
@@ -97,18 +91,7 @@ export default {
           key: "shipWeightOunces",
           label: "Ship Weight Ounces",
         },
-        {
-          key: "sizeHeightInches",
-          label: "Size Height Inches",
-        },
-        {
-          key: "sizeWidthInches",
-          label: "Size Width Inches",
-        },
-        {
-          key: "sizeDepthInches",
-          label: "Size Depth Inches",
-        },
+
         {
           key: "shipSizeHeightInches",
           label: "Ship Size Height Inches",
@@ -119,7 +102,7 @@ export default {
         },
         {
           key: "shipSizeDepthInches",
-          label: "Ship Size Depth Inches",
+          label: "Ship Size Length Inches",
         },
         { key: "ebayListingId", label: "eBay Item ID" },
         { key: "itemImage", label: "Images" },
@@ -129,31 +112,13 @@ export default {
   },
   async created() {
     const itemId = this.$route.params.id;
-    const token = this.$cookie.get("token");
-    this.item = [await api.getItem(token, itemId)];
+    this.token = this.$cookie.get("token");
+    this.item = [await api.getItem(this.token, itemId)];
   },
   methods: {
     async listItem(id) {
-      const token = this.$cookie.get("token");
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
-      const response = await fetch(url, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify({
-          itemId: id,
-        }),
-      });
-      if (response.status == 201) {
-        this.item = await api.getItem(token, id);
-      } else {
-        console.error(await response.json());
-      }
+      await itemUtils.listItem(id, this);
     },
-
     async deleteItem(id) {
       const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + id;
       const response = await fetch(url, {

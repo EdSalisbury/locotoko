@@ -45,6 +45,7 @@
 
 <script>
 import api from "../../api";
+import itemUtils from "./itemUtils";
 
 export default {
   data() {
@@ -82,14 +83,7 @@ export default {
       this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
     },
     async listItem(id) {
-      const response = await api.createEbayListing(this.token, { itemId: id });
-      if (response.status == 201) {
-        // TODO: Make this only get the appropriate item
-        this.items = await api.getItems(this.token);
-        this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
-      } else {
-        console.error(await response.json());
-      }
+      await itemUtils.listItem(id, this);
     },
 
     async deleteItem(id) {
