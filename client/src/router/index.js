@@ -2,19 +2,11 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import LoginForm from "@/components/LoginForm";
 import RegisterForm from "@/components/RegisterForm";
-import ItemList from "@/components/ItemList";
-import ItemView from "@/components/ItemView";
-import ItemEdit from "@/components/ItemEdit";
-import ItemAdd from "@/components/ItemAdd";
 import OwnerList from "@/components/OwnerList";
 import OwnerAdd from "@/components/OwnerAdd";
 import OwnerView from "@/components/OwnerView";
-import {
-  TemplateAdd,
-  TemplateEdit,
-  TemplateView,
-  TemplateList,
-} from "../components/Template";
+import { ItemAdd, ItemEdit, ItemView, ItemList } from "@/components/Item";
+import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
 
 Vue.use(VueRouter);
 
