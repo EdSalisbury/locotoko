@@ -27,7 +27,10 @@ const getTemplateOptions = async (token) => {
 };
 
 const getEbayConditionOptions = async (token, categoryId) => {
-  const ebayConditions = await api.getEbayConditions(token, categoryId);
+  let ebayConditions = await api.getEbayConditions(token, categoryId);
+  if (!Array.isArray(ebayConditions)) {
+    ebayConditions = [ebayConditions];
+  }
   return ebayConditions.map((condition) => ({ value: condition.ID, text: condition.DisplayName }));
 };
 
