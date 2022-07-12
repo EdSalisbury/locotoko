@@ -11,44 +11,8 @@
         <form-input v-model="form.title" label="Title" field="title" type="text" />
 
         <form-input v-model="form.description" label="Description" field="description" type="textarea" />
-        <form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
-        <form-input field="weightOunces" label="Weight (Oz.)" v-model="form.weightOunces" type="number" />
 
-        <form-input
-          field="shipWeightPounds"
-          label="Shipping Weight (Lbs.)"
-          v-model="form.shipWeightPounds"
-          type="number"
-        />
-        <form-input
-          field="shipWeightOunces"
-          label="Shipping Weight (Oz.)"
-          v-model="form.shipWeightOunces"
-          type="number"
-        />
-
-        <form-input field="sizeWidthInches" label="Width (In.)" v-model="form.sizeWidthInches" type="number" />
-        <form-input field="sizeHeightInches" label="Height (In.)" v-model="form.sizeHeightInches" type="number" />
-        <form-input field="sizeDepthInches" label="Depth (In.)" v-model="form.sizeDepthInches" type="number" />
-
-        <form-input
-          field="shipSizeWidthInches"
-          label="Ship Width (In.)"
-          v-model="form.shipSizeWidthInches"
-          type="number"
-        />
-        <form-input
-          field="shipSizeHeightInches"
-          label="Ship Height (In.)"
-          v-model="form.shipSizeHeightInches"
-          type="number"
-        />
-        <form-input
-          field="shipSizeDepthInches"
-          label="Ship Depth (In.)"
-          v-model="form.shipSizeDepthInches"
-          type="number"
-        />
+        <ShippingInput :weight="form.weight" :size="form.size" />
 
         <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
@@ -61,12 +25,14 @@ import api from "@/api";
 import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
+import ShippingInput from "@/components/ShippingInput";
 
 export default {
   components: {
     FormInput,
     EbayCategoryChooser,
     SpecificInput,
+    ShippingInput,
   },
   data() {
     return {
@@ -76,16 +42,15 @@ export default {
         specifics: [],
         title: "",
         description: "",
-        weightPounds: 0,
-        weightOunces: 0,
-        shipWeightPounds: 0,
-        shipWeightOunces: 0,
-        sizeWidthInches: 0,
-        sizeHeightInches: 0,
-        sizeDepthInches: 0,
-        shipSizeWidthInches: 0,
-        shipSizeHeightInches: 0,
-        shipSizeDepthInches: 0,
+        weight: {
+          pounds: 0,
+          ounces: 0,
+        },
+        size: {
+          width: 0,
+          height: 0,
+          length: 0,
+        },
       },
       ebayCategories: [],
     };
@@ -105,16 +70,12 @@ export default {
 
       let payload = JSON.parse(JSON.stringify(this.form));
 
-      payload.weightPounds = parseInt(payload.weightPounds);
-      payload.weightOunces = parseInt(payload.weightOunces);
-      payload.shipWeightPounds = parseInt(payload.shipWeightPounds);
-      payload.shipWeightOunces = parseInt(payload.shipWeightOunces);
-      payload.sizeWidthInches = parseInt(payload.sizeWidthInches);
-      payload.sizeHeightInches = parseInt(payload.sizeHeightInches);
-      payload.sizeDepthInches = parseInt(payload.sizeDepthInches);
-      payload.shipSizeWidthInches = parseInt(payload.shipSizeWidthInches);
-      payload.shipSizeHeightInches = parseInt(payload.shipSizeHeightInches);
-      payload.shipSizeDepthInches = parseInt(payload.shipSizeDepthInches);
+      payload.shipWeightPounds = parseInt(payload.weight.pounds);
+      payload.shipWeightOunces = parseInt(payload.weight.ounces);
+
+      payload.shipSizeWidthInches = parseInt(payload.size.width);
+      payload.shipSizeHeightInches = parseInt(payload.size.height);
+      payload.shipSizeDepthInches = parseInt(payload.size.length);
 
       payload.specifics = JSON.stringify(this.form.specifics);
       await api.createTemplate(this.token, payload);

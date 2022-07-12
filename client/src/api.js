@@ -130,6 +130,9 @@ const getTemplate = async (token, id) => {
   const response = await fetch(apiUrl("templates", id), apiHeaders(token));
   const template = await response.json();
   template.specifics = parseSpecifics(template.specifics);
+  template.weight = buildWeight(template.shipWeightPounds, template.shipWeightOunces);
+  template.size = buildSize(template.shipSizeWidthInches, template.shipSizeHeightInches, template.shipSizeDepthInches);
+
   return template;
 };
 
