@@ -1,9 +1,5 @@
 <template>
-  <b-container
-    class="rounded"
-    fluid
-    style="background: #eee; border: 1px solid black; margin: 10px 0 10px 0; padding: 10px"
-  >
+  <b-container class="rounded" style="background: #eee; border: 1px solid black; margin: 10px 0 10px 0; padding: 10px">
     <h5>Specifics</h5>
     <b-row v-for="(item, index) in specifics" :key="index">
       <b-col xs="5">

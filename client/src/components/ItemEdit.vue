@@ -50,45 +50,7 @@
         />
         <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 
-        <form-input field="weightPounds" label="Weight (Lbs.)" v-model="form.weightPounds" type="number" />
-        <form-input field="weightOunces" label="Weight (Oz.)" v-model="form.weightOunces" type="number" />
-
-        <form-input
-          field="shipWeightPounds"
-          label="Shipping Weight (Lbs.)"
-          v-model="form.shipWeightPounds"
-          type="number"
-        />
-        <form-input
-          field="shipWeightOunces"
-          label="Shipping Weight (Oz.)"
-          v-model="form.shipWeightOunces"
-          type="number"
-        />
-
-        <form-input field="sizeWidthInches" label="Width (In.)" v-model="form.sizeWidthInches" type="number" />
-        <form-input field="sizeHeightInches" label="Height (In.)" v-model="form.sizeHeightInches" type="number" />
-        <form-input field="sizeDepthInches" label="Depth (In.)" v-model="form.sizeDepthInches" type="number" />
-
-        <form-input
-          field="shipSizeWidthInches"
-          label="Ship Width (In.)"
-          v-model="form.shipSizeWidthInches"
-          type="number"
-        />
-        <form-input
-          field="shipSizeHeightInches"
-          label="Ship Height (In.)"
-          v-model="form.shipSizeHeightInches"
-          type="number"
-        />
-        <form-input
-          field="shipSizeDepthInches"
-          label="Ship Depth (In.)"
-          v-model="form.shipSizeDepthInches"
-          type="number"
-        />
-
+        <ShippingInput :weight="form.weight" :size="form.size" />
         <div v-for="(image, index) in this.form.images" :key="index" style="position: relative">
           <b-img style="z-index: 0" :src="image" v-on:click="previewImage" fluid />
           <b-btn style="position: absolute; z-index: 9999; top: 5px; right: 5px" v-on:click.stop="deleteImage(index)"
@@ -108,6 +70,7 @@
 import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
+import ShippingInput from "@/components/ShippingInput";
 
 import api from "@/api";
 import util from "@/util";
@@ -134,16 +97,15 @@ export default {
         ebayConditionId: 0,
         ownerId: "",
         templateId: "",
-        weightPounds: 0,
-        weightOunces: 0,
-        shipWeightPounds: 0,
-        shipWeightOunces: 0,
-        sizeWidthInches: 0,
-        sizeHeightInches: 0,
-        sizeDepthInches: 0,
-        shipSizeWidthInches: 0,
-        shipSizeHeightInches: 0,
-        shipSizeDepthInches: 0,
+        weight: {
+          pounds: 0,
+          ounces: 0,
+        },
+        size: {
+          width: 0,
+          height: 0,
+          length: 0,
+        },
         images: [],
         specifics: [],
       },
@@ -153,6 +115,7 @@ export default {
     FormInput,
     EbayCategoryChooser,
     SpecificInput,
+    ShippingInput,
   },
   async created() {
     const itemId = this.$route.params.id;
@@ -219,16 +182,11 @@ export default {
         this.template = this.templates.filter((template) => template.id === event)[0];
         this.form.ebayCategoryId = this.template.ebayCategoryId;
         this.specifics = JSON.parse(this.template.specifics);
-        this.form.weightPounds = this.template.weightPounds || 0;
-        this.form.weightOunces = this.template.weightOunces || 0;
-        this.form.shipWeightPounds = this.template.shipWeightPounds || 0;
-        this.form.shipWeightOunces = this.template.shipWeightOunces || 0;
-        this.form.sizeWidthInches = this.template.sizeWidthInches || 0;
-        this.form.sizeHeightInches = this.template.sizeHeightInches || 0;
-        this.form.sizeDepthInches = this.template.sizeDepthInches || 0;
-        this.form.shipSizeWidthInches = this.template.shipSizeWidthInches || 0;
-        this.form.shipSizeHeightInches = this.template.shipSizeHeightInches || 0;
-        this.form.shipSizeDepthInches = this.template.shipSizeDepthInches || 0;
+        this.form.weight.pounds = this.template.shipWeightPounds || 0;
+        this.form.weight.ounces = this.template.shipWeightOunces || 0;
+        this.form.size.width = this.template.shipSizeWidthInches || 0;
+        this.form.size.height = this.template.shipSizeHeightInches || 0;
+        this.form.size.length = this.template.shipSizeLengthInches;
       }
     },
     createBase64Image(fileObject) {
@@ -249,16 +207,13 @@ export default {
       this.payload.ebayCategoryId = parseInt(this.payload.ebayCategoryId);
       this.payload.ebayConditionId = parseInt(this.payload.ebayConditionId);
       this.payload.quantity = parseInt(this.payload.quantity);
-      this.payload.weightPounds = parseInt(this.payload.weightPounds);
-      this.payload.weightOunces = parseInt(this.payload.weightOunces);
-      this.payload.shipWeightPounds = parseInt(this.payload.shipWeightPounds);
-      this.payload.shipWeightOunces = parseInt(this.payload.shipWeightOunces);
-      this.payload.sizeWidthInches = parseInt(this.payload.sizeWidthInches);
-      this.payload.sizeHeightInches = parseInt(this.payload.sizeHeightInches);
-      this.payload.sizeDepthInches = parseInt(this.payload.sizeDepthInches);
-      this.payload.shipSizeWidthInches = parseInt(this.payload.shipSizeWidthInches);
-      this.payload.shipSizeHeightInches = parseInt(this.payload.shipSizeHeightInches);
-      this.payload.shipSizeDepthInches = parseInt(this.payload.shipSizeDepthInches);
+
+      this.payload.shipWeightPounds = parseInt(this.payload.weight.pounds);
+      this.payload.shipWeightOunces = parseInt(this.payload.weight.ounces);
+
+      this.payload.shipSizeWidthInches = parseInt(this.payload.size.width);
+      this.payload.shipSizeHeightInches = parseInt(this.payload.size.height);
+      this.payload.shipSizeDepthInches = parseInt(this.payload.size.length);
 
       this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
       this.payload.price = parseFloat(this.payload.price).toFixed(2);

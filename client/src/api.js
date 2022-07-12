@@ -20,6 +20,8 @@ const getItem = async (token, id) => {
   const response = await fetch(apiUrl("items", id), apiHeaders(token));
   const item = await response.json();
   item.specifics = parseSpecifics(item.specifics);
+  item.weight = buildWeight(item.shipWeightPounds, item.shipWeightOunces);
+  item.size = buildSize(item.shipSizeWidthInches, item.shipSizeHeightInches, item.shipSizeDepthInches);
   return item;
 };
 
@@ -107,6 +109,21 @@ const parseSpecifics = (specificsString) => {
     specifics = specificsArray;
   }
   return specifics;
+};
+
+const buildWeight = (pounds, ounces) => {
+  return {
+    pounds: pounds,
+    ounces: ounces,
+  };
+};
+
+const buildSize = (width, height, depth) => {
+  return {
+    width: width,
+    height: height,
+    length: depth,
+  };
 };
 
 const getTemplate = async (token, id) => {

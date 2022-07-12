@@ -1,9 +1,6 @@
 <template>
   <div id="app" class="web-camera-container">
-    <div
-      v-show="isLoading"
-      class="camera-loading"
-    >
+    <div v-show="isLoading" class="camera-loading">
       <ul class="loader-circle">
         <li></li>
         <li></li>
@@ -11,42 +8,17 @@
       </ul>
     </div>
 
-    <div
-      v-show="!isLoading"
-      class="camera-box"
-      :class="{ flash: isShotPhoto }"
-    >
-      <div
-        class="camera-shutter"
-        :class="{ flash: isShotPhoto }"
-      ></div>
+    <div v-show="!isLoading" class="camera-box" :class="{ flash: isShotPhoto }">
+      <div class="camera-shutter" :class="{ flash: isShotPhoto }"></div>
 
-      <video
-        v-show="!isPhotoTaken"
-        ref="camera"
-        :width="450"
-        :height="337.5"
-        autoplay
-      ></video>
+      <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5" autoplay></video>
 
-      <canvas
-        v-show="isPhotoTaken"
-        id="photoTaken"
-        ref="canvas"
-        :width="450"
-        :height="337.5"
-      ></canvas>
+      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
     </div>
 
     <div v-if="!isLoading" class="camera-shoot">
-      <button
-        type="button"
-        class="button"
-        @click="takePhoto"
-      >
-        <img
-          src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png"
-        />
+      <button type="button" class="button" @click="takePhoto">
+        <img src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" />
       </button>
     </div>
   </div>
@@ -82,15 +54,12 @@ export default {
         })
         .catch(() => {
           this.isLoading = false;
-          console.log(
-            "Error creating camera element",
-          );
+          console.log("Error creating camera element");
         });
     },
 
     stopCameraStream() {
-      let tracks =
-        this.$refs.camera.srcObject.getTracks();
+      let tracks = this.$refs.camera.srcObject.getTracks();
 
       tracks.forEach((track) => {
         track.stop();
@@ -110,15 +79,8 @@ export default {
 
       this.isPhotoTaken = !this.isPhotoTaken;
 
-      const context =
-        this.$refs.canvas.getContext("2d");
-      context.drawImage(
-        this.$refs.camera,
-        0,
-        0,
-        450,
-        337.5,
-      );
+      const context = this.$refs.canvas.getContext("2d");
+      context.drawImage(this.$refs.camera, 0, 0, 450, 337.5);
       this.stopCameraStream();
       this.downloadImage();
     },
@@ -127,10 +89,7 @@ export default {
       const canvas = document
         .getElementById("photoTaken")
         .toDataURL("image/jpeg")
-        .replace(
-          "image/jpeg",
-          "image/octet-stream",
-        );
+        .replace("image/jpeg", "image/octet-stream");
       this.$emit("photoTaken", canvas);
     },
   },
