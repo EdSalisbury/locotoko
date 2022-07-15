@@ -71,6 +71,7 @@ import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import itemUtils from "./itemUtils";
 
 import api from "@/api";
 import util from "@/util";
@@ -146,11 +147,11 @@ export default {
     deleteImage(index) {
       this.form.images.splice(index, 1);
     },
-    addImages(event) {
+    async addImages(event) {
       event.preventDefault();
       const files = [...event.target.files];
-      files.forEach((file) => {
-        this.createBase64Image(file);
+      files.forEach(async (file) => {
+        this.form.images.push(await itemUtils.resizeImage(file));
       });
     },
     changeSpecifics() {
@@ -190,16 +191,6 @@ export default {
         this.form.size.length = this.template.shipSizeDepthInches || 0;
       }
     },
-    createBase64Image(fileObject) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const img = e.target.result;
-        this.form.images.push(img);
-      };
-      reader.readAsDataURL(fileObject);
-    },
-
     async onSubmit(event) {
       event.preventDefault();
 

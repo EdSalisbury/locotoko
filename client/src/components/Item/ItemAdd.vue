@@ -90,6 +90,7 @@ import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import itemUtils from "./itemUtils";
 
 //import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
@@ -150,21 +151,12 @@ export default {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
     },
-    addImages(event) {
+    async addImages(event) {
       event.preventDefault();
       const files = [...event.target.files];
-      files.forEach((file) => {
-        this.createBase64Image(file);
+      files.forEach(async (file) => {
+        this.form.images.push(await itemUtils.resizeImage(file));
       });
-    },
-    createBase64Image(fileObject) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        const img = e.target.result;
-        this.form.images.push(img);
-      };
-      reader.readAsDataURL(fileObject);
     },
     addImage(event) {
       event.preventDefault();

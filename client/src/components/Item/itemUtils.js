@@ -4,18 +4,47 @@ import util from "@/util";
 const listItem = async (id, context) => {
   const response = await api.createEbayListing(context.token, { itemId: id });
   if (response.status == 201) {
-    util.toastGood("Listing Item Successful", "Success!", context);
-
+    context.$toast.success("Listing Item Successful");
     // TODO: Make this only get the appropriate item
     context.items = await api.getItems(context.token);
     context.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   } else {
     const err = await response.json();
-    util.toastBad("Listing Item Unsuccessful", JSON.stringify(err), context);
+    const msgs = err.message.map((msg) => "<li>" + msg.ShortMessage + "</li>");
+
+    let msg = "<ul>" + msgs.join("") + "</ul>";
+    context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + msg, { duration: 0 });
     console.error(err);
   }
 };
 
+const resizeImage = async (file) => {
+  const maxSideSize = 1600;
+  if (!file.type.match(/image.*/)) {
+    return null;
+  }
+  const canvas = document.createElement("canvas");
+  const image = new Image();
+  image.src = await util.readFileAsync(file);
+  await image.decode();
+  canvas.width = image.width;
+  canvas.height = image.height;
+  if (image.width > image.height) {
+    if (image.width > maxSideSize) {
+      canvas.height *= maxSideSize / image.width;
+      canvas.width = maxSideSize;
+    }
+  } else {
+    if (image.height > maxSideSize) {
+      canvas.width += maxSideSize / image.height;
+      canvas.height = maxSideSize;
+    }
+  }
+  canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL();
+};
+
 export default {
   listItem,
+  resizeImage,
 };

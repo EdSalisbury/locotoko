@@ -67,6 +67,17 @@ const toastBad = (title, body, context) => {
   });
 };
 
+const readFileAsync = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
 export default {
   getOwnerOptions,
   getUserOptions,
@@ -77,4 +88,5 @@ export default {
   toast,
   toastGood,
   toastBad,
+  readFileAsync,
 };
