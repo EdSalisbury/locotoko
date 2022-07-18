@@ -65,19 +65,11 @@
           <img :src="image" width="100" height="100" />
         </div>
 
-        <!-- <photo-camera
-          v-if="this.camera"
-          @photoTaken="photoTaken"
-        /> -->
+        <photo-camera v-if="this.camera" @photoTaken="photoTaken" />
 
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
 
-        <!-- <button
-          v-show="!this.camera"
-          @click="addImage"
-        >
-          Add Photo
-        </button> -->
+        <button v-show="!this.camera" @click="addImage">Add Photo</button>
 
         <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
@@ -92,7 +84,7 @@ import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
 import itemUtils from "./itemUtils";
 
-//import PhotoCamera from "@/components/PhotoCamera";
+import PhotoCamera from "@/components/PhotoCamera";
 import api from "@/api";
 import util from "@/util";
 
@@ -138,7 +130,7 @@ export default {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
-    //PhotoCamera,
+    PhotoCamera,
   },
   async created() {
     const token = this.$cookie.get("token");

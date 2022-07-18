@@ -11,9 +11,9 @@
     <div v-show="!isLoading" class="camera-box" :class="{ flash: isShotPhoto }">
       <div class="camera-shutter" :class="{ flash: isShotPhoto }"></div>
 
-      <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5" autoplay></video>
+      <video v-show="!isPhotoTaken" ref="camera" :width="1450" :height="937.5" autoplay></video>
 
-      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
+      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="1450" :height="937.5"></canvas>
     </div>
 
     <div v-if="!isLoading" class="camera-shoot">
@@ -111,7 +111,7 @@ body {
   align-items: center;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 500px;
+  width: 1500px;
 }
 .camera-button {
   margin-bottom: 2rem;

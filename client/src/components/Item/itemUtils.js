@@ -20,15 +20,18 @@ const listItem = async (id, context) => {
 
 const resizeImage = async (file) => {
   const maxSideSize = 1600;
-  if (!file.type.match(/image.*/)) {
-    return null;
-  }
-  const canvas = document.createElement("canvas");
+
   const image = new Image();
   image.src = await util.readFileAsync(file);
   await image.decode();
+  if (image.width <= maxSideSize && image.height <= maxSideSize) {
+    return image.src;
+  }
+
+  const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
+
   if (image.width > image.height) {
     if (image.width > maxSideSize) {
       canvas.height *= maxSideSize / image.width;
@@ -36,12 +39,12 @@ const resizeImage = async (file) => {
     }
   } else {
     if (image.height > maxSideSize) {
-      canvas.width += maxSideSize / image.height;
+      canvas.width *= maxSideSize / image.height;
       canvas.height = maxSideSize;
     }
   }
   canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL();
+  return canvas.toDataURL("image/jpeg", 0.7);
 };
 
 export default {

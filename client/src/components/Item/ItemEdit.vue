@@ -135,6 +135,13 @@ export default {
     }
 
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
+
+    const newImages = [];
+    this.form.images.forEach(async (file) => {
+      const newFile = util.dataURLtoFile(file, "filename.jpg");
+      newImages.push(await itemUtils.resizeImage(newFile));
+    });
+    this.form.images = newImages;
   },
   methods: {
     async changeCategory(event) {
