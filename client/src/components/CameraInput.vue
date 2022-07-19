@@ -92,7 +92,7 @@ export default {
       canvas.height = camera.videoHeight;
       const context = canvas.getContext("2d");
       if (this.brightnessBoost) {
-        context.filter = "brightness(125%)";
+        context.filter = "brightness(150%)";
       }
       context.drawImage(this.$refs.camera, 0, 0, canvas.width, canvas.height);
 

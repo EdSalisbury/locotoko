@@ -52,10 +52,12 @@
 
         <ShippingInput :weight="form.weight" :size="form.size" />
 
-        <ImageView :images="form.images" @deleteImage="deleteImage" :edit="true" />
-
-        <CameraInput @photoTaken="photoTaken" />
-
+        <b-row>
+          <b-col lg="auto"> <CameraInput @photoTaken="photoTaken" /> </b-col>
+          <b-col>
+            <ImageView lg="auto" :images="form.images" @deleteImage="deleteImage" :edit="true" />
+          </b-col>
+        </b-row>
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
 
         <b-button type="submit" variant="primary">Update</b-button>
