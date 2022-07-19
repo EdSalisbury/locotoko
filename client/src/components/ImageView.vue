@@ -33,7 +33,8 @@ export default {
   },
   computed: {
     localImages() {
-      return Array.from({ ...this.images, length: 12 });
+      const newImages = Array.from({ ...this.images, length: 12 });
+      return newImages.map((image) => (image ? image : "/noImage.png"));
     },
   },
   methods: {
