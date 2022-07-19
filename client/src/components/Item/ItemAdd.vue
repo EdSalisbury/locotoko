@@ -61,12 +61,12 @@
 
         <ShippingInput :weight="form.weight" :size="form.size" />
 
-        <ImageView :images="form.images" />
+        <ImageView :images="form.images" @deleteImage="deleteImage" :edit="true" />
 
         <CameraInput @photoTaken="photoTaken" />
-        
+
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
-        
+
         <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
     </b-card-body>
@@ -139,6 +139,9 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+    },
+    deleteImage(index) {
+      this.form.images.splice(index, 1);
     },
     async addImages(event) {
       event.preventDefault();

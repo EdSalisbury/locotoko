@@ -52,7 +52,7 @@
 
         <ShippingInput :weight="form.weight" :size="form.size" />
 
-        <ImageView :images="form.images" />
+        <ImageView :images="form.images" @deleteImage="deleteImage" :edit="true" />
 
         <CameraInput @photoTaken="photoTaken" />
 
@@ -179,8 +179,6 @@ export default {
       }
     },
     async photoTaken(value) {
-      //const file = util.dataURLtoFile(value, "filename.jpg");
-      //const croppedImage = await itemUtils.cropImage(file, 1);
       this.form.images.push(value);
     },
     changeTemplate(event) {
