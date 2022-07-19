@@ -10,10 +10,17 @@
         <b-icon-camera-video-off-fill v-if="cameraEnabled" />
         <b-icon-camera-video-fill v-else />
       </b-button>
-      Crop:
-      <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" /> Rotate
-      180: <b-form-checkbox v-model="rotate180" /> Increase Brightness: <b-form-checkbox v-model="brightnessBoost" />
     </div>
+    <b-container>
+      <b-row>
+        <b-col xs="4">
+          <b>Crop:</b>
+          <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
+        </b-col>
+        <b-col xs="4"> <b>Rotate 180:</b> <b-form-checkbox v-model="rotate180" /> </b-col>
+        <b-col><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" /> </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 <script>
@@ -21,14 +28,14 @@ export default {
   data() {
     return {
       cameraEnabled: false,
-      cropFactor: "0",
+      cropFactor: "1",
       cropOptions: [
         { item: "0", name: "None" },
         { item: "1.333", name: "4:3" },
         { item: "1", name: "Square" },
       ],
-      rotate180: false,
-      brightnessBoost: false,
+      rotate180: true,
+      brightnessBoost: true,
     };
   },
   methods: {
@@ -134,16 +141,16 @@ export default {
 }
 
 .camera-toggle {
-  position: absolute;
   z-index: 1;
-  bottom: 540px;
+  position: absolute;
+  bottom: 640px;
   left: 60px;
 }
 
 .camera-shutter {
   position: absolute;
   z-index: 1;
-  bottom: 110px;
+  bottom: 230px;
   left: 280px;
 }
 
