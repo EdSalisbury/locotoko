@@ -149,10 +149,6 @@ export default {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
     },
-    previewImage(event) {
-      event.preventDefault();
-      alert("Preview");
-    },
     deleteImage(index) {
       this.form.images.splice(index, 1);
     },
@@ -182,8 +178,10 @@ export default {
         this.form.description = description;
       }
     },
-    photoTaken(value) {
-      this.form.images.push(value);
+    async photoTaken(value) {
+      const file = util.dataURLtoFile(value, "filename.jpg");
+      const croppedImage = await itemUtils.cropImage(file, 1);
+      this.form.images.push(croppedImage);
     },
     changeTemplate(event) {
       if (event === "0") {

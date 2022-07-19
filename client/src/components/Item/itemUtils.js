@@ -47,7 +47,21 @@ const resizeImage = async (file) => {
   return canvas.toDataURL("image/jpeg", 0.7);
 };
 
+const cropImage = async (file, ratio = 1.3333) => {
+  const image = new Image();
+  image.src = await util.readFileAsync(file);
+  await image.decode();
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(image.height * ratio);
+  canvas.height = image.height;
+  const left = (image.width - canvas.width) / 2;
+  const context = canvas.getContext("2d");
+  context.drawImage(image, left, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", 0.7);
+};
+
 export default {
   listItem,
   resizeImage,
+  cropImage,
 };
