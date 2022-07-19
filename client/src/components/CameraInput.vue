@@ -1,5 +1,5 @@
 <template>
-  <div class="frame">
+  <div class="frame rounded">
     <div class="camera-frame">
       <video v-show="cameraEnabled" id="camera" ref="camera" class="camera camera-offset" autoplay />
       <b-img v-if="!cameraEnabled" blank blank-color="black" class="camera" />
@@ -151,15 +151,15 @@ export default {
 .camera-toggle {
   z-index: 1;
   position: absolute;
-  bottom: 640px;
-  left: 60px;
+  top: 10px;
+  left: 10px;
 }
 
 .camera-shutter {
   position: absolute;
   z-index: 1;
-  bottom: 230px;
-  left: 280px;
+  bottom: 50px;
+  left: 225px;
 }
 
 .camera-frame {
@@ -167,5 +167,7 @@ export default {
   padding: 0;
   margin: 0;
   max-width: 500px;
+  display: inline-block;
+  position: relative;
 }
 </style>
