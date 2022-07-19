@@ -1,7 +1,7 @@
 <template>
   <div class="frame">
     <div class="camera-frame">
-      <video v-show="cameraEnabled" ref="camera" class="camera camera-offset" autoplay />
+      <video v-show="cameraEnabled" id="camera" ref="camera" class="camera camera-offset" autoplay />
       <b-img v-if="!cameraEnabled" blank blank-color="black" class="camera" />
       <b-button v-show="cameraEnabled" @click="takePhoto" variant="info" class="camera-shutter">
         <b-icon-camera-fill />
@@ -18,8 +18,6 @@ export default {
   data() {
     return {
       cameraEnabled: false,
-      cameraWidth: 0,
-      cameraHeight: 0,
     };
   },
   methods: {
@@ -33,27 +31,29 @@ export default {
     },
 
     async createCameraElement() {
-      const constraints = (window.constraints = {
-        audio: false,
-        video: true,
-      });
+      const widths = [3840, 1920, 1280, 640];
 
-      try {
-        const camera = await navigator.mediaDevices.getUserMedia(constraints);
-        const tracks = camera.getVideoTracks();
-        const capabilities = tracks[0].getCapabilities();
-        this.$refs.camera.srcObject = camera;
-        this.cameraEnabled = true;
-        this.cameraWidth = capabilities.width.max;
-        this.cameraHeight = capabilities.height.max;
-      } catch (e) {
-        console.error("Error creating camera element: " + e);
+      for (const width of widths) {
+        const constraints = {
+          video: {
+            mandatory: {
+              minWidth: width,
+            },
+          },
+        };
+
+        try {
+          this.$refs.camera.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
+          this.cameraEnabled = true;
+          break;
+        } catch {
+          // Do nothing
+        }
       }
     },
 
     stopCameraStream() {
-      let tracks = this.$refs.camera.srcObject.getTracks();
-
+      const tracks = this.$refs.camera.srcObject.getTracks();
       tracks.forEach((track) => {
         track.stop();
       });
@@ -61,9 +61,10 @@ export default {
 
     takePhoto() {
       const canvas = document.createElement("canvas");
-      canvas.width = this.cameraWidth;
-      canvas.height = this.cameraHeight;
-      canvas.getContext("2d").drawImage(this.$refs.camera, 0, 0, this.cameraWidth, this.cameraHeight);
+      const camera = document.getElementById("camera");
+      canvas.width = camera.videoWidth;
+      canvas.height = camera.videoHeight;
+      canvas.getContext("2d").drawImage(this.$refs.camera, 0, 0, canvas.width, canvas.height);
       const photo = canvas.toDataURL("image/jpeg", 0.7);
       this.$emit("photoTaken", photo);
     },
