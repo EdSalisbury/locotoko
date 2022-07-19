@@ -4,9 +4,7 @@
     <b-card-body>
       <b-table stacked :items="item" :fields="fields">
         <template #cell(itemImage)="data">
-          <div v-for="(image, index) in data.item.images" :key="index">
-            <img :src="image" width="100" height="100" />
-          </div>
+          <ImageView :images="data.item.images" />
         </template>
         <template #cell(ebayListingId)="data">
           <a v-bind:href="'https://www.ebay.com/itm/' + data.item.ebayListingId" target="_blank">
@@ -44,8 +42,12 @@
 <script>
 import api from "../../api";
 import itemUtils from "./itemUtils";
+import ImageView from "@/components/ImageView";
 
 export default {
+  components: {
+    ImageView,
+  },
   data() {
     return {
       item: [{}],

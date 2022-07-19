@@ -61,16 +61,12 @@
 
         <ShippingInput :weight="form.weight" :size="form.size" />
 
-        <div v-for="(image, index) in this.form.images" :key="index">
-          <img :src="image" width="100" height="100" />
-        </div>
+        <ImageView :images="form.images" />
 
-        <photo-camera v-if="this.camera" @photoTaken="photoTaken" />
-
+        <CameraInput @photoTaken="photoTaken" />
+        
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
-
-        <button v-show="!this.camera" @click="addImage">Add Photo</button>
-
+        
         <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
     </b-card-body>
@@ -84,14 +80,14 @@ import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
 import itemUtils from "./itemUtils";
 
-import PhotoCamera from "@/components/PhotoCamera";
+import ImageView from "@/components/ImageView";
+import CameraInput from "@/components/CameraInput";
 import api from "@/api";
 import util from "@/util";
 
 export default {
   data() {
     return {
-      camera: false,
       users: [],
       owners: [],
       templates: [],
@@ -130,7 +126,8 @@ export default {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
-    PhotoCamera,
+    ImageView,
+    CameraInput,
   },
   async created() {
     const token = this.$cookie.get("token");
@@ -149,10 +146,6 @@ export default {
       files.forEach(async (file) => {
         this.form.images.push(await itemUtils.resizeImage(file));
       });
-    },
-    addImage(event) {
-      event.preventDefault();
-      this.camera = true;
     },
     changeSpecifics() {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
@@ -195,7 +188,6 @@ export default {
     },
     photoTaken(value) {
       this.form.images.push(value);
-      this.camera = false;
     },
     async onSubmit(event) {
       event.preventDefault();

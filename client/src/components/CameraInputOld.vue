@@ -18,7 +18,7 @@
 
     <div v-if="!isLoading" class="camera-shoot">
       <button type="button" class="button" @click="takePhoto">
-        <img src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png" />
+        <b-icon-camera-fill />
       </button>
     </div>
   </div>
@@ -28,6 +28,7 @@
 export default {
   data() {
     return {
+      enableCamera: false,
       isPhotoTaken: false,
       isShotPhoto: false,
       isLoading: false,

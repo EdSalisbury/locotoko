@@ -51,12 +51,10 @@
         <form-input field="acquisitionDate" label="Aquisition Date" v-model="form.acquisitionDate" type="date" />
 
         <ShippingInput :weight="form.weight" :size="form.size" />
-        <div v-for="(image, index) in this.form.images" :key="index" style="position: relative">
-          <b-img style="z-index: 0" :src="image" v-on:click="previewImage" fluid />
-          <b-btn style="position: absolute; z-index: 9999; top: 5px; right: 5px" v-on:click.stop="deleteImage(index)"
-            ><b-icon-trash-fill
-          /></b-btn>
-        </div>
+
+        <ImageView :images="form.images" />
+
+        <CameraInput @photoTaken="photoTaken" />
 
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
 
@@ -72,6 +70,8 @@ import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
 import itemUtils from "./itemUtils";
+import ImageView from "@/components/ImageView";
+import CameraInput from "@/components/CameraInput";
 
 import api from "@/api";
 import util from "@/util";
@@ -118,6 +118,8 @@ export default {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
+    ImageView,
+    CameraInput,
   },
   async created() {
     const itemId = this.$route.params.id;
@@ -179,6 +181,9 @@ export default {
         description = description.replaceAll("${Condition}", conditionName || "");
         this.form.description = description;
       }
+    },
+    photoTaken(value) {
+      this.form.images.push(value);
     },
     changeTemplate(event) {
       if (event === "0") {
