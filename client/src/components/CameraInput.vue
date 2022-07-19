@@ -13,12 +13,14 @@
     </div>
     <b-container>
       <b-row>
-        <b-col xs="4">
+        <b-col xs="4" style="text-align: center">
           <b>Crop:</b>
           <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
         </b-col>
-        <b-col xs="4"> <b>Rotate 180:</b> <b-form-checkbox v-model="rotate180" /> </b-col>
-        <b-col><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" /> </b-col>
+        <b-col xs="4" style="text-align: center"> <b>Rotate 180:</b> <b-form-checkbox v-model="rotate180" /> </b-col>
+        <b-col style="text-align: center"
+          ><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" />
+        </b-col>
       </b-row>
     </b-container>
   </div>
