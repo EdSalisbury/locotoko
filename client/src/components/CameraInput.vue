@@ -70,13 +70,19 @@ export default {
           // Do nothing
         }
       }
+      window.addEventListener("keydown", this.shortcutListener);
     },
-
+    shortcutListener(event) {
+      if (event.key === "`") {
+        this.takePhoto();
+      }
+    },
     stopCameraStream() {
       const tracks = this.$refs.camera.srcObject.getTracks();
       tracks.forEach((track) => {
         track.stop();
       });
+      window.removeEventListener("keydown", this.shortcutListener);
     },
 
     takePhoto() {
