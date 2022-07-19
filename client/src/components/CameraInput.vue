@@ -10,6 +10,7 @@
         <b-icon-camera-video-off-fill v-if="cameraEnabled" />
         <b-icon-camera-video-fill v-else />
       </b-button>
+      Cropping: <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
     </div>
   </div>
 </template>
@@ -18,6 +19,12 @@ export default {
   data() {
     return {
       cameraEnabled: false,
+      cropFactor: "0",
+      cropOptions: [
+        { item: "0", name: "None" },
+        { item: "1.333", name: "4:3" },
+        { item: "1", name: "Square" },
+      ],
     };
   },
   methods: {
@@ -60,13 +67,26 @@ export default {
     },
 
     takePhoto() {
-      const canvas = document.createElement("canvas");
+      let canvas = document.createElement("canvas");
       const camera = document.getElementById("camera");
       canvas.width = camera.videoWidth;
       canvas.height = camera.videoHeight;
       canvas.getContext("2d").drawImage(this.$refs.camera, 0, 0, canvas.width, canvas.height);
-      const photo = canvas.toDataURL("image/jpeg", 0.7);
-      this.$emit("photoTaken", photo);
+
+      if (this.cropFactor !== "0") {
+        canvas = this.cropImage(canvas, parseFloat(this.cropFactor));
+      }
+
+      this.$emit("photoTaken", canvas.toDataURL("image/jpeg", 0.7));
+    },
+    cropImage(image, ratio = 1.3333) {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.height * ratio);
+      canvas.height = image.height;
+      const left = (image.width - canvas.width) / 2;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, left, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      return canvas;
     },
   },
 };

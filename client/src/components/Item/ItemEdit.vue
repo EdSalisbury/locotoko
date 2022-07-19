@@ -179,9 +179,9 @@ export default {
       }
     },
     async photoTaken(value) {
-      const file = util.dataURLtoFile(value, "filename.jpg");
-      const croppedImage = await itemUtils.cropImage(file, 1);
-      this.form.images.push(croppedImage);
+      //const file = util.dataURLtoFile(value, "filename.jpg");
+      //const croppedImage = await itemUtils.cropImage(file, 1);
+      this.form.images.push(value);
     },
     changeTemplate(event) {
       if (event === "0") {
