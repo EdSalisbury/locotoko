@@ -10,7 +10,9 @@
         <b-icon-camera-video-off-fill v-if="cameraEnabled" />
         <b-icon-camera-video-fill v-else />
       </b-button>
-      Cropping: <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
+      Crop:
+      <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" /> Rotate
+      180: <b-form-checkbox v-model="rotate180" />
     </div>
   </div>
 </template>
@@ -25,6 +27,7 @@ export default {
         { item: "1.333", name: "4:3" },
         { item: "1", name: "Square" },
       ],
+      rotate180: false,
     };
   },
   methods: {
@@ -76,6 +79,9 @@ export default {
       if (this.cropFactor !== "0") {
         canvas = this.cropImage(canvas, parseFloat(this.cropFactor));
       }
+      if (this.rotate180) {
+        canvas = this.rotateImage180(canvas);
+      }
 
       this.$emit("photoTaken", canvas.toDataURL("image/jpeg", 0.7));
     },
@@ -86,6 +92,16 @@ export default {
       const left = (image.width - canvas.width) / 2;
       const context = canvas.getContext("2d");
       context.drawImage(image, left, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      return canvas;
+    },
+    rotateImage180(image) {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext("2d");
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.rotate(Math.PI);
+      context.drawImage(image, -image.width / 2, -image.height / 2);
       return canvas;
     },
   },
