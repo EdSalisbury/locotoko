@@ -9,6 +9,22 @@
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
         </b-button>
+        <b-button
+          class="leftButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index > 0"
+          @click="moveImageLeft(index)"
+        >
+          <b-icon-arrow-left-square-fill />
+        </b-button>
+        <b-button
+          class="rightButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index < images.length - 1"
+          @click="moveImageRight(index)"
+        >
+          <b-icon-arrow-right-square-fill />
+        </b-button>
       </b-col> </b-row
     ><b-row class="row">
       <b-col class="col" v-for="(image, index) in localImages.slice(4, 8)" :key="'col_' + index">
@@ -18,6 +34,22 @@
         </b-modal>
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
+        </b-button>
+        <b-button
+          class="leftButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index + 4 > 0"
+          @click="moveImageLeft(index + 4)"
+        >
+          <b-icon-arrow-left-square-fill />
+        </b-button>
+        <b-button
+          class="rightButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index + 4 < images.length - 1"
+          @click="moveImageRight(index + 4)"
+        >
+          <b-icon-arrow-right-square-fill />
         </b-button>
       </b-col>
     </b-row>
@@ -30,6 +62,22 @@
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
         </b-button>
+        <b-button
+          class="leftButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index + 8 > 0"
+          @click="moveImageLeft(index + 8)"
+        >
+          <b-icon-arrow-left-square-fill />
+        </b-button>
+        <b-button
+          class="rightButton"
+          v-show="edit"
+          v-if="image !== '/noImage.png' && index + 8 < images.length - 1"
+          @click="moveImageRight(index + 8)"
+        >
+          <b-icon-arrow-right-square-fill />
+        </b-button>
       </b-col>
     </b-row>
   </b-container>
@@ -40,11 +88,6 @@ export default {
   props: {
     images: Array,
     edit: Boolean,
-  },
-  data() {
-    return {
-      newImages: [],
-    };
   },
   computed: {
     localImages() {
@@ -59,6 +102,12 @@ export default {
     },
     deleteImage(index) {
       this.$emit("deleteImage", index);
+    },
+    moveImageLeft(index) {
+      this.$emit("moveImageLeft", index);
+    },
+    moveImageRight(index) {
+      this.$emit("moveImageRight", index);
     },
   },
 };
@@ -80,8 +129,20 @@ export default {
 .deleteButton {
   position: absolute;
   z-index: 0;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
+}
+.leftButton {
+  position: absolute;
+  z-index: 0;
+  left: 10px;
+  bottom: 10px;
+}
+.rightButton {
+  position: absolute;
+  z-index: 0;
+  right: 10px;
+  bottom: 10px;
 }
 .row {
   margin: 0;

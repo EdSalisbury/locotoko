@@ -64,7 +64,14 @@
         <b-row>
           <b-col lg="auto"> <CameraInput @photoTaken="photoTaken" /> </b-col>
           <b-col>
-            <ImageView lg="auto" :images="form.images" @deleteImage="deleteImage" :edit="true" />
+            <ImageView
+              lg="auto"
+              :images="form.images"
+              @deleteImage="deleteImage"
+              :edit="true"
+              @moveImageLeft="moveImageLeft"
+              @moveImageRight="moveImageRight"
+            />
           </b-col>
         </b-row>
         <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
@@ -144,6 +151,16 @@ export default {
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
+    },
+    moveImageLeft(index) {
+      const tmp = this.form.images[index - 1];
+      this.$set(this.form.images, index - 1, this.form.images[index]);
+      this.$set(this.form.images, index, tmp);
+    },
+    moveImageRight(index) {
+      const tmp = this.form.images[index + 1];
+      this.$set(this.form.images, index + 1, this.form.images[index]);
+      this.$set(this.form.images, index, tmp);
     },
     async addImages(event) {
       event.preventDefault();
