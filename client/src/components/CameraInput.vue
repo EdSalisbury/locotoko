@@ -12,7 +12,7 @@
       </b-button>
       Crop:
       <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" /> Rotate
-      180: <b-form-checkbox v-model="rotate180" />
+      180: <b-form-checkbox v-model="rotate180" /> Increase Brightness: <b-form-checkbox v-model="brightnessBoost" />
     </div>
   </div>
 </template>
@@ -28,6 +28,7 @@ export default {
         { item: "1", name: "Square" },
       ],
       rotate180: false,
+      brightnessBoost: false,
     };
   },
   methods: {
@@ -74,7 +75,11 @@ export default {
       const camera = document.getElementById("camera");
       canvas.width = camera.videoWidth;
       canvas.height = camera.videoHeight;
-      canvas.getContext("2d").drawImage(this.$refs.camera, 0, 0, canvas.width, canvas.height);
+      const context = canvas.getContext("2d");
+      if (this.brightnessBoost) {
+        context.filter = "brightness(125%)";
+      }
+      context.drawImage(this.$refs.camera, 0, 0, canvas.width, canvas.height);
 
       if (this.cropFactor !== "0") {
         canvas = this.cropImage(canvas, parseFloat(this.cropFactor));
