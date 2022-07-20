@@ -85,7 +85,7 @@ import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
 import TextInput from "./TextInput";
 import SelectInput from "./SelectInput";
-import itemUtils from "./itemUtils";
+
 
 import ImageView from "@/components/ImageView";
 import CameraInput from "@/components/CameraInput";
@@ -159,13 +159,6 @@ export default {
       const tmp = this.form.images[index + 1];
       this.$set(this.form.images, index + 1, this.form.images[index]);
       this.$set(this.form.images, index, tmp);
-    },
-    async addImages(event) {
-      event.preventDefault();
-      const files = [...event.target.files];
-      files.forEach(async (file) => {
-        this.form.images.push(await itemUtils.resizeImage(file));
-      });
     },
     changeSpecifics() {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";

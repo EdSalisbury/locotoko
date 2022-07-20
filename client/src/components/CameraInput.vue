@@ -34,6 +34,7 @@
   </div>
 </template>
 <script>
+import itemUtils from "@/components/Item/itemUtils";
 export default {
   data() {
     return {
@@ -57,7 +58,6 @@ export default {
         this.createCameraElement();
       }
     },
-
     async createCameraElement() {
       const widths = [3840, 1920, 1280, 640];
 
@@ -131,6 +131,14 @@ export default {
       context.rotate(Math.PI);
       context.drawImage(image, -image.width / 2, -image.height / 2);
       return canvas;
+    },
+    async addImages(event) {
+      event.preventDefault();
+      const files = [...event.target.files];
+      files.forEach(async (file) => {
+        const image = await itemUtils.resizeImage(file);
+        this.$emit("photoTaken", image);
+      });
     },
   },
 };

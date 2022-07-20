@@ -11,8 +11,13 @@ export default {
     value: String,
   },
   computed: {
-    localValue() {
-      return this.value;
+    localValue: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit("input", value);
+      },
     },
   },
 };
