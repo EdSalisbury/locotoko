@@ -13,14 +13,14 @@
         />
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-        <form-input
-          label="Condition"
-          field="ebayConditionId"
-          v-model="form.ebayConditionId"
-          :options="this.conditions"
-          type="select"
-          @input="changeSpecifics"
-        />
+
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 p-0">
+            <b-col xs="4" class="m-0 pl-0 pr-2">
+              <ConditionInput v-model="form.ebayConditionId" :options="conditions" />
+            </b-col>
+          </b-row>
+        </b-container>
 
         <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="75" />
 
@@ -85,6 +85,7 @@ import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import ConditionInput from "./ConditionInput";
 import itemUtils from "./itemUtils";
 
 import ImageView from "@/components/ImageView";
@@ -134,6 +135,7 @@ export default {
     ShippingInput,
     ImageView,
     CameraInput,
+    ConditionInput,
   },
   async created() {
     const token = this.$cookie.get("token");
