@@ -23,7 +23,7 @@
         </b-container>
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-        <TextInput label="Title" v-model="form.title" />
+        <TextInput label="Title" v-model="form.title" :required="true" />
 
         <b-container fluid class="p-0" style="margin-top: 10px">
           <b-row class="m-0 p-0">
@@ -145,6 +145,7 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+      console.log(this.conditions);
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);

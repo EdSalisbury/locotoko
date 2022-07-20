@@ -15,6 +15,7 @@
           v-model="levels[index]"
           :options="getCategories(levels[index - 1])"
           @change="resetCategories(index)"
+          :required="true"
         />
       </b-col>
     </b-row>

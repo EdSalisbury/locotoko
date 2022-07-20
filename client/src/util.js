@@ -31,7 +31,9 @@ const getEbayConditionOptions = async (token, categoryId) => {
   if (!Array.isArray(ebayConditions)) {
     ebayConditions = [ebayConditions];
   }
-  return ebayConditions.map((condition) => ({ value: condition.ID, text: condition.DisplayName }));
+  let newConditions = ebayConditions.map((condition) => ({ value: condition.ID, text: condition.DisplayName }));
+  newConditions.unshift({ value: "0", text: "None" });
+  return newConditions;
 };
 
 const getCategoryName = async (token, ebayCategoryId) => {
