@@ -4,19 +4,20 @@ $border: #333;
 .section {
   background-color: $highlight;
   border: 2px solid $border;
-  margin: 0px;
+  margin: 10px 0 10px 0;
   padding: 10px;
   border-radius: 0.5rem !important;
 }
 
 .section-row {
   margin: 0;
-  padding: 5px;
+  padding: 0 5px 0 5px;
 }
 
 .section-col {
   margin: 0;
   padding: 2px;
+  // border: 1px solid red;
 }
 
 h1 {

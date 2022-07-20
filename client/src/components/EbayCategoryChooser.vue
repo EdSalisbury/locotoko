@@ -4,7 +4,7 @@
     <b-row class="section-row">
       <b-col
         class="section-col"
-        lg="auto"
+        xs="auto"
         v-for="(level, index) in levels"
         :key="'ebayCategoryCol-' + index + '-' + keyIndex"
       >
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       ebayCategories: [],
-      maxLevels: 10,
+      maxLevels: 6,
       levels: [0],
       keyIndex: 0,
     };
