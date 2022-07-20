@@ -64,11 +64,6 @@ export default {
           label: "Description",
         },
         { key: "specifics", label: "Specifics" },
-
-        {
-          key: "acquisitionDate",
-          label: "Acquisition Date",
-        },
         {
           key: "ebayCategoryName",
           label: "eBay Category",

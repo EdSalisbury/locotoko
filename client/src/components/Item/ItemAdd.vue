@@ -57,8 +57,6 @@
 
         <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
 
-        <form-input field="acquisitionDate" label="Acquisition Date" v-model="form.acquisitionDate" type="date" />
-
         <ShippingInput :weight="form.weight" :size="form.size" />
 
         <b-row>
@@ -109,7 +107,6 @@ export default {
         price: 0.0,
         cost: 0.0,
         description: "",
-        acquisitionDate: "",
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
@@ -229,12 +226,6 @@ export default {
 
       this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
-
-      if (this.payload.acquisitionDate == "") {
-        delete this.payload.acquisitionDate;
-      } else {
-        this.payload.acquisitionDate = new Date(this.payload.acquisitionDate).toISOString();
-      }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
 
