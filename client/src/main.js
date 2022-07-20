@@ -10,6 +10,7 @@ import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import VueCookie from "vue-cookie";
+import "@/assets/global.scss";
 
 Vue.config.productionTip = false;
 

@@ -11,7 +11,7 @@
           v-model="form.templateId"
           @input="changeTemplate"
         />
-        <ebay-category-chooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
+        <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
         <form-input
           label="Condition"

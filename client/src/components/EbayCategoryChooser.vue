@@ -1,20 +1,24 @@
 <template>
-  <b-form-group id="ebayCategory-input-group" label="eBay Category" label-for="ebayCategory-input'">
-    <b-container fluid>
-      <b-row>
-        <b-col v-for="(level, index) in levels" :key="'ebayCategoryCol-' + index + '-' + keyIndex">
-          <b-form-select
-            v-if="index === 0 || (levels[index - 1] > 0 && getCategories(levels[index - 1]).length > 0)"
-            :key="'ebayCategory-' + index + '-' + keyIndex"
-            :id="'ebayCategory-' + index"
-            v-model="levels[index]"
-            :options="getCategories(levels[index - 1])"
-            @change="resetCategories(index)"
-          />
-        </b-col>
-      </b-row>
-    </b-container>
-  </b-form-group>
+  <b-container fluid class="section">
+    <h1>eBay Category</h1>
+    <b-row class="section-row">
+      <b-col
+        class="section-col"
+        lg="auto"
+        v-for="(level, index) in levels"
+        :key="'ebayCategoryCol-' + index + '-' + keyIndex"
+      >
+        <b-form-select
+          v-if="index === 0 || (levels[index - 1] > 0 && getCategories(levels[index - 1]).length > 0)"
+          :key="'ebayCategory-' + index + '-' + keyIndex"
+          :id="'ebayCategory-' + index"
+          v-model="levels[index]"
+          :options="getCategories(levels[index - 1])"
+          @change="resetCategories(index)"
+        />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
