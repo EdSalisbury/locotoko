@@ -3,67 +3,68 @@
     <b-card-title>Add Item</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input
-          label="Template"
-          field="template"
-          :options="this.templateOptions"
-          type="select"
-          v-model="form.templateId"
-          @input="changeTemplate"
-        />
-        <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
-        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
             <b-col xs="4" class="m-0 pl-0 pr-2">
-              <ConditionInput v-model="form.ebayConditionId" :options="conditions" />
+              <SelectInput
+                label="Template"
+                v-model="form.templateId"
+                :options="templateOptions"
+                @input="changeTemplate"
+              />
+            </b-col>
+            <b-col xs="4" class="m-0 pl-0 pr-2">
+              <SelectInput label="Listing User" v-model="form.listingUserId" :options="this.users" />
+            </b-col>
+            <b-col xs="4" class="m-0 pl-0 pr-0">
+              <SelectInput label="Item Owner" v-model="form.ownerId" :options="this.owners" />
+            </b-col>
+          </b-row>
+        </b-container>
+        <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
+        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
+
+        <TextInput label="Title" v-model="form.title" />
+
+        <b-container fluid class="p-0" style="margin-top: 10px">
+          <b-row class="m-0 p-0">
+            <b-col xs="3" class="m-0 pl-0 pr-2">
+              <TextInput label="Quantity" v-model="form.quantity" />
+            </b-col>
+            <b-col xs="3" class="m-0 pl-0 pr-2">
+              <TextInput label="Purchase Price" v-model="form.cost" />
+            </b-col>
+            <b-col xs="3" class="m-0 pl-0 pr-2">
+              <TextInput label="Sale Price" v-model="form.price" />
+            </b-col>
+            <b-col xs="3" class="m-0 pl-0 pr-0">
+              <TextInput label="Location" v-model="form.location" />
             </b-col>
           </b-row>
         </b-container>
 
-        <form-input v-model="form.title" label="Listing Title" field="title" required maxLength="75" />
+        <b-container fluid class="section">
+          <h1>Description</h1>
+          <b-form-textarea v-model="form.description" rows="5" max-rows="10" />
+        </b-container>
 
-        <b-form-group id="description-input-group" label="Description" label-for="description-input">
-          <b-form-textarea
-            id="description-input"
-            v-model="form.description"
-            placeholder="Description"
-            rows="3"
-            max-rows="6"
-          ></b-form-textarea>
-        </b-form-group>
-        <form-input label="Quantity" field="quantity" v-model="form.quantity" type="number" />
-        <form-input field="price" label="Price" v-model="form.price" required />
-        <form-input field="location" label="Location" v-model="form.location" />
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 p-0">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
+              <ShippingInput :weight="form.weight" :size="form.size" />
+            </b-col>
+            <b-col xs="6" class="m-0 pl-0 pr-0">
+              <SelectInput label="Condition" v-model="form.ebayConditionId" :options="conditions" />
+            </b-col>
+          </b-row>
+        </b-container>
 
-        <form-input
-          label="Listing User"
-          field="listingUserId"
-          v-model="form.listingUserId"
-          :options="this.users"
-          type="select"
-          required
-        />
-
-        <form-input
-          label="Owner"
-          field="ownerId"
-          v-model="form.ownerId"
-          :options="this.owners"
-          type="select"
-          required
-        />
-
-        <form-input field="cost" label="Acquisition Cost" v-model="form.cost" />
-
-        <ShippingInput :weight="form.weight" :size="form.size" />
-
-        <b-row>
-          <b-col lg="auto"> <CameraInput @photoTaken="photoTaken" /> </b-col>
-          <b-col>
+        <b-row class="m-0 p-0">
+          <b-col xs="5" class="m-0 pl-0 pr-2">
+            <CameraInput @photoTaken="photoTaken" />
+          </b-col>
+          <b-col xs="auto" class="m-0 pl-0 pr-0">
             <ImageView
-              lg="auto"
               :images="form.images"
               @deleteImage="deleteImage"
               :edit="true"
@@ -81,11 +82,11 @@
 </template>
 
 <script>
-import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
-import ConditionInput from "./ConditionInput";
+import TextInput from "./TextInput";
+import SelectInput from "./SelectInput";
 import itemUtils from "./itemUtils";
 
 import ImageView from "@/components/ImageView";
@@ -94,6 +95,15 @@ import api from "@/api";
 import util from "@/util";
 
 export default {
+  components: {
+    EbayCategoryChooser,
+    SpecificInput,
+    ShippingInput,
+    ImageView,
+    CameraInput,
+    TextInput,
+    SelectInput,
+  },
   data() {
     return {
       users: [],
@@ -127,15 +137,6 @@ export default {
         specifics: [],
       },
     };
-  },
-  components: {
-    FormInput,
-    EbayCategoryChooser,
-    SpecificInput,
-    ShippingInput,
-    ImageView,
-    CameraInput,
-    ConditionInput,
   },
   async created() {
     const token = this.$cookie.get("token");

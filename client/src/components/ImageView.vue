@@ -1,5 +1,6 @@
 <template>
-  <b-container class="frame rounded">
+  <b-container class="section">
+    <h1>Images</h1>
     <b-row class="row">
       <b-col class="col" v-for="(image, index) in localImages.slice(0, 4)" :key="'col_' + index">
         <b-img :id="'thumb_' + index" thumbnail :src="image" class="thumbnail rounded" @click="preview" />

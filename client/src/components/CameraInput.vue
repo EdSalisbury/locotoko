@@ -1,24 +1,27 @@
 <template>
-  <div class="frame rounded">
-    <div class="camera-frame">
-      <video v-show="cameraEnabled" id="camera" ref="camera" class="camera camera-offset" autoplay />
-      <b-img v-if="!cameraEnabled" blank blank-color="black" class="camera" />
-      <b-button v-show="cameraEnabled" @click="takePhoto" variant="info" class="camera-shutter">
-        <b-icon-camera-fill />
-      </b-button>
-      <b-button @click="toggleCamera" variant="info" class="camera-toggle">
-        <b-icon-camera-video-off-fill v-if="cameraEnabled" />
-        <b-icon-camera-video-fill v-else />
-      </b-button>
+  <div class="section">
+    <h1>Camera</h1>
+    <div style="text-align: center; width: 100%">
+      <div class="camera-frame">
+        <video v-show="cameraEnabled" id="camera" ref="camera" class="camera camera-offset" autoplay />
+        <b-img v-if="!cameraEnabled" blank blank-color="black" class="camera" />
+        <b-button v-show="cameraEnabled" @click="takePhoto" variant="info" class="camera-shutter">
+          <b-icon-camera-fill />
+        </b-button>
+        <b-button @click="toggleCamera" variant="info" class="camera-toggle">
+          <b-icon-camera-video-off-fill v-if="cameraEnabled" />
+          <b-icon-camera-video-fill v-else />
+        </b-button>
+      </div>
     </div>
-    <b-container>
+    <b-container style="margin-top: 5px">
       <b-row>
         <b-col xs="4" style="text-align: center">
           <b>Crop:</b>
           <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
         </b-col>
         <b-col xs="4" style="text-align: center"> <b>Rotate 180:</b> <b-form-checkbox v-model="rotate180" /> </b-col>
-        <b-col style="text-align: center"
+        <b-col xs="4" style="text-align: center"
           ><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" />
         </b-col>
       </b-row>
@@ -142,6 +145,7 @@ export default {
   z-index: 0;
   background-color: black;
   border: 1px solid black;
+  text-align: center;
 }
 
 .camera-offset {

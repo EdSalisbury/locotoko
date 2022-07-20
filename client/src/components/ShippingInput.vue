@@ -1,6 +1,6 @@
 <template>
-  <b-container class="rounded" style="background: #eee; border: 1px solid black; margin: 10px 0 10px 0; padding: 10px">
-    <h5>Shipping</h5>
+  <b-container class="section m-0">
+    <h1>Shipping</h1>
     <b-row>
       <b-col xs="6"><WeightInput v-model="localWeight" /> </b-col>
     </b-row>
