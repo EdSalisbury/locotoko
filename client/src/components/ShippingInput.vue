@@ -1,5 +1,5 @@
 <template>
-  <b-container class="section m-0">
+  <b-container fluid class="section m-0">
     <h1>Shipping</h1>
     <b-row>
       <b-col xs="6"><WeightInput v-model="localWeight" /> </b-col>

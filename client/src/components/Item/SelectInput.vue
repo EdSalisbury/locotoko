@@ -1,5 +1,5 @@
 <template>
-  <b-container class="section m-0">
+  <b-container fluid class="section m-0">
     <h1>{{ label }}</h1>
     <b-form-select v-model="localValue" :options="options" :required="required" />
   </b-container>

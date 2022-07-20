@@ -58,7 +58,7 @@
           </b-row>
         </b-container>
 
-        <b-row class="m-0 p-0">
+        <b-row fluid class="m-0 p-0">
           <b-col xs="5" class="m-0 pl-0 pr-2">
             <CameraInput @photoTaken="photoTaken" />
           </b-col>
