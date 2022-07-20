@@ -1,4 +1,4 @@
-$highlight: #eee;
+$highlight: #f7f7ff;
 $border: #333;
 
 .section {
@@ -28,4 +28,17 @@ h1 {
   margin-left: 0;
   margin-right: 0;
   font-weight: bold;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.file-upload {
+  background-color: #33f;
+  color: #fff;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 0.25rem !important;
 }

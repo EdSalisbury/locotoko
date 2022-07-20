@@ -14,7 +14,7 @@
         </b-button>
       </div>
     </div>
-    <b-container style="margin-top: 5px">
+    <b-container style="margin-top: 5px; text-align: center">
       <b-row>
         <b-col xs="4" style="text-align: center">
           <b>Crop:</b>
@@ -25,6 +25,11 @@
           ><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" />
         </b-col>
       </b-row>
+      <label for="file-upload" class="file-upload" style="margin-top: 10px">
+        <b-icon-cloud-upload-fill />
+        Upload Images
+      </label>
+      <input id="file-upload" type="file" accept="image/*" multiple="true" v-on:change="addImages" />
     </b-container>
   </div>
 </template>

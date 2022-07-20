@@ -23,7 +23,6 @@
         </b-container>
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-
         <TextInput label="Title" v-model="form.title" />
 
         <b-container fluid class="p-0" style="margin-top: 10px">
@@ -73,9 +72,8 @@
             />
           </b-col>
         </b-row>
-        <input type="file" accept="image/*" multiple="true" v-on:change="addImages" />
 
-        <b-button type="submit" variant="primary">Add</b-button>
+        <b-button type="submit" variant="primary" style="margin-top: 10px">Add</b-button>
       </b-form>
     </b-card-body>
   </b-card>
@@ -114,13 +112,13 @@ export default {
       conditions: [],
       form: {
         title: "",
-        quantity: 1,
-        price: 0.0,
-        cost: 0.0,
+        quantity: "1",
+        price: "0.0",
+        cost: "0.0",
         description: "",
         listingUserId: this.$cookie.get("userId"),
-        ebayCategoryId: 0,
-        ebayConditionId: 0,
+        ebayCategoryId: "0",
+        ebayConditionId: "0",
         location: "",
         ownerId: "",
         templateId: "",
