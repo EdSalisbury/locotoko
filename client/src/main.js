@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueToast from "vue-toast-notification";
+import VModal from "vue-js-modal";
 import "vue-toast-notification/dist/theme-sugar.css";
 import App from "./App.vue";
 import router from "./router";
@@ -15,6 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(VueCookie);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
+Vue.use(VModal);
 Vue.use(VueToast, { position: "top-right", duration: 5000 });
 
 new Vue({

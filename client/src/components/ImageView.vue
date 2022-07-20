@@ -3,9 +3,9 @@
     <b-row class="row">
       <b-col class="col" v-for="(image, index) in localImages.slice(0, 4)" :key="'col_' + index">
         <b-img :id="'thumb_' + index" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <b-modal centered size="xl" class="img-modal" hide-header hide-footer :id="'img_' + index">
-          <b-img :src="localImages[index]" />
-        </b-modal>
+        <modal :name="'img_' + index" width="800px" height="auto" style="text-align: center">
+          <b-img fluid thumbnail :src="localImages[index]" />
+        </modal>
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
         </b-button>
@@ -29,9 +29,9 @@
     ><b-row class="row">
       <b-col class="col" v-for="(image, index) in localImages.slice(4, 8)" :key="'col_' + index">
         <b-img :id="'thumb_' + index + 4" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <b-modal centered size="xl" class="img-modal" hide-header hide-footer :id="'img_' + index + 4">
-          <b-img :src="localImages[index + 4]" />
-        </b-modal>
+        <modal :name="'img_' + index + 4" width="800px" height="auto" style="text-align: center">
+          <b-img fluid thumbnail :src="localImages[index + 4]" />
+        </modal>
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
         </b-button>
@@ -56,9 +56,9 @@
     <b-row class="row">
       <b-col class="col" v-for="(image, index) in localImages.slice(8, 12)" :key="'col_' + index">
         <b-img :id="'thumb_' + index + 8" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <b-modal centered size="xl" class="img-modal" hide-header hide-footer :id="'img_' + index + 8">
-          <b-img :src="localImages[index + 8]" />
-        </b-modal>
+        <modal :name="'img_' + index + 8" width="800px" height="auto" style="text-align: center">
+          <b-img fluid thumbnail :src="localImages[index + 8]" />
+        </modal>
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
           <b-icon-trash-fill />
         </b-button>
@@ -98,7 +98,8 @@ export default {
   methods: {
     preview(event) {
       const modalId = "img_" + event.target.id.split("_")[1];
-      this.$bvModal.show(modalId);
+      //this.$bvModal.show(modalId);
+      this.$modal.show(modalId);
     },
     deleteImage(index) {
       this.$emit("deleteImage", index);
