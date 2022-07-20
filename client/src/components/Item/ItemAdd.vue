@@ -17,7 +17,7 @@
               <SelectInput label="Listing User" v-model="form.listingUserId" :options="this.users" />
             </b-col>
             <b-col xs="4" class="m-0 pl-0 pr-0">
-              <SelectInput label="Item Owner" v-model="form.ownerId" :options="this.owners" />
+              <SelectInput label="Item Owner" v-model="form.ownerId" :options="this.owners" :required="true" />
             </b-col>
           </b-row>
         </b-container>
@@ -86,7 +86,6 @@ import ShippingInput from "@/components/ShippingInput";
 import TextInput from "./TextInput";
 import SelectInput from "./SelectInput";
 
-
 import ImageView from "@/components/ImageView";
 import CameraInput from "@/components/CameraInput";
 import api from "@/api";
@@ -112,13 +111,13 @@ export default {
       conditions: [],
       form: {
         title: "",
-        quantity: "1",
-        price: "0.0",
-        cost: "0.0",
+        quantity: 1,
+        price: 0.0,
+        cost: 0.0,
         description: "",
         listingUserId: this.$cookie.get("userId"),
-        ebayCategoryId: "0",
-        ebayConditionId: "0",
+        ebayCategoryId: 0,
+        ebayConditionId: 0,
         location: "",
         ownerId: "",
         templateId: "",
@@ -220,6 +219,10 @@ export default {
 
       this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
+
+      if (!this.payload.ownerId) {
+        this.payload.ownerId = "0";
+      }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
 
