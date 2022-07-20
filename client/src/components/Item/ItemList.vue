@@ -78,6 +78,7 @@ export default {
       item.id = "";
       item.title += " Copy";
       item.ebayListingId = "";
+      item.specifics = JSON.stringify(item.specifics);
       await api.createItem(this.token, item);
       this.items = await api.getItems(this.token);
       this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
