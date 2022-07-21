@@ -33,7 +33,7 @@
         <modal :name="'img_' + index + 4" width="800px" height="auto" style="text-align: center">
           <b-img fluid thumbnail :src="localImages[index + 4]" />
         </modal>
-        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
+        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index + 4)">
           <b-icon-trash-fill />
         </b-button>
         <b-button
@@ -60,7 +60,7 @@
         <modal :name="'img_' + index + 8" width="800px" height="auto" style="text-align: center">
           <b-img fluid thumbnail :src="localImages[index + 8]" />
         </modal>
-        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
+        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index + 8)">
           <b-icon-trash-fill />
         </b-button>
         <b-button

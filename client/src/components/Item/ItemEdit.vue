@@ -160,7 +160,7 @@ export default {
       const newFile = util.dataURLtoFile(file, "filename.jpg");
       newImages.push(await itemUtils.resizeImage(newFile));
     });
-    this.form.images = newImages;
+    this.$set(this.form.images, newImages);
   },
   methods: {
     async changeCategory(event) {

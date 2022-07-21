@@ -74,8 +74,10 @@ export default {
           this.$refs.camera.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
           this.cameraEnabled = true;
           break;
-        } catch {
-          // Do nothing
+        } catch (e) {
+          if (width == 640) {
+            console.error("Cannot get stream: " + e);
+          }
         }
       }
       window.addEventListener("keydown", this.shortcutListener);
@@ -110,6 +112,7 @@ export default {
       if (this.rotate180) {
         canvas = this.rotateImage180(canvas);
       }
+      canvas = this.resizeImage(canvas);
 
       this.$emit("photoTaken", canvas.toDataURL("image/jpeg", 0.7));
     },
@@ -130,6 +133,31 @@ export default {
       context.translate(canvas.width / 2, canvas.height / 2);
       context.rotate(Math.PI);
       context.drawImage(image, -image.width / 2, -image.height / 2);
+      return canvas;
+    },
+    resizeImage(image) {
+      const maxSideSize = 1600;
+
+      if (image.width <= maxSideSize && image.height <= maxSideSize) {
+        return image;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      if (image.width > image.height) {
+        if (image.width > maxSideSize) {
+          canvas.height *= maxSideSize / image.width;
+          canvas.width = maxSideSize;
+        }
+      } else {
+        if (image.height > maxSideSize) {
+          canvas.width *= maxSideSize / image.height;
+          canvas.height = maxSideSize;
+        }
+      }
+      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
       return canvas;
     },
     async addImages(event) {
