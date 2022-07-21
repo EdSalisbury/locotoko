@@ -47,6 +47,8 @@ export default {
       const template = await api.getTemplate(this.token, id);
       template.id = "";
       template.name += " Copy";
+      template.specifics = JSON.stringify(template.specifics);
+
       await api.createTemplate(this.token, template);
       this.templates = await api.getTemplates(this.token);
     },
