@@ -47,7 +47,7 @@ export class EbayListingService {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
       }
 
-      const request = {
+      let request = {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
           ConditionID: item.ebayConditionId,
@@ -111,6 +111,7 @@ export class EbayListingService {
         },
       };
 
+      request = this.encodeSpecialChars(request);
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
 
@@ -170,7 +171,7 @@ export class EbayListingService {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
       }
 
-      const request = {
+      let request = {
         Item: {
           ItemID: item.ebayListingId,
           Title: item.title + "-" + item.id.slice(-4),
@@ -234,11 +235,18 @@ export class EbayListingService {
           },
         },
       };
+      request = this.encodeSpecialChars(request);
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
       throw new BadRequestException(e.meta.Errors);
     }
+  }
+
+  encodeSpecialChars(data: Object) {
+    let strData = JSON.stringify(data);
+    strData = strData.replaceAll("&", "&amp;");
+    return JSON.parse(strData);
   }
 
   async getEbayListing(itemId: string) {
