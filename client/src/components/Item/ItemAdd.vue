@@ -195,7 +195,7 @@ export default {
         this.form.size.width = this.template.shipSizeWidthInches || 0;
         this.form.size.height = this.template.shipSizeHeightInches || 0;
         this.form.size.length = this.template.shipSizeDepthInches || 0;
-
+        this.form.location = this.template.location || "";
         this.changeSpecifics();
       }
     },
