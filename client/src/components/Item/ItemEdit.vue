@@ -86,8 +86,8 @@ import ShippingInput from "@/components/ShippingInput";
 import itemUtils from "./itemUtils";
 import ImageView from "@/components/ImageView";
 import CameraInput from "@/components/CameraInput";
-import TextInput from "./TextInput";
-import SelectInput from "./SelectInput";
+import TextInput from "@/components/TextInput";
+import SelectInput from "@/components/SelectInput";
 
 import api from "@/api";
 import util from "@/util";

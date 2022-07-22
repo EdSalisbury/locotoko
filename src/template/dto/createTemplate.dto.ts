@@ -59,4 +59,8 @@ export class CreateTemplateDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsString()
+  @IsOptional()
+  location: string;
 }

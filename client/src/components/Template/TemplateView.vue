@@ -31,6 +31,7 @@ export default {
         "specifics",
         "title",
         "description",
+        "location",
         {
           key: "weightPounds",
           label: "Weight Pounds",

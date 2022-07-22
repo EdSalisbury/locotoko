@@ -100,7 +100,7 @@ model Template {
   shipSizeHeightInches Int?
   shipSizeWidthInches Int?
   shipSizeDepthInches Int?
-  
+  location String?
   title String?
   description String?
   

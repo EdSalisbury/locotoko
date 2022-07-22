@@ -12,6 +12,8 @@
         <form-input v-model="form.title" label="Title" field="title" type="text" />
 
         <form-input v-model="form.description" label="Description" field="description" type="textarea" />
+        <TextInput v-model="form.location" label="Location" />
+
         <ShippingInput :weight="form.weight" :size="form.size" />
 
         <b-button type="submit" variant="primary">Update</b-button>
@@ -27,6 +29,7 @@ import FormInput from "@/components/FormInput";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import TextInput from "@/components/TextInput";
 
 export default {
   components: {
@@ -34,6 +37,7 @@ export default {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
+    TextInput,
   },
   data() {
     return {
@@ -52,6 +56,7 @@ export default {
         },
         title: "",
         description: "",
+        location: "",
       },
     };
   },

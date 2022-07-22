@@ -83,8 +83,8 @@
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
-import TextInput from "./TextInput";
-import SelectInput from "./SelectInput";
+import TextInput from "@/components/TextInput";
+import SelectInput from "@/components/SelectInput";
 
 import ImageView from "@/components/ImageView";
 import CameraInput from "@/components/CameraInput";

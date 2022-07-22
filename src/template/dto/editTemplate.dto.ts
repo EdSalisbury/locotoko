@@ -59,4 +59,8 @@ export class EditTemplateDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsString()
+  @IsOptional()
+  location: string;
 }
