@@ -264,9 +264,20 @@ export default {
       await response.json();
 
       if (this.form.ebayListingId !== null) {
-        await api.updateEbayListing(token, itemId, {
+        const response = await api.updateEbayListing(token, itemId, {
           itemId: itemId,
         });
+
+        if (response.status == 201) {
+          this.$toast.success("Update Listing Successful");
+        } else {
+          const err = await response.json();
+          const msgs = err.message.map((msg) => "<li>" + msg.ShortMessage + "</li>");
+
+          let msg = "<ul>" + msgs.join("") + "</ul>";
+          this.$toast.error("Update Listing Unsuccessful!</br>Reasons:</br>" + msg, { duration: 0 });
+          console.error(err);
+        }
       }
 
       this.$router.push({ path: "/items" });
