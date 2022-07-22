@@ -268,7 +268,7 @@ export default {
           itemId: itemId,
         });
 
-        if (response.status == 201) {
+        if (response.status == 200) {
           this.$toast.success("Update Listing Successful");
         } else {
           const err = await response.json();

@@ -111,7 +111,7 @@ export class EbayListingService {
         },
       };
 
-      request = this.encodeSpecialChars(request);
+      //request = this.encodeSpecialChars(request);
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
 
@@ -235,7 +235,7 @@ export class EbayListingService {
           },
         },
       };
-      request = this.encodeSpecialChars(request);
+      //request = this.encodeSpecialChars(request);
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
