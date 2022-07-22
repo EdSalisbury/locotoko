@@ -1,34 +1,29 @@
 <template>
   <b-card>
-    <b-card-title>Owner</b-card-title>
+    <b-card-title>Add Owner</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input
-          v-model="form.name"
-          label="Name"
-          field="name"
-          required
-        />
-        <form-input
-          v-model="form.rate"
-          label="Rate"
-          field="rate"
-          required
-        />
-
-        <b-button type="submit" variant="primary"
-          >Add</b-button
-        >
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 p-0">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
+              <TextInput label="Name" v-model="form.name" required />
+            </b-col>
+            <b-col xs="6" class="m-0 pl-0 pr-0">
+              <TextInput style="margin-top: 10px" label="Rate" v-model="form.rate" required />
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-button type="submit" variant="primary">Add</b-button>
       </b-form>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
-import FormInput from "@/components/FormInput";
+import TextInput from "@/components/TextInput";
 export default {
   components: {
-    FormInput,
+    TextInput,
   },
   data() {
     return {
@@ -42,20 +37,15 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
 
-      const payload = JSON.parse(
-        JSON.stringify(this.form),
-      );
+      const payload = JSON.parse(JSON.stringify(this.form));
 
       payload.rate = parseFloat(payload.rate);
-      const url =
-        process.env.VUE_APP_API_BASE_URL +
-        "/api/v1/owners";
+      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/owners";
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer " + this.$cookie.get("token"),
+          Authorization: "Bearer " + this.$cookie.get("token"),
         },
         body: JSON.stringify(payload),
       });

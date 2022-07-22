@@ -3,34 +3,30 @@
     <b-card-title>Login</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input
-          v-model="form.email"
-          label="Email Address"
-          field="email"
-          type="email"
-          required
-        />
-        <form-input
-          v-model="form.password"
-          label="Password"
-          field="password"
-          type="password"
-          required
-        />
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 p-0">
+            <b-col class="m-0 p-0">
+              <TextInput label="Email" v-model="form.email" required />
+            </b-col>
+          </b-row>
+          <b-row class="p-0" style="margin: 10px 0 10px 0">
+            <b-col class="m-0 p-0">
+              <TextInput label="Password" v-model="form.password" password required />
+            </b-col>
+          </b-row>
+        </b-container>
 
-        <b-button type="submit" variant="primary"
-          >Login</b-button
-        >
+        <b-button type="submit" variant="primary">Login</b-button>
       </b-form>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
-import FormInput from "@/components/FormInput";
+import TextInput from "@/components/TextInput";
 export default {
   components: {
-    FormInput,
+    TextInput,
   },
   data() {
     return {
@@ -43,9 +39,7 @@ export default {
   methods: {
     async onSubmit(event) {
       event.preventDefault();
-      const url =
-        process.env.VUE_APP_API_BASE_URL +
-        "/api/v1/auth/login";
+      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/auth/login";
       const response = await fetch(url, {
         method: "POST",
         headers: {
