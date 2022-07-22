@@ -20,7 +20,8 @@ const getEbayCategoryOptions = async (token) => {
 };
 
 const getTemplateOptions = async (token) => {
-  const templates = await api.getTemplates(token);
+  let templates = await api.getTemplates(token);
+  templates.sort((a, b) => (a.name > b.name ? 1 : -1));
   let newTemplates = templates.map(optionsMap);
   newTemplates.unshift({ value: "0", text: "None" });
   return newTemplates;
