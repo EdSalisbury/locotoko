@@ -58,6 +58,7 @@ export default {
         "quantity",
         { key: "ebayCategoryName", label: "Category" },
         { key: "location", label: "Location" },
+        { key: "price", label: "Price" },
         {
           key: "ebayListingId",
           label: "eBay Listing ID",

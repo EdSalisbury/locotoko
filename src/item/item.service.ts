@@ -28,6 +28,7 @@ export class ItemService {
         location: true,
         quantity: true,
         updatedAt: true,
+        price: true,
       },
     });
     return items.map((item) => ({
