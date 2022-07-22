@@ -39,14 +39,14 @@ export default {
   data() {
     return {
       cameraEnabled: false,
-      cropFactor: "1",
+      cropFactor: "1.333",
       cropOptions: [
         { item: "0", name: "None" },
         { item: "1.333", name: "4:3" },
         { item: "1", name: "Square" },
       ],
-      rotate180: true,
-      brightnessBoost: true,
+      rotate180: false,
+      brightnessBoost: false,
     };
   },
   methods: {
