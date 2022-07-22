@@ -1,21 +1,26 @@
 <template>
   <b-card>
-    <b-card-title>Template</b-card-title>
+    <b-card-title>Edit Template</b-card-title>
     <b-card-body>
       <b-form @submit="onSubmit">
-        <form-input v-model="form.name" label="Name" field="name" required />
-
+        <TextInput label="Name" v-model="form.name" required />
         <ebay-category-chooser v-model="form.ebayCategoryId" />
-
         <SpecificInput v-model="form.specifics" />
+        <TextInput label="Title" v-model="form.title" />
 
-        <form-input v-model="form.title" label="Title" field="title" type="text" />
+        <b-container fluid class="section">
+          <h1>Description</h1>
+          <b-form-textarea v-model="form.description" rows="5" max-rows="10" />
+        </b-container>
 
-        <form-input v-model="form.description" label="Description" field="description" type="textarea" />
-        <TextInput v-model="form.location" label="Location" />
-
-        <ShippingInput :weight="form.weight" :size="form.size" />
-
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 p-0">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
+              <ShippingInput :weight="form.weight" :size="form.size" />
+            </b-col>
+            <b-col xs="6" class="m-0 pl-0 pr-0"> <TextInput v-model="form.location" label="Location" /></b-col>
+          </b-row>
+        </b-container>
         <b-button type="submit" variant="primary">Update</b-button>
       </b-form>
     </b-card-body>
@@ -24,7 +29,6 @@
 
 <script>
 import api from "@/api";
-import FormInput from "@/components/FormInput";
 
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
@@ -33,7 +37,6 @@ import TextInput from "@/components/TextInput";
 
 export default {
   components: {
-    FormInput,
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
