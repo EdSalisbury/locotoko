@@ -98,13 +98,17 @@ export class ItemService {
         throw new BadRequestException();
       }
     }
-
-    const item = await this.prisma.item.create({
-      data: {
-        ...dto,
-      },
-    });
-    return item;
+    try {
+      const item = await this.prisma.item.create({
+        data: {
+          ...dto,
+        },
+      });
+      return item;
+    } catch (e) {
+      console.error("Cannot create item: " + e);
+      throw new BadRequestException(e);
+    }
   }
 
   async editItemById(itemId: string, dto: EditItemDto) {

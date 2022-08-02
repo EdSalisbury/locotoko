@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       ebayCategories: [],
-      maxLevels: 6,
+      maxLevels: 10,
       levels: [0],
       keyIndex: 0,
     };

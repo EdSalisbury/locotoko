@@ -33,8 +33,10 @@ export class EbayListingService {
       let imageUrls = [];
       // Upload the images
       for (const image of item.images) {
-        const url = await this.uploadImage(image);
-        imageUrls.push(url);
+        if (image !== "") {
+          const url = await this.uploadImage(image);
+          imageUrls.push(url);
+        }
       }
 
       let shippingPolicy = this.config.get(
@@ -136,6 +138,7 @@ export class EbayListingService {
       });
     } catch (e) {
       console.error(e);
+      console.log(JSON.stringify(e.meta));
       throw new BadRequestException(e.meta.Errors);
     }
   }
