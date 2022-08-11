@@ -25,6 +25,8 @@ export class ItemService {
         title: true,
         ebayCategoryId: true,
         ebayListingId: true,
+        ownerId: true,
+        listingUserId: true,
         location: true,
         quantity: true,
         updatedAt: true,
@@ -75,7 +77,7 @@ export class ItemService {
     });
 
     if (!listingUser) {
-      throw new BadRequestException();
+      throw new BadRequestException("Invalid listing user ID");
     }
 
     const owner = await this.prisma.owner.findUnique({
@@ -85,7 +87,7 @@ export class ItemService {
     });
 
     if (!owner) {
-      throw new BadRequestException();
+      throw new BadRequestException("Invalid Owner ID");
     }
 
     if (dto.shippingUserId) {
