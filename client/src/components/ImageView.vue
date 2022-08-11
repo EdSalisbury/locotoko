@@ -61,7 +61,7 @@
           <b-img fluid thumbnail :src="localImages[index + 8]" />
         </modal>
         <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index + 8)">
-          <b-icon-trash-fill />
+          <b-icon-trash-fill class="icon" />
         </b-button>
         <b-button
           class="leftButton"

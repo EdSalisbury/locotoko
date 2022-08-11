@@ -20,7 +20,10 @@
           <b>Crop:</b>
           <b-form-radio-group v-model="cropFactor" :options="cropOptions" value-field="item" text-field="name" />
         </b-col>
-        <b-col xs="4" style="text-align: center"> <b>Rotate 180:</b> <b-form-checkbox v-model="rotate180" /> </b-col>
+        <b-col xs="4" style="text-align: center">
+          <b>Rotate:</b>
+          <b-form-radio-group v-model="rotate" :options="rotateOptions" value-field="item" text-field="name" />
+        </b-col>
         <b-col xs="4" style="text-align: center"
           ><b> Boost Brightness:</b> <b-form-checkbox v-model="brightnessBoost" />
         </b-col>
@@ -45,7 +48,13 @@ export default {
         { item: "1.333", name: "4:3" },
         { item: "1", name: "Square" },
       ],
-      rotate180: false,
+      rotate: "0",
+      rotateOptions: [
+        { item: "0", name: "None" },
+        { item: "90", name: "90°" },
+        { item: "180", name: "180°" },
+        { item: "270", name: "270°" },
+      ],
       brightnessBoost: false,
     };
   },
@@ -109,8 +118,8 @@ export default {
       if (this.cropFactor !== "0") {
         canvas = this.cropImage(canvas, parseFloat(this.cropFactor));
       }
-      if (this.rotate180) {
-        canvas = this.rotateImage180(canvas);
+      if (this.rotate !== "0") {
+        canvas = this.rotateImage(canvas, parseInt(this.rotate));
       }
       canvas = this.resizeImage(canvas);
 
@@ -132,6 +141,21 @@ export default {
       const context = canvas.getContext("2d");
       context.translate(canvas.width / 2, canvas.height / 2);
       context.rotate(Math.PI);
+      context.drawImage(image, -image.width / 2, -image.height / 2);
+      return canvas;
+    },
+    rotateImage(image, degrees) {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      if (degrees === 90 || degrees === 270) {
+        canvas.width = image.height;
+        canvas.height = image.width;
+      }
+
+      const context = canvas.getContext("2d");
+      context.translate(canvas.width / 2, canvas.height / 2);
+      context.rotate(degrees * (Math.PI / 180.0));
       context.drawImage(image, -image.width / 2, -image.height / 2);
       return canvas;
     },
