@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.11.10",
+  "version": "0.11.11",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -21,7 +21,7 @@
     "db:prod:up": "docker compose up prod-db -d",
     "db:prod:restart": "yarn db:prod:rm && yarn db:dev:up && sleep 1 && yarn prisma:prod:deploy",
     "prebuild": "rimraf dist",
-    "deploy": "yarn version && VERSION=`grep '\"version\"' package.json | awk -F \\\" '{print $4}'` && cd client && yarn version --no-git-tag-version --new-version $VERSION && cd .. && git add client/package.json && git commit -m 'Updated version to $VERSION' && git tag $VERSION && git push origin $VERSION && docker build -t edsalisbury/locotoko:$VERSION . && docker tag edsalisbury/locotoko:$VERSION edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$VERSION && docker push edsalisbury/locotoko:latest",
+    "deploy": "yarn version && VERSION=`grep '\"version\"' package.json | awk -F \\\" '{print $4}'` && cd client && yarn version --no-git-tag-version --new-version $VERSION && cd .. && git add client/package.json && git commit -m 'Updated version to $VERSION' && git tag $VERSION && git push origin && git push origin $VERSION && docker build -t edsalisbury/locotoko:$VERSION . && docker tag edsalisbury/locotoko:$VERSION edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$VERSION && docker push edsalisbury/locotoko:latest",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
