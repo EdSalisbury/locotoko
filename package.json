@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -21,7 +21,7 @@
     "db:prod:up": "docker compose up prod-db -d",
     "db:prod:restart": "yarn db:prod:rm && yarn db:dev:up && sleep 1 && yarn prisma:prod:deploy",
     "prebuild": "rimraf dist",
-    "deploy": "yarn version && VERSION=`grep '\"version\"' package.json | awk -F \\\" '{print $4}'` && cd client && yarn version --no-git-tag-version --new-version $VERSION && git tag $VERSION && git push origin && cd .. && docker build -t edsalisbury/locotoko:$VERSION . && docker tag edsalisbury/locotoko:$VERSION edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$VERSION && docker push edsalisbury/locotoko:latest",
+    "deploy": "yarn version && VERSION=`grep '\"version\"' package.json | awk -F \\\" '{print $4}'` && cd client && yarn version --no-git-tag-version --new-version $VERSION && git tag -a $VERSION && git push origin && cd .. && docker build -t edsalisbury/locotoko:$VERSION . && docker tag edsalisbury/locotoko:$VERSION edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$VERSION && docker push edsalisbury/locotoko:latest",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
