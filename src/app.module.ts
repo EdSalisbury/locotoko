@@ -13,6 +13,7 @@ import { TemplateModule } from "./template/template.module";
 import { EbayListingModule } from "./ebay-listing/ebay-listing.module";
 import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
 import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
+import { EbaySellerEventModule } from "./ebay-seller-event/ebay-seller-event.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -30,6 +31,7 @@ import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
     EbayListingModule,
     EbayCategoryModule,
     EbayConditionModule,
+    EbaySellerEventModule,
   ],
 })
 export class AppModule {}

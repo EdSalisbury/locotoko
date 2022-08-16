@@ -1,0 +1,10 @@
+{
+  "name": "ebay",
+  "version": "1.0.0",
+  "description": "eBay Update Microservice",
+  "main": "index.js",
+  "repository": "https://github.com/EdSalisbury/locotoko",
+  "author": "Ed Salisbury",
+  "license": "MIT",
+  "private": true
+}
