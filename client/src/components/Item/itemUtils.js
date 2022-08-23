@@ -10,7 +10,12 @@ const listItem = async (id, context) => {
     context.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   } else {
     const err = await response.json();
-    const errMsgs = [err];
+    let errMsgs = [];
+    if (err.message) {
+      errMsgs = err.message;
+    } else {
+      errMsgs = [err];
+    }
     const msgs = errMsgs.map((msg) => "<li>" + msg.ShortMessage + "</li>");
     let msg = "<ul>" + msgs.join("") + "</ul>";
     context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + msg, { duration: 0 });
