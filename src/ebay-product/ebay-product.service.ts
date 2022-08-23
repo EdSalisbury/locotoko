@@ -1,18 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { EbayService } from "../ebay/ebay.service";
+const eBay = require("ebay-node-api");
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class EbayProductService {
-  constructor(private ebay: EbayService) {}
+  constructor(private config: ConfigService) {}
 
   async getEbayProduct(upc: string) {
-    const request = {
-      ProductID: {
-        "#value": upc,
-        "@_type": "UPC",
-      },
-    };
-    const items = await this.ebay.shopping.FindProducts(request);
-    return items[0];
+    const ebay = new eBay({
+      clientID: this.config.get("EBAY_APP_ID"),
+    });
+
+    const results = await ebay.findItemsByKeywords(upc);
+    return results[0];
   }
 }
