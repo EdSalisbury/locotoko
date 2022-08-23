@@ -57,6 +57,10 @@ export class EditItemDto {
 
   @IsString()
   @IsOptional()
+  ownerId: string;
+
+  @IsString()
+  @IsOptional()
   shippingUserId: string;
 
   @IsNumber()
