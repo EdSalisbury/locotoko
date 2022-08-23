@@ -35,14 +35,6 @@ export class CreateItemDto {
   @IsOptional()
   soldPrice: number;
 
-  @IsDecimal()
-  @IsOptional()
-  cost: number;
-
-  @IsDateString()
-  @IsOptional()
-  acquisitionDate: string;
-
   @IsDateString()
   @IsOptional()
   soldAt: string;

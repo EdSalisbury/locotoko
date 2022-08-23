@@ -31,10 +31,7 @@ model Item {
   ebayCategoryId Int
   ebayListingId String?
   ebayListing EbayListing? @relation("itemEbayListing", fields: [ebayListingId], references: [id])
-  price Decimal? @db.Money
-  soldPrice Decimal? @db.Money
-  cost Decimal? @db.Money
-  acquisitionDate DateTime?
+  price Decimal @db.Money
   soldAt DateTime?
   shippedAt DateTime?
   ebayConditionId Int @default(0)
@@ -59,6 +56,7 @@ model Item {
   specifics String?
   templateId String?
   images String[]
+  acquisitionId String?
 
   @@map("items")
 }
@@ -105,6 +103,15 @@ model Template {
   description String?
   
   @@map("templates")
+}
+
+model Acquisition {
+  id String @id
+  name String
+  price Decimal @db.Money
+  date DateTime
+
+  @@map("acquisitions")
 }
 
 model EbayListing {

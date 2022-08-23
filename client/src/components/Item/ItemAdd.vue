@@ -31,9 +31,6 @@
               <TextInput label="Quantity" v-model="form.quantity" />
             </b-col>
             <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Purchase Price" v-model="form.cost" />
-            </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Sale Price" v-model="form.price" />
             </b-col>
             <b-col xs="3" class="m-0 pl-0 pr-0">
@@ -113,7 +110,6 @@ export default {
         title: "",
         quantity: 1,
         price: 0.0,
-        cost: 0.0,
         description: "",
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
@@ -218,7 +214,6 @@ export default {
       this.payload.shipSizeHeightInches = parseInt(this.payload.size.height);
       this.payload.shipSizeDepthInches = parseInt(this.payload.size.length);
 
-      this.payload.cost = parseFloat(this.payload.cost).toFixed(2);
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
 
       if (!this.payload.ownerId) {
