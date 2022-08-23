@@ -78,7 +78,7 @@ export default {
           label: "Shipping User",
         },
         { key: "ownerId", label: "Owner" },
-
+        { key: "acquisitionId", label: "Acquisition ID" },
         {
           key: "shipWeightPounds",
           label: "Ship Weight Pounds",

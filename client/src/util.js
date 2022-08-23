@@ -27,6 +27,18 @@ const getTemplateOptions = async (token) => {
   return newTemplates;
 };
 
+const getAcquisitionOptions = async (token) => {
+  let acquisitions = await api.getAcquisitions(token);
+  acquisitions.sort((a, b) => (a.date < b.date ? 1 : -1));
+  let newAcquisitions = acquisitions.map((item) => ({
+    value: item.id,
+    text: `${item.name} - ${item.date.split("T")[0]}`,
+  }));
+
+  newAcquisitions.unshift({ value: "0", text: "None" });
+  return newAcquisitions;
+};
+
 const getEbayConditionOptions = async (token, categoryId) => {
   let ebayConditions = await api.getEbayConditions(token, categoryId);
   if (!Array.isArray(ebayConditions)) {
@@ -98,6 +110,7 @@ export default {
   getUserOptions,
   getEbayCategoryOptions,
   getTemplateOptions,
+  getAcquisitionOptions,
   getEbayConditionOptions,
   getCategoryName,
   toast,

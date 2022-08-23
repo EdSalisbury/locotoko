@@ -49,8 +49,19 @@
             <b-col xs="6" class="m-0 pl-0 pr-2">
               <ShippingInput :weight="form.weight" :size="form.size" />
             </b-col>
-            <b-col xs="6" class="m-0 pl-0 pr-0">
-              <SelectInput label="Condition" v-model="form.ebayConditionId" :options="conditions" />
+            <b-col xs="6" class="m-0 p-0">
+              <b-container fluid class="m-0 p-0">
+                <b-row class="m-0 p-0">
+                  <b-col class="m-0 p-0">
+                    <SelectInput label="Condition" v-model="form.ebayConditionId" :options="conditions" />
+                  </b-col>
+                </b-row>
+                <b-row class="m-0 pt-2">
+                  <b-col class="m-0 p-0">
+                    <SelectInput label="Acquisition" v-model="form.acquisitionId" :options="acquisitions" />
+                  </b-col>
+                </b-row>
+              </b-container>
             </b-col>
           </b-row>
         </b-container>
@@ -108,6 +119,7 @@ export default {
       templates: [],
       templateOptions: [],
       conditions: [],
+      acquisitions: [],
       form: {
         title: "",
         quantity: 1,
@@ -119,6 +131,7 @@ export default {
         ownerId: "",
         oldTemplateId: "",
         templateId: "",
+        acquisitionId: "",
         weight: {
           pounds: 0,
           ounces: 0,
@@ -142,6 +155,8 @@ export default {
     this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
+    this.acquisitions = await util.getAcquisitionOptions(token);
+
     this.form = await api.getItem(token, itemId);
     this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
