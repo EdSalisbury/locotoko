@@ -106,7 +106,7 @@ model Template {
 }
 
 model Acquisition {
-  id String @id
+  id String @id @default(cuid())
   name String
   price Decimal @db.Money
   date DateTime
