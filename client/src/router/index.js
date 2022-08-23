@@ -7,19 +7,20 @@ import OwnerAdd from "@/components/OwnerAdd";
 import OwnerView from "@/components/OwnerView";
 import { ItemAdd, ItemEdit, ItemView, ItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
+import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "../components/Acquisition";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "items",
-    component: ItemList,
-  },
-  {
     path: "/login",
     name: "login",
     component: LoginForm,
+  },
+  {
+    path: "/",
+    name: "items",
+    component: ItemList,
   },
   {
     path: "/register",
@@ -61,7 +62,6 @@ const routes = [
     name: "add owner",
     component: OwnerAdd,
   },
-
   {
     path: "/templates/:id",
     name: "template view",
@@ -81,6 +81,26 @@ const routes = [
     path: "/editTemplate/:id",
     name: "edit template",
     component: TemplateEdit,
+  },
+  {
+    path: "/acquisitions/:id",
+    name: "acquisition view",
+    component: AcquisitionView,
+  },
+  {
+    path: "/acquisitions",
+    name: "acquisitions",
+    component: AcquisitionList,
+  },
+  {
+    path: "/addAcquisition",
+    name: "add acquisition",
+    component: AcquisitionAdd,
+  },
+  {
+    path: "/editAcquisition/:id",
+    name: "edit acquisition",
+    component: AcquisitionEdit,
   },
 ];
 

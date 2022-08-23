@@ -105,6 +105,9 @@ export class EditItemDto {
   templateId: string;
 
   @IsOptional()
+  acquisitionId: string;
+
+  @IsOptional()
   @IsString()
   location: string;
 }

@@ -182,6 +182,42 @@ const getEbayConditions = async (token, categoryId) => {
   return await response.json();
 };
 
+const getAcquisitions = async (token) => {
+  const response = await fetch(apiUrl("acquisitions"), apiHeaders(token));
+
+  return await response.json();
+};
+
+const getAcquisition = async (token, id) => {
+  const response = await fetch(apiUrl("acquisitions", id), apiHeaders(token));
+  return await response.json();
+};
+
+const createAcquisition = async (token, acquisition) => {
+  const response = await fetch(apiUrl("acquisitions"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(acquisition),
+  });
+  return await response.json();
+};
+
+const updateAcquisition = async (token, id, acquisition) => {
+  const response = await fetch(apiUrl("acquisitions", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(acquisition),
+  });
+  return await response.json();
+};
+
+const deleteAcquisition = async (token, id) => {
+  return await fetch(apiUrl("acquisitions", id), {
+    method: "DELETE",
+    ...apiHeaders(token),
+  });
+};
+
 export default {
   getItems,
   getItem,
@@ -197,6 +233,11 @@ export default {
   createTemplate,
   updateTemplate,
   deleteTemplate,
+  getAcquisitions,
+  getAcquisition,
+  createAcquisition,
+  updateAcquisition,
+  deleteAcquisition,
   createEbayListing,
   updateEbayListing,
   getEbayConditions,

@@ -105,6 +105,9 @@ export class CreateItemDto {
   templateId: string;
 
   @IsOptional()
+  acquisitionId: string;
+
+  @IsOptional()
   @IsString()
   location: string;
 }
