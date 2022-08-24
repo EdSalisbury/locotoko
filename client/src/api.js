@@ -219,8 +219,7 @@ const deleteAcquisition = async (token, id) => {
 };
 
 const lookupProduct = async (token, upc) => {
-  console.log(upc);
-  const response = await fetch(apiUrl("ebayProducts", upc), apiHeaders(token));
+  const response = await fetch(apiUrl("products", upc), apiHeaders(token));
   return await response.json();
 };
 

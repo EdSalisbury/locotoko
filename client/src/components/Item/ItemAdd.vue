@@ -14,7 +14,7 @@
               />
             </b-col>
             <b-col xs="6" class="m-0 p-0">
-              <TextInput label="UPC" v-model="form.upc" @input="lookupProduct" />
+              <TextInput label="UPC" v-model="form.upc" @input="lookupProduct" v-on:keydown.enter.native.prevent />
             </b-col>
           </b-row>
         </b-container>
@@ -61,7 +61,12 @@
               <b-container fluid class="m-0 p-0">
                 <b-row class="m-0 p-0">
                   <b-col class="m-0 p-0">
-                    <SelectInput label="Condition" v-model="form.ebayConditionId" :options="conditions" />
+                    <SelectInput
+                      label="Condition"
+                      v-model="form.ebayConditionId"
+                      :options="conditions"
+                      @input="changeSpecifics"
+                    />
                   </b-col>
                 </b-row>
                 <b-row class="m-0 pt-2">
@@ -164,7 +169,6 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
-      console.log(this.conditions);
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
@@ -221,7 +225,18 @@ export default {
     async lookupProduct(upc) {
       if (upc.toString().length == 12) {
         const result = await api.lookupProduct(this.token, upc.toString());
-        console.log(result);
+        if (result.releases) {
+          const release = result.releases[0];
+          this.form.specifics = [];
+          this.form.specifics.push({ key: "Release Title", value: release.title });
+          this.form.specifics.push({ key: "Artist", value: release["artist-credit"][0].name });
+          this.form.specifics.push({ key: "UPC", value: upc });
+          this.form.specifics.push({ key: "EAN", value: upc });
+          this.form.specifics.push({ key: "Format", value: release.media[0].format });
+          this.form.specifics.push({ key: "Record Label", value: release["label-info"][0].label.name });
+          this.form.specifics.push({ key: "Release Year", value: release.date.split("-")[0] });
+          this.changeSpecifics();
+        }
       }
     },
     photoTaken(value) {
