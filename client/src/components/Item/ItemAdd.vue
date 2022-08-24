@@ -5,7 +5,7 @@
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
-            <b-col xs="4" class="m-0 pl-0 pr-2">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
               <SelectInput
                 label="Template"
                 v-model="form.templateId"
@@ -13,10 +13,17 @@
                 @input="changeTemplate"
               />
             </b-col>
-            <b-col xs="4" class="m-0 pl-0 pr-2">
+            <b-col xs="6" class="m-0 p-0">
+              <TextInput label="UPC" v-model="form.upc" @input="lookupProduct" />
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container fluid class="m-0 p-0">
+          <b-row class="m-0 pt-2">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
               <SelectInput label="Listing User" v-model="form.listingUserId" :options="this.users" />
             </b-col>
-            <b-col xs="4" class="m-0 pl-0 pr-0">
+            <b-col xs="6" class="m-0 pl-0 pr-0">
               <SelectInput label="Item Owner" v-model="form.ownerId" :options="this.owners" :required="true" />
             </b-col>
           </b-row>
@@ -147,6 +154,7 @@ export default {
   },
   async created() {
     const token = this.$cookie.get("token");
+    this.token = this.$cookie.get("token");
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
     this.users = await util.getUserOptions(token);
@@ -208,6 +216,12 @@ export default {
         this.form.size.length = this.template.shipSizeDepthInches || 0;
         this.form.location = this.template.location || "";
         this.changeSpecifics();
+      }
+    },
+    async lookupProduct(upc) {
+      if (upc.toString().length == 12) {
+        const result = await api.lookupProduct(this.token, upc.toString());
+        console.log(result);
       }
     },
     photoTaken(value) {

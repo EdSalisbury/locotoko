@@ -108,6 +108,9 @@ export class EditItemDto {
   acquisitionId: string;
 
   @IsOptional()
+  upc: string;
+
+  @IsOptional()
   @IsString()
   location: string;
 }

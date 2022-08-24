@@ -218,6 +218,12 @@ const deleteAcquisition = async (token, id) => {
   });
 };
 
+const lookupProduct = async (token, upc) => {
+  console.log(upc);
+  const response = await fetch(apiUrl("ebayProducts", upc), apiHeaders(token));
+  return await response.json();
+};
+
 export default {
   getItems,
   getItem,
@@ -241,4 +247,5 @@ export default {
   createEbayListing,
   updateEbayListing,
   getEbayConditions,
+  lookupProduct,
 };

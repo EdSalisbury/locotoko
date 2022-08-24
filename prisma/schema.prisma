@@ -57,7 +57,8 @@ model Item {
   templateId String?
   images String[]
   acquisitionId String?
-
+  upc String?
+  
   @@map("items")
 }
 
