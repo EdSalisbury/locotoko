@@ -45,6 +45,7 @@
     "@nestjs/serve-static": "^2.2.2",
     "@prisma/client": "^3.12.0",
     "argon2": "^0.28.5",
+    "axios": "^0.27.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "ebay-api": "^7.0.0",
