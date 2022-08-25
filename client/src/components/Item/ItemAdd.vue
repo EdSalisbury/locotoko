@@ -225,16 +225,11 @@ export default {
     async lookupProduct(upc) {
       if (upc.toString().length == 12) {
         const result = await api.lookupProduct(this.token, upc.toString());
-        if (result.releases) {
-          const release = result.releases[0];
+        if (result) {
           this.form.specifics = [];
-          this.form.specifics.push({ key: "Release Title", value: release.title });
-          this.form.specifics.push({ key: "Artist", value: release["artist-credit"][0].name });
-          this.form.specifics.push({ key: "UPC", value: upc });
-          this.form.specifics.push({ key: "EAN", value: upc });
-          this.form.specifics.push({ key: "Format", value: release.media[0].format });
-          this.form.specifics.push({ key: "Record Label", value: release["label-info"][0].label.name });
-          this.form.specifics.push({ key: "Release Year", value: release.date.split("-")[0] });
+          Object.keys(result).forEach((key) => {
+            this.form.specifics.push({ key: key, value: result[key] });
+          });
           this.changeSpecifics();
         }
       }
