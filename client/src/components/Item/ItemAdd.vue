@@ -225,12 +225,16 @@ export default {
     async lookupProduct(upc) {
       if (upc.toString().length == 12) {
         const result = await api.lookupProduct(this.token, upc.toString());
-        if (result) {
+        if (Object.keys(result).length > 0) {
+          console.log(result);
           this.form.specifics = [];
           Object.keys(result).forEach((key) => {
             this.form.specifics.push({ key: key, value: result[key] });
           });
           this.changeSpecifics();
+        } else {
+          this.$toast.error("Unable to find item with UPC " + upc);
+          this.form.upc = "";
         }
       }
     },

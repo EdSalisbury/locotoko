@@ -40,7 +40,6 @@ export class ProductService {
   }
 
   async getProduct(upc: string) {
-    const ebayProduct = await this.getEbayProduct(upc);
     const musicProduct = await this.getMusicProduct(upc);
 
     let details = {};
@@ -56,16 +55,23 @@ export class ProductService {
       details["Release Year"] = release.date.split("-")[0];
       return details;
     }
-    ebayProduct.Product.ItemSpecifics.NameValueList.forEach((specific) => {
-      details[specific.Name] = specific.Value;
-    });
-    details["Title"] = ebayProduct.Product.Title;
-    const title = ebayProduct.Product.Title;
-    const regex = /^(.*?)\s+\((.*?), (.*?)\)$/;
-    const found = title.match(regex);
-    if (found) {
-      details["Release Title"] = details["Release Title"] || found[1];
-      details["Release Year"] = details["Release Year"] || found[3];
+    try {
+      const ebayProduct = await this.getEbayProduct(upc);
+
+      ebayProduct.Product.ItemSpecifics.NameValueList.forEach((specific) => {
+        details[specific.Name] = specific.Value;
+      });
+      details["Title"] = ebayProduct.Product.Title;
+      const title = ebayProduct.Product.Title;
+      const regex = /^(.*?)\s+\((.*?), (.*?)\)$/;
+      const found = title.match(regex);
+      if (found) {
+        details["Release Title"] = details["Release Title"] || found[1];
+        details["Release Year"] = details["Release Year"] || found[3];
+      }
+    } catch (e) {
+      console.log("No match found for " + upc);
+      return {};
     }
 
     return details;
