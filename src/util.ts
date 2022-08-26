@@ -1,15 +1,9 @@
 const encodeSpecialChars = (str: string) => {
-  return str
-    .replaceAll("&", "&amp;")
-    .replaceAll("'", "&apos;")
-    .replaceAll('"', "&quot;");
+  return str.replaceAll("&", "&amp;").replaceAll("'", "&apos;");
 };
 
 const decodeSpecialChars = (str: string) => {
-  return str
-    .replaceAll("&amp;", "&")
-    .replaceAll("&apos;", "'")
-    .replaceAll("&quot;", '"');
+  return str.replaceAll("&amp;", "&").replaceAll("&apos;", "'");
 };
 
 const decodeSpecialCharsInObject = (obj: Object) => {
