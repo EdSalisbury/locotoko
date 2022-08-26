@@ -238,7 +238,7 @@ export class EbayListingService {
           },
         },
       };
-      //request = this.encodeSpecialChars(request);
+      request = this.encodeSpecialChars(request);
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
@@ -247,9 +247,14 @@ export class EbayListingService {
   }
 
   encodeSpecialChars(data: Object) {
-    let strData = JSON.stringify(data);
-    strData = strData.replaceAll("&", "&amp;");
-    return JSON.parse(strData);
+    try {
+      let strData = JSON.stringify(data);
+      strData = strData.replaceAll("&", "&amp;");
+      return JSON.parse(strData);
+    } catch (e) {
+      console.error("Unable to encode special chars: " + e);
+      return data;
+    }
   }
 
   async getEbayListing(itemId: string) {

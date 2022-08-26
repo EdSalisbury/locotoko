@@ -30,6 +30,7 @@ export class ProductService {
     };
     this.ebay.OAuth2.setCredentials(token.access_token);
     const product = await this.ebay.shopping.FindProducts(request);
+    this.ebay.OAuth2.setCredentials("");
     let productStr = JSON.stringify(product);
     productStr = productStr.replaceAll("&apos;", "'");
     productStr = productStr.replaceAll("&quot;", '"');
@@ -70,7 +71,6 @@ export class ProductService {
         details["Release Year"] = details["Release Year"] || found[3];
       }
     } catch (e) {
-      console.log("No match found for " + upc);
       return {};
     }
 
