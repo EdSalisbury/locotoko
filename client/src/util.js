@@ -105,6 +105,14 @@ function dataURLtoFile(dataurl, filename) {
   return new File([u8arr], filename, { type: mime });
 }
 
+const encodeSpecialChars = (str) => {
+  return str.replaceAll("&", "&amp;").replaceAll("'", "&apos;").replaceAll('"', "&quot;");
+};
+
+const decodeSpecialChars = (str) => {
+  return str.replaceAll("&amp;", "&").replaceAll("&apos;", "'").replaceAll("&quot;", '"');
+};
+
 export default {
   getOwnerOptions,
   getUserOptions,
@@ -118,4 +126,6 @@ export default {
   toastBad,
   readFileAsync,
   dataURLtoFile,
+  encodeSpecialChars,
+  decodeSpecialChars,
 };

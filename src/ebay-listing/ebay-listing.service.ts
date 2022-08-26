@@ -8,6 +8,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { EbayService } from "../ebay/ebay.service";
 import { CreateEbayListingDto, UpdateEbayListingDto } from "./dto";
 import * as FormData from "form-data";
+import { encodeSpecialCharsInObject } from "../util";
 @Injectable()
 export class EbayListingService {
   constructor(
@@ -113,7 +114,7 @@ export class EbayListingService {
         },
       };
 
-      //request = this.encodeSpecialChars(request);
+      request = encodeSpecialCharsInObject(request);
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
 
@@ -238,22 +239,11 @@ export class EbayListingService {
           },
         },
       };
-      request = this.encodeSpecialChars(request);
+      request = encodeSpecialCharsInObject(request);
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
       throw new BadRequestException(e.meta.Errors);
-    }
-  }
-
-  encodeSpecialChars(data: Object) {
-    try {
-      let strData = JSON.stringify(data);
-      strData = strData.replaceAll("&", "&amp;");
-      return JSON.parse(strData);
-    } catch (e) {
-      console.error("Unable to encode special chars: " + e);
-      return data;
     }
   }
 

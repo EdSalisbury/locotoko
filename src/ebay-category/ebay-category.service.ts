@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { EbayService } from "../ebay/ebay.service";
-
+import { decodeSpecialChars } from "../util";
 @Injectable()
 export class EbayCategoryService {
   constructor(private prisma: PrismaService, private ebay: EbayService) {}
@@ -32,13 +32,22 @@ export class EbayCategoryService {
       });
     }
   }
+  
   async getCategories() {
     const categories = await this.prisma.ebayCategory.findMany();
     return categories
       .map((cat) => ({
         ...cat,
-        name: cat.name.replaceAll("&amp;", "&").replaceAll("&apos;", "'"),
+        name: decodeSpecialChars(cat.name),
       }))
       .sort((a, b) => (a.name > b.name ? 1 : -1));
+  }
+
+  async getCategory(categoryId: number) {
+    let category = await this.prisma.ebayCategory.findUnique({
+      where: { id: categoryId },
+    });
+    category.name = decodeSpecialChars(category.name);
+    return category;
   }
 }

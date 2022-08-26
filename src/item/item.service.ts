@@ -7,13 +7,15 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PtouchService } from "../ptouch/ptouch.service";
 import { ConfigService } from "@nestjs/config";
 import { CreateItemDto, EditItemDto } from "./dto";
-
+import { decodeSpecialChars } from "../util";
+import { EbayCategoryService } from "../ebay-category/ebay-category.service";
 @Injectable()
 export class ItemService {
   constructor(
     private prisma: PrismaService,
     private ptouch: PtouchService,
     private config: ConfigService,
+    private cat: EbayCategoryService,
   ) {}
 
   async getItems() {
@@ -35,10 +37,10 @@ export class ItemService {
     });
     return items.map((item) => ({
       ...item,
-      ebayCategoryName:
-        categories
-          .find((category) => item.ebayCategoryId === category.id)
-          .name.replaceAll("&amp;", "&") || "",
+      ebayCategoryName: decodeSpecialChars(
+        categories.find((category) => item.ebayCategoryId === category.id)
+          .name || "",
+      ),
     }));
   }
 
@@ -48,10 +50,9 @@ export class ItemService {
     });
     const newItem = Object(item);
     newItem.ebayCategoryName = (
-      await this.prisma.ebayCategory.findUnique({
-        where: { id: item.ebayCategoryId },
-      })
-    ).name.replaceAll("&amp;", "&");
+      await this.cat.getCategory(item.ebayCategoryId)
+    ).name;
+
     return item;
   }
 

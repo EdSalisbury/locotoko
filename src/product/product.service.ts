@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import axios from "axios";
 import { EbayService } from "../ebay/ebay.service";
 import { ConfigService } from "@nestjs/config";
+import { decodeSpecialCharsInObject } from "../util";
+
 const eBay = require("ebay-node-api");
 
 @Injectable()
@@ -31,13 +33,7 @@ export class ProductService {
     this.ebay.OAuth2.setCredentials(token.access_token);
     const product = await this.ebay.shopping.FindProducts(request);
     this.ebay.OAuth2.setCredentials("");
-    let productStr = JSON.stringify(product);
-    productStr = productStr.replaceAll("&apos;", "'");
-    productStr = productStr.replaceAll("&quot;", '"');
-    productStr = productStr.replaceAll("&amp;", "&");
-    productStr = productStr.replaceAll("&lt;", "<");
-    productStr = productStr.replaceAll("&gt;", ">");
-    return JSON.parse(productStr);
+    return decodeSpecialCharsInObject(product);
   }
 
   async getProduct(upc: string) {
