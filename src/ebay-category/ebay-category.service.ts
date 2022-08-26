@@ -37,7 +37,7 @@ export class EbayCategoryService {
     return categories
       .map((cat) => ({
         ...cat,
-        name: cat.name.replaceAll("&amp;", "&"),
+        name: cat.name.replaceAll("&amp;", "&").replaceAll("&apos;", "'"),
       }))
       .sort((a, b) => (a.name > b.name ? 1 : -1));
   }
