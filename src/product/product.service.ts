@@ -4,8 +4,6 @@ import { EbayService } from "../ebay/ebay.service";
 import { ConfigService } from "@nestjs/config";
 import { decodeSpecialCharsInObject } from "../util";
 
-const eBay = require("ebay-node-api");
-
 @Injectable()
 export class ProductService {
   constructor(private ebay: EbayService, private config: ConfigService) {}
@@ -19,20 +17,18 @@ export class ProductService {
   }
 
   async getEbayProduct(upc: string) {
-    let ebay = new eBay({
-      clientID: this.config.get("EBAY_APP_ID"),
-      clientSecret: this.config.get("EBAY_CERT_ID"),
-    });
-    const token = await ebay.getAccessToken();
     const request = {
       ProductID: {
         "#value": upc,
         "@_type": "UPC",
       },
     };
-    this.ebay.OAuth2.setCredentials(token.access_token);
+
+    const token = await this.ebay.OAuth2.getApplicationAccessToken();
+    this.ebay.OAuth2.setCredentials(token);
     const product = await this.ebay.shopping.FindProducts(request);
-    this.ebay.OAuth2.setCredentials("");
+    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+
     return decodeSpecialCharsInObject(product);
   }
 
@@ -54,7 +50,6 @@ export class ProductService {
     }
     try {
       const ebayProduct = await this.getEbayProduct(upc);
-
       ebayProduct.Product.ItemSpecifics.NameValueList.forEach((specific) => {
         details[specific.Name] = specific.Value;
       });
@@ -67,6 +62,7 @@ export class ProductService {
         details["Release Year"] = details["Release Year"] || found[3];
       }
     } catch (e) {
+      console.log(e);
       return {};
     }
 
