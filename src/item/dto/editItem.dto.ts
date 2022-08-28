@@ -18,20 +18,26 @@ export class EditItemDto {
   description?: string;
 
   @IsNumber()
+  @IsOptional()
   ebayCategoryId: number;
 
   @IsNumber()
+  @IsOptional()
   ebayConditionId: number;
 
   @IsNumber()
   @IsNotEmpty()
+  @IsOptional()
   quantity: number;
+
+  @IsNumber()
+  @IsOptional()
+  quantitySold: number;
 
   @IsDecimal()
   @IsOptional()
   price: number;
 
-  @IsDecimal()
   @IsOptional()
   soldPrice: number;
 
@@ -96,6 +102,7 @@ export class EditItemDto {
   shipSizeDepthInches: number;
 
   @IsArray()
+  @IsOptional()
   images: [string];
 
   @IsOptional()

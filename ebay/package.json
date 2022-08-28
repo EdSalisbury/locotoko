@@ -6,5 +6,10 @@
   "repository": "https://github.com/EdSalisbury/locotoko",
   "author": "Ed Salisbury",
   "license": "MIT",
-  "private": true
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1"
+  }
 }

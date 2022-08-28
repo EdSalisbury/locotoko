@@ -31,6 +31,8 @@ export class ItemService {
         listingUserId: true,
         location: true,
         quantity: true,
+        quantitySold: true,
+        soldAt: true,
         updatedAt: true,
         price: true,
       },
@@ -45,15 +47,19 @@ export class ItemService {
   }
 
   async getItemById(itemId: string) {
-    const item = await this.prisma.item.findUnique({
-      where: { id: itemId },
-    });
-    const newItem = Object(item);
-    newItem.ebayCategoryName = (
-      await this.cat.getCategory(item.ebayCategoryId)
-    ).name;
+    try {
+      const item = await this.prisma.item.findUnique({
+        where: { id: itemId },
+      });
+      const newItem = Object(item);
+      newItem.ebayCategoryName = (
+        await this.cat.getCategory(item.ebayCategoryId)
+      ).name;
 
-    return item;
+      return item;
+    } catch {
+      throw new NotFoundException();
+    }
   }
 
   async printItemLabel(itemId: string) {

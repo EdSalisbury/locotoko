@@ -4,41 +4,42 @@ services:
     image: postgres:13
     ports:
       - 5434:5432
-    env_file: .env.dev
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
     networks:
       - locotoko
   test-db:
     image: postgres:13
     ports:
       - 5435:5432
-    env_file: .env.test
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
     networks:
       - locotoko
   prod-db:
     image: postgres:13
     ports:
       - 5432:5432
-    env_file: .env.prod
+    env_file:
+      - .env.prod
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
-
+    volumes:
+      - type: bind
+        source: /data01/Store
+        target: /var/lib/postgresql/data
     networks:
       - locotoko
   server:
-    image: locotoko:0.1.7
+    image: edsalisbury/locotoko:latest
     ports:
       - 80:3333
     networks:
       - locotoko
+    env_file: .env.prod
+
+  ebay:
+    image: edsalisbury/locotoko:latest
+    working_dir: /app/ebay
+    command: node index.js
+    env_file: .env.prod
 networks:
   locotoko:

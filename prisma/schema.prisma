@@ -32,7 +32,9 @@ model Item {
   ebayListingId String?
   ebayListing EbayListing? @relation("itemEbayListing", fields: [ebayListingId], references: [id])
   price Decimal @db.Money
+  currentPrice Decimal? @db.Money
   soldAt DateTime?
+  soldPrice Decimal @db.Money @default(0.00)
   shippedAt DateTime?
   ebayConditionId Int @default(0)
   listingUser User @relation("listingUser", fields: [listingUserId], references: [id])
@@ -42,6 +44,7 @@ model Item {
   ownerId String
   owner Owner @relation(fields: [ownerId], references: [id])
   quantity Int
+  quantitySold Int @default(0)
   location String?
   weightPounds Int?
   weightOunces Int?

@@ -27,11 +27,14 @@ export class CreateItemDto {
   @IsNotEmpty()
   quantity: number;
 
+  @IsNumber()
+  @IsOptional()
+  quantitySold: number;
+
   @IsDecimal()
   @IsOptional()
   price: number;
 
-  @IsDecimal()
   @IsOptional()
   soldPrice: number;
 
@@ -109,7 +112,7 @@ export class CreateItemDto {
 
   @IsOptional()
   upc: string;
-  
+
   @IsOptional()
   @IsString()
   location: string;
