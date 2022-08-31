@@ -34,6 +34,7 @@ export class ItemService {
         quantitySold: true,
         soldAt: true,
         updatedAt: true,
+        createdAt: true,
         price: true,
       },
     });

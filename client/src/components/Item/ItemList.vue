@@ -55,15 +55,15 @@ export default {
       token: "",
       fields: [
         { key: "itemLink", label: "Title" },
-        "quantity",
         { key: "ebayCategoryName", label: "Category" },
         { key: "location", label: "Location" },
+        { key: "quantity", labal: "Quantity" },
+        { key: "quantitySold", label: "Quantity Sold" },
         { key: "price", label: "Price" },
         {
           key: "ebayListingId",
           label: "eBay Listing ID",
         },
-        { key: "updatedAt", label: "Last Updated" },
         "actions",
       ],
     };
@@ -71,7 +71,7 @@ export default {
   async created() {
     this.token = this.$cookie.get("token");
     this.items = await api.getItems(this.token);
-    this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+    this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
   },
   methods: {
     async duplicateItem(id) {
