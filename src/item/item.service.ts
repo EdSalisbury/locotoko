@@ -64,6 +64,16 @@ export class ItemService {
     return items.map(this.categoryMap);
   }
 
+  async getActiveItems() {
+    await this.getCategories();
+    const items = await this.prisma.item.findMany({
+      select: this.itemSelection,
+    });
+    return items.map(this.categoryMap).filter((item) => {
+      item.quantitySold < item.quantity;
+    });
+  }
+
   async getItems() {
     await this.getCategories();
     const items = await this.prisma.item.findMany({

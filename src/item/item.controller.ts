@@ -26,7 +26,7 @@ export class ItemController {
     if (sold) {
       return this.itemService.getSoldItems();
     }
-    return this.itemService.getItems();
+    return this.itemService.getActiveItems();
   }
 
   @Get(":id")
