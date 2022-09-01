@@ -71,6 +71,7 @@ model Owner {
   rate Decimal
 
   items Item[]
+  payouts Payout[]
 
   @@map("owners")
 }
@@ -126,3 +127,12 @@ model EbayListing {
   @@map("ebayListings")
 }
 
+model Payout {
+  id String @id @default(cuid())
+  ownerId String
+  owner Owner @relation(fields: [ownerId], references: [id])
+  amount Decimal @db.Money
+  date DateTime
+
+  @@map("payouts")
+}
