@@ -16,6 +16,11 @@ const getItems = async (token) => {
   return await response.json();
 };
 
+const getSoldItems = async (token) => {
+  const response = await fetch(apiUrl("items") + "?sold=true", apiHeaders(token));
+  return await response.json();
+};
+
 const getItem = async (token, id) => {
   const response = await fetch(apiUrl("items", id), apiHeaders(token));
   const item = await response.json();
@@ -247,4 +252,5 @@ export default {
   updateEbayListing,
   getEbayConditions,
   lookupProduct,
+  getSoldItems,
 };
