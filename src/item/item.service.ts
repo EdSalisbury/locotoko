@@ -9,8 +9,35 @@ import { ConfigService } from "@nestjs/config";
 import { CreateItemDto, EditItemDto } from "./dto";
 import { decodeSpecialChars } from "../util";
 import { EbayCategoryService } from "../ebay-category/ebay-category.service";
+
 @Injectable()
 export class ItemService {
+  itemSelection = {
+    id: true,
+    title: true,
+    ebayCategoryId: true,
+    ebayListingId: true,
+    ownerId: true,
+    listingUserId: true,
+    location: true,
+    quantity: true,
+    quantitySold: true,
+    soldAt: true,
+    updatedAt: true,
+    createdAt: true,
+    price: true,
+  };
+
+  categories = [];
+
+  categoryMap = (item) => ({
+    ...item,
+    ebayCategoryName: decodeSpecialChars(
+      this.categories.find((category) => item.ebayCategoryId === category.id)
+        .name || "",
+    ),
+  });
+
   constructor(
     private prisma: PrismaService,
     private ptouch: PtouchService,
@@ -18,33 +45,32 @@ export class ItemService {
     private cat: EbayCategoryService,
   ) {}
 
-  async getItems() {
-    const categories = await this.prisma.ebayCategory.findMany();
+  async getCategories() {
+    if (this.categories.length === 0) {
+      this.categories = await this.cat.getCategories();
+    }
+  }
 
+  async getSoldItems() {
+    await this.getCategories();
     const items = await this.prisma.item.findMany({
-      select: {
-        id: true,
-        title: true,
-        ebayCategoryId: true,
-        ebayListingId: true,
-        ownerId: true,
-        listingUserId: true,
-        location: true,
-        quantity: true,
-        quantitySold: true,
-        soldAt: true,
-        updatedAt: true,
-        createdAt: true,
-        price: true,
+      select: this.itemSelection,
+      where: {
+        quantitySold: {
+          gt: 0,
+        },
       },
     });
-    return items.map((item) => ({
-      ...item,
-      ebayCategoryName: decodeSpecialChars(
-        categories.find((category) => item.ebayCategoryId === category.id)
-          .name || "",
-      ),
-    }));
+    return items.map(this.categoryMap);
+  }
+
+  async getItems() {
+    await this.getCategories();
+    const items = await this.prisma.item.findMany({
+      select: this.itemSelection,
+    });
+
+    return items.map(this.categoryMap);
   }
 
   async getItemById(itemId: string) {

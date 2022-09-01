@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Query,
   Post,
   UseGuards,
 } from "@nestjs/common";
@@ -21,7 +22,10 @@ export class ItemController {
   constructor(private itemService: ItemService) {}
 
   @Get()
-  getItems() {
+  getItems(@Query("sold") sold: boolean = false) {
+    if (sold) {
+      return this.itemService.getSoldItems();
+    }
     return this.itemService.getItems();
   }
 
