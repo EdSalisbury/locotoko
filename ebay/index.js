@@ -28,8 +28,8 @@ const login = async () => {
   TOKEN = response.data.access_token;
 };
 
-const getItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
+const getItems = async (sold = false) => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=" + sold;
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -98,6 +98,28 @@ const processSales = async () => {
         );
       }
     }
+  });
+};
+
+const processPayouts = async () => {
+  await login();
+  const startDate = new Date(
+    date.getFullYear(),
+    date.getMonth() - 1,
+    1,
+  ).toISOString();
+  const endDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    1,
+  ).toISOString();
+
+  const soldItems = await getItems((sold = true)).filter((item) => {
+    item.soldAt >= startDate && item.soldAt <= endDate;
+  });
+
+  soldItems.forEach((item) => {
+    // TODO: Process sold items
   });
 };
 
