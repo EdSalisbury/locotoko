@@ -58,6 +58,7 @@ export default {
         { key: "quantity", labal: "Quantity" },
         { key: "quantitySold", label: "Quantity Sold" },
         { key: "price", label: "Price" },
+        { key: "soldAt", label: "Sold Date" },
         {
           key: "ebayListingId",
           label: "eBay Listing ID",
