@@ -32,7 +32,7 @@ model Item {
   ebayListingId String?
   ebayListing EbayListing? @relation("itemEbayListing", fields: [ebayListingId], references: [id])
   price Decimal @db.Money
-  currentPrice Decimal? @db.Money
+  currentPrice Decimal? @db.Money @default(0.00)
   soldAt DateTime?
   soldPrice Decimal @db.Money @default(0.00)
   shippedAt DateTime?

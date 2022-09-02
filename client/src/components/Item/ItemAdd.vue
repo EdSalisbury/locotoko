@@ -37,12 +37,29 @@
             <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Quantity" v-model="form.quantity" />
             </b-col>
+            <b-col xs="3" class="m-0 pl-0 pr-0">
+              <TextInput label="Sold Quantity" v-model="form.quantitySold" />
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container fluid class="p-0" style="margin-top: 10px">
+          <b-row class="m-0 p-0">
             <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Sale Price" v-model="form.price" />
+              <TextInput label="Original Price" v-model="form.price" />
             </b-col>
             <b-col xs="3" class="m-0 pl-0 pr-0">
+              <TextInput label="Current Price" v-model="form.currentPrice" />
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container fluid class="p-0" style="margin-top: 10px">
+          <b-row class="m-0 p-0">
+            <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Location" v-model="form.location" />
             </b-col>
+            <b-col xs="3" class="m-0 pl-0 pr-0">
+              <TextInput label="eBay Listing ID" v-model="form.ebayListingId"
+            /></b-col>
           </b-row>
         </b-container>
 
@@ -136,6 +153,9 @@ export default {
         quantity: 1,
         price: 0.0,
         description: "",
+        ebayListingId: "",
+        currentPrice: 0.0,
+        quantitySold: 0,
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,

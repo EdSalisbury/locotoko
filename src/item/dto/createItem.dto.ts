@@ -36,6 +36,9 @@ export class CreateItemDto {
   price: number;
 
   @IsOptional()
+  currentPrice: number;
+
+  @IsOptional()
   soldPrice: number;
 
   @IsDateString()

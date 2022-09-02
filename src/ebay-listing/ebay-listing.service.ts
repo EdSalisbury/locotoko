@@ -50,6 +50,10 @@ export class EbayListingService {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
       }
 
+      if (!item.currentPrice) {
+        item.currentPrice = item.price;
+      }
+
       let request = {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
@@ -63,12 +67,8 @@ export class EbayListingService {
           },
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity,
-          ButItNowPrice: {
-            "#value": item.price.toString(),
-            "@_currencyID": "USD",
-          },
           StartPrice: {
-            "#value": item.price.toString(),
+            "#value": item.currentPrice.toString(),
             "@_currencyID": "USD",
           },
           PictureDetails: {
@@ -175,6 +175,10 @@ export class EbayListingService {
         shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
       }
 
+      if (!item.currentPrice) {
+        item.currentPrice = item.price;
+      }
+
       let request = {
         Item: {
           ItemID: item.ebayListingId,
@@ -189,12 +193,8 @@ export class EbayListingService {
           },
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity,
-          ButItNowPrice: {
-            "#value": item.price.toString(),
-            "@_currencyID": "USD",
-          },
           StartPrice: {
-            "#value": item.price.toString(),
+            "#value": item.currentPrice.toString(),
             "@_currencyID": "USD",
           },
           PictureDetails: {

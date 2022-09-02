@@ -69,9 +69,10 @@ export class ItemService {
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
     });
-    return items.map(this.categoryMap).filter((item) => {
-      item.quantitySold < item.quantity;
-    });
+
+    return items
+      .filter((item) => item.quantitySold < item.quantity)
+      .map(this.categoryMap);
   }
 
   async getItems() {

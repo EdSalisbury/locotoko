@@ -28,8 +28,14 @@ const login = async () => {
   TOKEN = response.data.access_token;
 };
 
-const getItems = async (sold = false) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=" + sold;
+const getItems = async () => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
+const getSoldItems = async () => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -79,6 +85,7 @@ const getSellerEvents = async () => {
 };
 
 const processSales = async () => {
+  console.log("Processing sales... ");
   await login();
   const events = await getSellerEvents();
   const ebayItems = events.ItemArray.Item;
@@ -123,10 +130,32 @@ const processPayouts = async () => {
   });
 };
 
+const getWeeksDiff = (startDate, endDate) => {
+  const msInWeek = 1000 * 60 * 60 * 24 * 7;
+  return Math.floor(Math.abs(endDate - startDate) / msInWeek);
+};
+
+const markdownItems = async () => {
+  console.log("Marking down items... ");
+  await login();
+  const markdownRate = 0.005;
+  const now = new Date();
+  const items = await getSoldItems();
+  items.forEach((item) => {
+    const weeks = getWeeksDiff(new Date(item.createdAt), now);
+    const currentPrice = (item.price * (1 - markdownRate * weeks)).toFixed(2);
+    if (currentPrice.toString() !== item.price.toString()) {
+      console.log(
+        `Updating ${item.id} price to ${currentPrice} (Originally ${item.price})`,
+      );
+    }
+  });
+};
+
 const main = async () => {
   while (true) {
-    console.log("Looking for sales... ");
     await processSales();
+    await markdownItems();
     await sleep(1000 * 60);
   }
 };
