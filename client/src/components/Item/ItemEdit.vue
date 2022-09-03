@@ -188,14 +188,14 @@ export default {
     this.owners = await util.getOwnerOptions(token);
     this.acquisitions = await util.getAcquisitionOptions(token);
 
+    this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
+
     this.form = await api.getItem(token, itemId);
     this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {
       this.form.templateId = "";
     }
-
-    this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
 
     const newImages = [];
     this.form.images.forEach(async (file) => {
