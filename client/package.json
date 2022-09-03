@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "private": true,
   "scripts": {
     "start": "dotenv -e ../.env.dev -- vue-cli-service serve",
@@ -15,7 +15,8 @@
     "vue-cookie": "^1.1.4",
     "vue-js-modal": "^2.0.1",
     "vue-router": "^3.5.1",
-    "vue-toast-notification": "^0.6.3"
+    "vue-toast-notification": "^0.6.3",
+    "vue2-bootstrap-table2": "^1.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
