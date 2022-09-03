@@ -1,5 +1,6 @@
 import { default as axios } from "axios";
 import "dotenv/config";
+import { nextTick } from "process";
 
 let TOKEN;
 
@@ -16,6 +17,15 @@ const getHeaders = () => {
       Authorization: "Bearer " + TOKEN,
     },
   };
+};
+
+const apiUrl = (resource, id = "", action = "") => {
+  return (
+    process.env.VUE_APP_API_BASE_URL +
+    `/api/v1/${resource}` +
+    (id ? `/${id}` : "") +
+    (action ? `/${action}` : "")
+  );
 };
 
 const login = async () => {
@@ -51,7 +61,7 @@ const getItemByEbayItemId = async (ebayItemId) => {
   return items.filter((item) => item.ebayListingId == ebayItemId)[0];
 };
 
-const updateItem = async (itemId, quantitySold, endTime, soldPrice) => {
+const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
   try {
     const item = await getItem(itemId);
     const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
@@ -89,7 +99,7 @@ const processSales = async () => {
   await login();
   const events = await getSellerEvents();
   const ebayItems = events.ItemArray.Item;
-  ebayItems.forEach(async (ebayItem) => {
+  for (const ebayItem of ebayItems) {
     const item = await getItemByEbayItemId(ebayItem.ItemID);
     if (!item) {
       console.error(
@@ -97,7 +107,7 @@ const processSales = async () => {
       );
     } else {
       if (item.soldAt !== ebayItem.ListingDetails.EndTime) {
-        await updateItem(
+        await updateItemSold(
           item.id,
           ebayItem.SellingStatus.QuantitySold,
           ebayItem.ListingDetails.EndTime,
@@ -105,7 +115,7 @@ const processSales = async () => {
         );
       }
     }
-  });
+  }
 };
 
 const processPayouts = async () => {
@@ -135,21 +145,60 @@ const getWeeksDiff = (startDate, endDate) => {
   return Math.floor(Math.abs(endDate - startDate) / msInWeek);
 };
 
+const updateItem = async (id, request) => {
+  const url = apiUrl("items", id);
+  try {
+    const response = await axios.patch(url, request, getHeaders());
+    console.log(`Updated item ${id} successfully.`);
+    return response;
+  } catch (e) {
+    console.error(
+      `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
+    );
+    return e.response;
+  }
+};
+
+const updateEbayListing = async (id) => {
+  const url = apiUrl("ebayListings", id);
+  const request = {
+    itemId: id,
+  };
+
+  try {
+    const response = await axios.patch(url, request, getHeaders());
+    console.log(`Updated eBay item for ${id} successfully.`);
+    return response;
+  } catch (e) {
+    console.error(
+      `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
+    );
+    return e.response;
+  }
+};
+
 const markdownItems = async () => {
   console.log("Marking down items... ");
   await login();
   const markdownRate = 0.005;
   const now = new Date();
   const items = await getSoldItems();
-  items.forEach((item) => {
+  for (const item of items) {
     const weeks = getWeeksDiff(new Date(item.createdAt), now);
     const currentPrice = (item.price * (1 - markdownRate * weeks)).toFixed(2);
     if (currentPrice.toString() !== item.price.toString()) {
       console.log(
         `Updating ${item.id} price to ${currentPrice} (Originally ${item.price})`,
       );
+      const itemResponse = await updateItem(item.id, {
+        currentPrice: parseFloat(currentPrice),
+      });
+      if (itemResponse.status !== 200) {
+        continue;
+      }
+      await updateEbayListing(item.id);
     }
-  });
+  }
 };
 
 const main = async () => {

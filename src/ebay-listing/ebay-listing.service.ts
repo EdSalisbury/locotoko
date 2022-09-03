@@ -9,6 +9,7 @@ import { EbayService } from "../ebay/ebay.service";
 import { CreateEbayListingDto, UpdateEbayListingDto } from "./dto";
 import * as FormData from "form-data";
 import { encodeSpecialCharsInObject } from "../util";
+
 @Injectable()
 export class EbayListingService {
   constructor(
@@ -275,7 +276,17 @@ export class EbayListingService {
   }
 
   getSpecificArray(specifics: string) {
-    const specObj = JSON.parse(specifics);
+    let specObj = JSON.parse(specifics);
+    if (!Array.isArray(specObj)) {
+      let arr = [];
+      for (const key of Object.keys(specObj)) {
+        let obj = {};
+        obj["key"] = key;
+        obj["value"] = specObj[key];
+        arr.push(obj);
+      }
+      specObj = arr;
+    }
 
     const data = specObj.map((specific) => ({
       Name: specific.key,
