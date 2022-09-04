@@ -10,6 +10,7 @@
         :show-column-picker="false"
         :sortable="true"
         :paginated="true"
+        :selectable="false"
         :multi-column-sortable="false"
         :filter-case-sensitive="false"
         class="pb-2"
