@@ -140,11 +140,6 @@ const processPayouts = async () => {
   });
 };
 
-const getWeeksDiff = (startDate, endDate) => {
-  const msInWeek = 1000 * 60 * 60 * 24 * 7;
-  return Math.floor(Math.abs(endDate - startDate) / msInWeek);
-};
-
 const updateItem = async (id, request) => {
   const url = apiUrl("items", id);
   try {
@@ -181,20 +176,21 @@ const markdownItems = async () => {
   console.log("Marking down items... ");
   await login();
   const markdownRate = 0.005;
-  const now = new Date();
-  const items = await getSoldItems();
+  const items = await getItems();
   for (let item of items) {
-    const weeks = getWeeksDiff(new Date(item.createdAt), now);
-    const currentPrice = (item.price * (1 - markdownRate * weeks)).toFixed(2);
-    if (!item.currentPrice) {
-      item.currentPrice = item.price;
-    }
-    if (currentPrice.toString() !== item.currentPrice.toString()) {
+    const origPrice = Number(item.price).toFixed(2);
+    const currPrice = Number(item.currentPrice).toFixed(2);
+    const newCurrPrice = (
+      origPrice *
+      (1 - markdownRate * item.weeksActive)
+    ).toFixed(2);
+
+    if (currPrice != newCurrPrice) {
       console.log(
-        `Updating ${item.id} price to ${currentPrice} (Originally ${item.price})`,
+        `Updating ${item.id} price to ${newCurrPrice} (Originally ${origPrice})`,
       );
       const itemResponse = await updateItem(item.id, {
-        currentPrice: parseFloat(currentPrice),
+        currentPrice: currPrice,
       });
       if (itemResponse.status !== 200) {
         continue;

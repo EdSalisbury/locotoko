@@ -7,7 +7,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PtouchService } from "../ptouch/ptouch.service";
 import { ConfigService } from "@nestjs/config";
 import { CreateItemDto, EditItemDto } from "./dto";
-import { decodeSpecialChars } from "../util";
+import { decodeSpecialChars, getWeeksDiff } from "../util";
 import { EbayCategoryService } from "../ebay-category/ebay-category.service";
 
 @Injectable()
@@ -73,6 +73,10 @@ export class ItemService {
 
     return items
       .filter((item) => item.quantitySold < item.quantity)
+      .map((item) => ({
+        ...item,
+        weeksActive: getWeeksDiff(item.createdAt, new Date()),
+      }))
       .map(this.categoryMap);
   }
 

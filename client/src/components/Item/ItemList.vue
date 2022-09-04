@@ -15,6 +15,9 @@
         :filter-case-sensitive="false"
         class="pb-2"
       >
+        <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
+        <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
+
         <template v-slot:ebayListingId="data">
           <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
             {{ data.value.ebayListingId }}
@@ -85,13 +88,17 @@ export default {
         },
         { name: "ebayCategoryName", title: "Category" },
         { name: "location", title: "Location", editable: true },
-        { name: "quantity", title: "Quant" },
+        { name: "quantity", title: "Qty" },
         { name: "quantitySold", title: "Sold" },
-        { name: "price", title: "O.Price" },
-        { name: "currentPrice", title: "C.Price" },
+        { name: "price", title: "OP" },
+        { name: "currentPrice", title: "CP" },
         {
           name: "ebayListingId",
           title: "eBay Listing ID",
+        },
+        {
+          name: "weeksActive",
+          title: "Weeks",
         },
         { name: "actions", title: "Actions", sortable: false, cellstyle: "text-nowrap" },
       ],
