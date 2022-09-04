@@ -183,10 +183,13 @@ const markdownItems = async () => {
   const markdownRate = 0.005;
   const now = new Date();
   const items = await getSoldItems();
-  for (const item of items) {
+  for (let item of items) {
     const weeks = getWeeksDiff(new Date(item.createdAt), now);
     const currentPrice = (item.price * (1 - markdownRate * weeks)).toFixed(2);
-    if (currentPrice.toString() !== item.price.toString()) {
+    if (!item.currentPrice) {
+      item.currentPrice = item.price;
+    }
+    if (currentPrice.toString() !== item.currentPrice.toString()) {
       console.log(
         `Updating ${item.id} price to ${currentPrice} (Originally ${item.price})`,
       );

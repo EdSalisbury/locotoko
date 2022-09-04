@@ -3,41 +3,61 @@
     <b-card-title>Items</b-card-title>
     <b-card-body>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
-      <b-table hover :items="items" :fields="fields">
-        <template #cell(itemLink)="data">
-          <router-link :to="'/viewItem/' + data.item.id">
-            {{ data.item.title }}{{ data.item.ebayListingId ? "-" + data.item.id.slice(-4) : "" }}
-          </router-link>
-        </template>
-
-        <template #cell(ebayListingId)="data">
-          <a v-bind:href="'https://www.ebay.com/itm/' + data.item.ebayListingId" target="_blank">
-            {{ data.item.ebayListingId }}
+      <vue-bootstrap-table
+        :columns="columns"
+        :values="items"
+        :show-filter="true"
+        :show-column-picker="false"
+        :sortable="true"
+        :paginated="true"
+        :multi-column-sortable="false"
+        :filter-case-sensitive="false"
+        class="pb-2"
+      >
+        <template v-slot:ebayListingId="data">
+          <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
+            {{ data.value.ebayListingId }}
           </a>
         </template>
+        <template v-slot:actions="data">
+          <router-link :to="'/viewItem/' + data.value.id">
+            <b-button class="p-1 mr-1" variant="primary">
+              <b-icon-eye-fill />
+            </b-button>
+          </router-link>
 
-        <template #cell(actions)="data">
-          <router-link :to="'/editItem/' + data.item.id">
-            <b-button class="p-1 m-1" variant="primary">
+          <router-link :to="'/editItem/' + data.value.id">
+            <b-button class="p-1 mr-1" variant="primary">
               <b-icon-pencil-fill />
             </b-button>
           </router-link>
-          <b-button v-if="!data.item.ebayListingId" class="p-1 m-1" variant="primary" @click="listItem(data.item.id)">
+
+          <b-button
+            v-if="!data.value.ebayListingId"
+            class="p-1 mr-1"
+            variant="primary"
+            @click="listItem(data.value.id)"
+          >
             eBay</b-button
           >
-          <b-button class="p-1 m-1" variant="success" @click="duplicateItem(data.item.id)">
+          <b-button class="p-1 mr-1" variant="success" @click="duplicateItem(data.value.id)">
             <b-icon-file-earmark-plus-fill />
           </b-button>
 
-          <b-button class="p-1 m-1" variant="primary" @click="printItemLabel(data.item.id)">
+          <b-button class="p-1 mr-1" variant="primary" @click="printItemLabel(data.value.id)">
             <b-icon-printer-fill />
           </b-button>
 
-          <b-button v-if="!data.item.ebayListingId" class="p-1 m-1" variant="danger" @click="deleteItem(data.item.id)">
+          <b-button
+            v-if="!data.value.ebayListingId"
+            class="p-1 m-0"
+            variant="danger"
+            @click="deleteItem(data.value.id)"
+          >
             <b-icon-trash-fill />
           </b-button>
         </template>
-      </b-table>
+      </vue-bootstrap-table>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
     </b-card-body>
   </b-card>
@@ -46,26 +66,33 @@
 <script>
 import api from "../../api";
 import itemUtils from "./itemUtils";
+import VueBootstrapTable from "vue2-bootstrap-table2";
 
 export default {
+  components: {
+    VueBootstrapTable: VueBootstrapTable,
+  },
   data() {
     return {
       items: [],
       categories: [],
       token: "",
-      fields: [
-        { key: "itemLink", label: "Title" },
-        { key: "ebayCategoryName", label: "Category" },
-        { key: "location", label: "Location" },
-        { key: "quantity", labal: "Quantity" },
-        { key: "quantitySold", label: "Quantity Sold" },
-        { key: "price", label: "Original Price" },
-        { key: "currentPrice", label: "Current Price" },
+      columns: [
         {
-          key: "ebayListingId",
-          label: "eBay Listing ID",
+          name: "title",
+          title: "Title",
         },
-        "actions",
+        { name: "ebayCategoryName", title: "Category" },
+        { name: "location", title: "Location", editable: true },
+        { name: "quantity", title: "Quantity" },
+        { name: "quantitySold", title: "Quantity Sold" },
+        { name: "price", title: "Original Price" },
+        { name: "currentPrice", title: "Current Price" },
+        {
+          name: "ebayListingId",
+          title: "eBay Listing ID",
+        },
+        { name: "actions", title: "Actions", sortable: false, cellstyle: "text-nowrap" },
       ],
     };
   },
