@@ -100,6 +100,16 @@ export default {
     this.token = this.$cookie.get("token");
     this.items = await api.getItems(this.token);
     this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+    this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
+      const request = {
+        [columnTitle]: newValue,
+      };
+      await api.updateItem(this.token, item.id, request);
+
+      if (item.ebayListingId) {
+        await api.updateEbayListing(this.token, item.id, { itemId: item.id });
+      }
+    });
   },
   methods: {
     async duplicateItem(id) {
