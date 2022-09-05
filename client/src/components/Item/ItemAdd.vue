@@ -246,7 +246,6 @@ export default {
       if (upc.toString().length == 12) {
         const result = await api.lookupProduct(this.token, upc.toString());
         if (Object.keys(result).length > 0) {
-          console.log(result);
           this.form.specifics = [];
           Object.keys(result).forEach((key) => {
             this.form.specifics.push({ key: key, value: result[key] });
@@ -278,6 +277,10 @@ export default {
       this.payload.shipSizeDepthInches = parseInt(this.payload.size.length);
 
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
+
+      if (!this.payload.currentPrice) {
+        this.payload.currentPrice = this.payload.price;
+      }
 
       if (!this.payload.ownerId) {
         this.payload.ownerId = "0";
