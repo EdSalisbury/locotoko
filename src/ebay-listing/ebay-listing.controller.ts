@@ -10,40 +10,30 @@ import {
 import { JwtGuard } from "../auth/guard";
 import { EbayListingService } from "./ebay-listing.service";
 
-import {
-  CreateEbayListingDto,
-  UpdateEbayListingDto,
-} from "./dto";
+import { CreateEbayListingDto, UpdateEbayListingDto } from "./dto";
 
 @UseGuards(JwtGuard)
 @Controller("ebayListings")
 export class EbayListingController {
-  constructor(
-    private ebayListingService: EbayListingService,
-  ) {}
+  constructor(private ebayListingService: EbayListingService) {}
 
   @Post("")
-  createEbayListing(
-    @Body() dto: CreateEbayListingDto,
-  ) {
-    return this.ebayListingService.createEbayListing(
-      dto,
-    );
+  createEbayListing(@Body() dto: CreateEbayListingDto) {
+    return this.ebayListingService.createEbayListing(dto);
   }
 
   @Get(":id")
   getEbayListing(@Param("id") itemID: string) {
-    return this.ebayListingService.getEbayListing(
-      itemID,
-    );
+    return this.ebayListingService.getEbayListing(itemID);
+  }
+
+  @Get()
+  getEbayListings() {
+    return this.ebayListingService.getEbayListings();
   }
 
   @Patch(":id")
-  updateEbayListing(
-    @Body() dto: UpdateEbayListingDto,
-  ) {
-    return this.ebayListingService.updateEbayListing(
-      dto,
-    );
+  updateEbayListing(@Body() dto: UpdateEbayListingDto) {
+    return this.ebayListingService.updateEbayListing(dto);
   }
 }

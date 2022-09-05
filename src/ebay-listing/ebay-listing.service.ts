@@ -254,6 +254,31 @@ export class EbayListingService {
     });
   }
 
+  async getEbayListings() {
+    let listings = [];
+
+    let pageNum = 1;
+    let maxPages = 2;
+
+    while (pageNum <= maxPages) {
+      const result = await this.ebay.trading.GetMyeBaySelling({
+        ActiveList: {
+          Sort: "TimeLeft",
+          Pagination: {
+            EntriesPerPage: 200,
+            PageNumber: pageNum,
+          },
+        },
+      });
+
+      listings.push(...result.ActiveList.ItemArray.Item);
+
+      maxPages = result.ActiveList.PaginationResult.TotalNumberOfPages;
+      pageNum++;
+    }
+    return listings;
+  }
+
   async uploadImage(image: string) {
     // Strip off metadata
     var img = Buffer.from(image.split(",")[1], "base64");
