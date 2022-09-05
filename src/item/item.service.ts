@@ -86,7 +86,12 @@ export class ItemService {
       select: this.itemSelection,
     });
 
-    return items.map(this.categoryMap);
+    return items
+      .map((item) => ({
+        ...item,
+        weeksActive: getWeeksDiff(item.createdAt, new Date()),
+      }))
+      .map(this.categoryMap);
   }
 
   async getItemById(itemId: string) {

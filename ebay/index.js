@@ -1,6 +1,5 @@
 import { default as axios } from "axios";
 import "dotenv/config";
-import { nextTick } from "process";
 
 let TOKEN;
 
@@ -44,8 +43,14 @@ const getItems = async () => {
   return response.data;
 };
 
+const getActiveItems = async () => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=false";
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
 const getSoldItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold";
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -105,6 +110,7 @@ const processSales = async () => {
       console.error(
         "Unable to find item with eBay Listing ID: " + ebayItem.ItemID,
       );
+      console.log(ebayItem);
     } else {
       if (item.soldAt !== ebayItem.ListingDetails.EndTime) {
         await updateItemSold(
@@ -116,6 +122,7 @@ const processSales = async () => {
       }
     }
   }
+  console.log("Done processing sales.");
 };
 
 const processPayouts = async () => {
@@ -176,7 +183,7 @@ const markdownItems = async () => {
   console.log("Marking down items... ");
   await login();
   const markdownRate = 0.005;
-  const items = await getItems();
+  const items = await getActiveItems();
   for (let item of items) {
     const origPrice = Number(item.price).toFixed(2);
     const currPrice = Number(item.currentPrice).toFixed(2);
@@ -190,7 +197,7 @@ const markdownItems = async () => {
         `Updating ${item.id} price to ${newCurrPrice} (Originally ${origPrice})`,
       );
       const itemResponse = await updateItem(item.id, {
-        currentPrice: currPrice,
+        currentPrice: newCurrPrice,
       });
       if (itemResponse.status !== 200) {
         continue;
@@ -198,6 +205,7 @@ const markdownItems = async () => {
       await updateEbayListing(item.id);
     }
   }
+  console.log("Done with item markdowns");
 };
 
 const main = async () => {

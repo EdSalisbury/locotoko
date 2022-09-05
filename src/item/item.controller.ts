@@ -22,11 +22,13 @@ export class ItemController {
   constructor(private itemService: ItemService) {}
 
   @Get()
-  getItems(@Query("sold") sold: boolean = false) {
-    if (sold) {
+  getItems(@Query("sold") sold: string = "") {
+    if (sold == "true") {
       return this.itemService.getSoldItems();
+    } else if (sold == "false") {
+      return this.itemService.getActiveItems();
     }
-    return this.itemService.getActiveItems();
+    return this.itemService.getItems();
   }
 
   @Get(":id")

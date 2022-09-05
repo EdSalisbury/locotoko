@@ -106,7 +106,7 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
-    this.items = await api.getItems(this.token);
+    this.items = await api.getActiveItems(this.token);
     this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
@@ -127,7 +127,7 @@ export default {
       item.ebayListingId = "";
       item.specifics = JSON.stringify(item.specifics);
       await api.createItem(this.token, item);
-      this.items = await api.getItems(this.token);
+      this.items = await api.getActiveItems(this.token);
       this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
     },
     async listItem(id) {
@@ -137,7 +137,7 @@ export default {
     async deleteItem(id) {
       const response = await api.deleteItem(this.token, id);
       if (response.status == 204) {
-        this.items = await api.getItems(this.token);
+        this.items = await api.getActiveItems(this.token);
         this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
       } else {
         console.error(response);
