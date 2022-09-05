@@ -208,11 +208,27 @@ const markdownItems = async () => {
   console.log("Done with item markdowns");
 };
 
+const getAllEbayListings = async () => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
+const listingCheck = async () => {
+  console.log("Checking ebay listings...");
+  await login();
+  const listings = await getAllEbayListings();
+  console.log(listings);
+  console.log("Done checking ebay listings.");
+};
+
 const main = async () => {
   while (true) {
     await processSales();
     await markdownItems();
     await sleep(1000 * 60);
+    //await listingCheck();
+    //await sleep(1000 * 360);
   }
 };
 
