@@ -56,11 +56,7 @@ export class ItemService {
     await this.getCategories();
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
-      where: {
-        quantitySold: {
-          gt: 0,
-        },
-      },
+      where: { soldAt: { not: null } },
     });
     return items.map(this.categoryMap);
   }
@@ -69,10 +65,10 @@ export class ItemService {
     await this.getCategories();
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
+      where: { soldAt: null },
     });
 
     return items
-      .filter((item) => item.quantitySold < item.quantity)
       .map((item) => ({
         ...item,
         weeksActive: getWeeksDiff(item.createdAt, new Date()),

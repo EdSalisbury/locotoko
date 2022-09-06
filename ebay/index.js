@@ -67,6 +67,7 @@ const getItemByEbayItemId = async (ebayItemId) => {
 };
 
 const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
+  console.log(itemId, quantitySold, endTime, soldPrice);
   try {
     const item = await getItem(itemId);
     const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
@@ -214,11 +215,53 @@ const getAllEbayListings = async () => {
   return response.data;
 };
 
+const getEbayListing = async (ebayListingId) => {
+  const url =
+    process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings/" + ebayListingId;
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
 const listingCheck = async () => {
   console.log("Checking ebay listings...");
   await login();
+  const items = await getItems();
+
+  let itemToEbayListing = {};
+  let ebayListingToItem = {};
+
+  for (const item of items) {
+    itemToEbayListing[item.id] = item.ebayListingId;
+    ebayListingToItem[item.ebayListingId] = item.id;
+  }
+
   const listings = await getAllEbayListings();
-  console.log(listings);
+
+  const listingByListingId = {};
+  for (const listing of listings) {
+    listingByListingId[listing.ItemID] = listing;
+  }
+
+  for (const listing of listings) {
+    if (!ebayListingToItem[listing.ItemID]) {
+      console.log("Could not find item for ebay listing " + listing.ItemID);
+    }
+  }
+
+  for (const item of items) {
+    if (!listingByListingId[item.ebayListingId]) {
+      console.log(`Could not find ebay listing for item ${item.id}`);
+      const listing = await getEbayListing(item.ebayListingId);
+      if (listing.Item.ListingDetails.EndTime) {
+        await updateItemSold(
+          item.id,
+          listing.Item.SellingStatus.QuantitySold,
+          listing.Item.ListingDetails.EndTime,
+          listing.Item.SellingStatus.CurrentPrice.value,
+        );
+      }
+    }
+  }
   console.log("Done checking ebay listings.");
 };
 
@@ -226,9 +269,8 @@ const main = async () => {
   while (true) {
     await processSales();
     await markdownItems();
+    await listingCheck();
     await sleep(1000 * 60);
-    //await listingCheck();
-    //await sleep(1000 * 360);
   }
 };
 
