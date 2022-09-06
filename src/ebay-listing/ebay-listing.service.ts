@@ -8,7 +8,10 @@ import { PrismaService } from "../prisma/prisma.service";
 import { EbayService } from "../ebay/ebay.service";
 import { CreateEbayListingDto, UpdateEbayListingDto } from "./dto";
 import * as FormData from "form-data";
-import { encodeSpecialCharsInObject } from "../util";
+import {
+  encodeSpecialCharsInObject,
+  decodeSpecialCharsInObject,
+} from "../util";
 
 @Injectable()
 export class EbayListingService {
@@ -253,9 +256,11 @@ export class EbayListingService {
   }
 
   async getEbayListing(itemId: string) {
-    return this.ebay.trading.GetItem({
+    const item = await this.ebay.trading.GetItem({
       ItemID: itemId,
+      IncludeItemSpecifics: true,
     });
+    return decodeSpecialCharsInObject(item);
   }
 
   async getEbayListings() {
