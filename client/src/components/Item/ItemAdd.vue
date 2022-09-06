@@ -246,9 +246,18 @@ export default {
       if (upc.toString().length == 12) {
         const result = await api.lookupProduct(this.token, upc.toString());
         if (Object.keys(result).length > 0) {
-          this.form.specifics = [];
+          //this.form.specifics = [];
           Object.keys(result).forEach((key) => {
-            this.form.specifics.push({ key: key, value: result[key] });
+            let found = false;
+            for (let i = 0; i < this.form.specifics.length; i++) {
+              if (this.form.specifics[i].key === key) {
+                this.form.specifics[i].value = result[key];
+                found = true;
+              }
+            }
+            if (!found) {
+              this.form.specifics.push({ key: key, value: result[key] });
+            }
           });
           this.changeSpecifics();
         } else {

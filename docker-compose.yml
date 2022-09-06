@@ -6,6 +6,12 @@ services:
       - 5434:5432
     networks:
       - locotoko
+    env_file:
+      - .env.dev
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
   test-db:
     image: postgres:13
     ports:
