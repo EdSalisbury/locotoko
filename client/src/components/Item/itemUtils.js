@@ -6,7 +6,7 @@ const listItem = async (id, context) => {
   if (response.status == 201) {
     context.$toast.success("Listing Item Successful");
     // TODO: Make this only get the appropriate item
-    context.items = await api.getItems(context.token);
+    context.items = await api.getActiveItems(context.token);
     context.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
   } else {
     const err = await response.json();
