@@ -63,7 +63,8 @@ const getItem = async (itemId) => {
 
 const getItemByEbayItemId = async (ebayItemId) => {
   const items = await getItems();
-  return items.filter((item) => item.ebayListingId == ebayItemId)[0];
+  const filtered = items.filter((item) => item.ebayListingId == ebayItemId);
+  return filtered[0];
 };
 
 const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
@@ -109,11 +110,11 @@ const processSales = async () => {
     const item = await getItemByEbayItemId(ebayItem.ItemID);
     if (!item) {
       console.error(
-        "Unable to find item with eBay Listing ID: " + ebayItem.ItemID,
+        `Unable to find item with eBay Listing ID: ${ebayItem.ItemID} (${ebayItem.Title})`,
       );
-      console.log(ebayItem);
     } else {
-      if (item.soldAt !== ebayItem.ListingDetails.EndTime) {
+      if (item.quantitySold !== ebayItem.SellingStatus.QuantitySold) {
+        console.log(`Marking ${ebayItem.Title} as sold`);
         await updateItemSold(
           item.id,
           ebayItem.SellingStatus.QuantitySold,
@@ -183,7 +184,11 @@ const updateEbayListing = async (id) => {
 const markdownItems = async () => {
   console.log("Marking down items... ");
   await login();
-  const markdownRate = 0.005;
+  const markdownRate = process.env.MARKDOWN_RATE;
+  if (!markdownRate) {
+    console.error("No Markdown rate specified.");
+    return;
+  }
   const items = await getActiveItems();
   for (let item of items) {
     const origPrice = Number(item.price).toFixed(2);
@@ -195,7 +200,7 @@ const markdownItems = async () => {
 
     if (currPrice != newCurrPrice) {
       console.log(
-        `Updating ${item.id} price to ${newCurrPrice} (Originally ${origPrice})`,
+        `Updating ${item.id} (${item.title}) price to ${newCurrPrice} (Originally ${origPrice})`,
       );
       const itemResponse = await updateItem(item.id, {
         currentPrice: newCurrPrice,
@@ -226,6 +231,7 @@ const listingCheck = async () => {
   console.log("Checking ebay listings...");
   await login();
   const items = await getItems();
+  const activeItems = await getActiveItems();
 
   let itemToEbayListing = {};
   let ebayListingToItem = {};
@@ -244,29 +250,53 @@ const listingCheck = async () => {
 
   for (const listing of listings) {
     if (!ebayListingToItem[listing.ItemID]) {
-      console.log("Could not find item for ebay listing " + listing.ItemID);
+      console.log(
+        `Could not find item for ebay listing ${listing.ItemID} - ${listing.Title}`,
+      );
     }
   }
 
-  for (const item of items) {
+  for (const item of activeItems) {
     if (!listingByListingId[item.ebayListingId]) {
-      console.log(`Could not find ebay listing for item ${item.id}`);
-      const listing = await getEbayListing(item.ebayListingId);
-      if (listing.Item.ListingDetails.EndTime) {
-        await updateItemSold(
-          item.id,
-          listing.Item.SellingStatus.QuantitySold,
-          listing.Item.ListingDetails.EndTime,
-          listing.Item.SellingStatus.CurrentPrice.value,
-        );
-      }
+      console.log(
+        `Could not find ebay listing for item ${item.id} - ${item.title}`,
+      );
     }
   }
   console.log("Done checking ebay listings.");
 };
 
+const titleCheck = async () => {
+  console.log("Starting title checks.");
+  await login();
+  const items = await getActiveItems();
+  for (const item of items) {
+    if (item.title.length > 75) {
+      console.log(`${item.id} - ${item.title} has too long a title`);
+    }
+  }
+  console.log("Done with title checks");
+};
+
+const soldCheck = async () => {
+  console.log("Starting sold checks.");
+  await login();
+  const items = await getItems();
+  for (const item of items) {
+    if (item.soldAt) {
+      console.log(
+        `${item.id} - ${item.title} - ${item.quantity} - ${item.quantitySold} - ${item.soldAt}`,
+      );
+      await updateItem(item.id, {
+        soldAt: null,
+        quantitySold: 0,
+      });
+    }
+  }
+};
 const main = async () => {
   while (true) {
+    await titleCheck();
     await processSales();
     await markdownItems();
     await listingCheck();

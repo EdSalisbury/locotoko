@@ -1,7 +1,7 @@
 <template>
   <b-container fluid class="section m-0">
     <h1>{{ label }}</h1>
-    <b-form-datepicker v-model="localValue" :required="required" />
+    <b-form-datepicker v-model="localValue" :required="required" :reset-button="true" />
   </b-container>
 </template>
 <script>

@@ -41,6 +41,9 @@
             <b-col xs="3" class="m-0 pl-0 pr-0">
               <TextInput label="Sold Quantity" v-model="form.quantitySold" />
             </b-col>
+            <b-col xs="3" class="m-0 p-0">
+              <DateInput label="Sold At" v-model="form.soldAt" />
+            </b-col>
           </b-row>
         </b-container>
         <b-container fluid class="p-0" style="margin-top: 10px">
@@ -126,6 +129,7 @@ import ImageView from "@/components/ImageView";
 import CameraInput from "@/components/CameraInput";
 import TextInput from "@/components/TextInput";
 import SelectInput from "@/components/SelectInput";
+import DateInput from "@/components/DateInput";
 
 import api from "@/api";
 import util from "@/util";
@@ -139,6 +143,7 @@ export default {
     CameraInput,
     SelectInput,
     TextInput,
+    DateInput,
   },
   data() {
     return {
@@ -158,6 +163,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
+        soldAt: "",
         ownerId: "",
         oldTemplateId: "",
         templateId: "",
@@ -293,6 +299,14 @@ export default {
       this.payload.ebayCategoryId = parseInt(this.payload.ebayCategoryId);
       this.payload.ebayConditionId = parseInt(this.payload.ebayConditionId);
       this.payload.quantity = parseInt(this.payload.quantity);
+      this.payload.quantitySold = parseInt(this.payload.quantitySold);
+
+      try {
+        const date = new Date(this.payload.soldAt);
+        this.payload.soldAt = date.toISOString();
+      } catch {
+        this.payload.soldAt = "";
+      }
 
       this.payload.shipWeightPounds = parseInt(this.payload.weight.pounds);
       this.payload.shipWeightOunces = parseInt(this.payload.weight.ounces);

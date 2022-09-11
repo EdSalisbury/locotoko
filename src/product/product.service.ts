@@ -62,35 +62,33 @@ export class ProductService {
     details["UPC"] = upc;
     details["EAN"] = upc;
 
-    // const musicProduct = await this.getMusicProduct(upc);
+    const musicProduct = await this.getMusicProduct(upc);
 
-    // if (musicProduct.releases.length > 0) {
-    //   const release = musicProduct.releases[0];
-    //   details["Release Title"] = release.title;
-    //   details["Artist"] = release["artist-credit"][0].name;
-    //   details["Format"] = release.media[0].format;
-    //   details["Record Label"] = release["label-info"][0].label.name;
-    //   details["Release Year"] = release.date.split("-")[0];
-    //   //return details;
-    // }
+    try {
+      if (musicProduct.releases.length > 0) {
+        const release = musicProduct.releases[0];
+        details["Release Title"] = release.title;
+        details["Artist"] = release["artist-credit"][0].name;
+        details["Format"] = release.media[0].format;
+        details["Record Label"] = release["label-info"][0].label.name;
+        details["Release Year"] = release.date.split("-")[0];
+      }
+    } catch {}
 
-    // try {
-    //   const ebayProduct = await this.getEbayProduct(upc);
-    //   ebayProduct.Product.ItemSpecifics.NameValueList.forEach((specific) => {
-    //     details[specific.Name] = specific.Value;
-    //   });
-    //   details["Title"] = ebayProduct.Product.Title;
-    //   const title = ebayProduct.Product.Title;
-    //   const regex = /^(.*?)\s+\((.*?), (.*?)\)$/;
-    //   const found = title.match(regex);
-    //   if (found) {
-    //     details["Release Title"] = details["Release Title"] || found[1];
-    //     details["Release Year"] = details["Release Year"] || found[3];
-    //   }
-    // } catch (e) {
-    //   console.log(e);
-    //   return {};
-    // }
+    try {
+      const ebayProduct = await this.getEbayProduct(upc);
+      ebayProduct.Product.ItemSpecifics.NameValueList.forEach((specific) => {
+        details[specific.Name] = specific.Value;
+      });
+      details["Title"] = ebayProduct.Product.Title;
+      const title = ebayProduct.Product.Title;
+      const regex = /^(.*?)\s+\((.*?), (.*?)\)$/;
+      const found = title.match(regex);
+      if (found) {
+        details["Release Title"] = details["Release Title"] || found[1];
+        details["Release Year"] = details["Release Year"] || found[3];
+      }
+    } catch {}
 
     try {
       const items = await this.getEbayItemsByProduct(upc);
@@ -110,10 +108,7 @@ export class ProductService {
           }
         }
       }
-    } catch (e) {
-      console.log(e);
-      return {};
-    }
+    } catch {}
 
     return details;
   }
