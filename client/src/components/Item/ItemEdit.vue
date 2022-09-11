@@ -301,11 +301,15 @@ export default {
       this.payload.quantity = parseInt(this.payload.quantity);
       this.payload.quantitySold = parseInt(this.payload.quantitySold);
 
-      try {
-        const date = new Date(this.payload.soldAt);
-        this.payload.soldAt = date.toISOString();
-      } catch {
-        this.payload.soldAt = "";
+      if (this.payload.soldAt) {
+        try {
+          const date = new Date(this.payload.soldAt);
+          this.payload.soldAt = date.toISOString();
+        } catch {
+          this.payload.soldAt = null;
+        }
+      } else {
+        this.payload.soldAt = null;
       }
 
       this.payload.shipWeightPounds = parseInt(this.payload.weight.pounds);
