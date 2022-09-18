@@ -260,7 +260,7 @@ export default {
           console.log(result);
           this.form.specifics = [];
           Object.keys(result).forEach((key) => {
-            this.form.specifics.push({ key: key, value: result[key] });
+            this.form.specifics.push({ key: key, value: String(result[key]).substring(0, 50) });
           });
           this.changeSpecifics();
         } else {

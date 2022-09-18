@@ -251,12 +251,12 @@ export default {
             let found = false;
             for (let i = 0; i < this.form.specifics.length; i++) {
               if (this.form.specifics[i].key === key) {
-                this.form.specifics[i].value = result[key];
+                this.form.specifics[i].value = String(result[key]).substring(0, 50);
                 found = true;
               }
             }
             if (!found) {
-              this.form.specifics.push({ key: key, value: result[key] });
+              this.form.specifics.push({ key: key, value: String(result[key]).substring(0, 50) });
             }
           });
           this.changeSpecifics();

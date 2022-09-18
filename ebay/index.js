@@ -73,7 +73,7 @@ const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
     const item = await getItem(itemId);
     const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
     const request = {
-      soldPrice: parseFloat(soldPrice),
+      soldPrice: soldPrice,
       quantitySold: item.quantitySold + quantitySold,
       soldAt: endTime,
     };
@@ -119,7 +119,7 @@ const processSales = async () => {
           item.id,
           ebayItem.SellingStatus.QuantitySold,
           ebayItem.ListingDetails.EndTime,
-          ebayItem.SellingStatus.CurrentPrice.value,
+          parseFloat(ebayItem.SellingStatus.CurrentPrice.value).toFixed(2),
         );
       }
     }

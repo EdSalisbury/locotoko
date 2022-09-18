@@ -6,7 +6,7 @@
         <b-form-input type="text" v-model="item.key" placeholder="Key" @input="input" />
       </b-col>
       <b-col xs="auto" class="section-col">
-        <b-form-input type="text" v-model="item.value" placeholder="Value" @input="input" />
+        <b-form-input type="text" v-model="item.value" placeholder="Value" @input="input" :formatter="formatValue" />
       </b-col>
       <b-col xs="1" class="section-col">
         <b-button class="p-1 m-1" variant="danger" @click="deleteItem(index)"><b-icon-dash /></b-button>
@@ -36,6 +36,9 @@ export default {
     },
     input() {
       this.$emit("input", this.specifics);
+    },
+    formatValue(value) {
+      return String(value).substring(0, 50);
     },
   },
 };
