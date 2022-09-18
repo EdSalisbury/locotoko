@@ -1,6 +1,6 @@
 import {
   IsDateString,
-  IsDecimal,
+  IsCurrency,
   IsNotEmpty,
   IsNumber,
   IsArray,
@@ -34,13 +34,15 @@ export class EditItemDto {
   @IsOptional()
   quantitySold: number;
 
-  @IsDecimal()
+  @IsCurrency()
   @IsOptional()
   price: number;
 
+  @IsCurrency()
   @IsOptional()
   currentPrice: number;
 
+  @IsCurrency()
   @IsOptional()
   soldPrice: number;
 

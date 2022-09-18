@@ -1,7 +1,7 @@
 import {
   IsArray,
   IsDateString,
-  IsDecimal,
+  IsCurrency,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -31,13 +31,15 @@ export class CreateItemDto {
   @IsOptional()
   quantitySold: number;
 
-  @IsDecimal()
+  @IsCurrency()
   @IsOptional()
   price: number;
 
+  @IsCurrency()
   @IsOptional()
   currentPrice: number;
 
+  @IsCurrency()
   @IsOptional()
   soldPrice: number;
 

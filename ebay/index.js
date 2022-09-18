@@ -193,10 +193,15 @@ const markdownItems = async () => {
   for (let item of items) {
     const origPrice = Number(item.price).toFixed(2);
     const currPrice = Number(item.currentPrice).toFixed(2);
-    const newCurrPrice = (
+
+    let newCurrPrice = (
       origPrice *
       (1 - markdownRate * item.weeksActive)
     ).toFixed(2);
+
+    if (newCurrPrice < 5.99) {
+      newCurrPrice = 5.99;
+    }
 
     if (currPrice != newCurrPrice) {
       console.log(
@@ -294,13 +299,36 @@ const soldCheck = async () => {
     }
   }
 };
+
+const setMinimumPrice = async () => {
+  console.log("Updating minimum prices.");
+  await login();
+
+  const items = await getItems();
+  for (const item of items) {
+    if (item.price < 5.99) {
+      console.log(`${item.id} - ${item.title} - ${item.price}`);
+      const itemResponse = await updateItem(item.id, {
+        price: 5.99,
+        currentPrice: 5.99,
+      });
+      if (itemResponse.status !== 200) {
+        continue;
+      }
+      await updateEbayListing(item.id);
+    }
+  }
+  console.log("Done updating minimum prices.");
+};
+
 const main = async () => {
   while (true) {
-    await titleCheck();
+    //await titleCheck();
     await processSales();
     await markdownItems();
-    await listingCheck();
-    await sleep(1000 * 60);
+    //await listingCheck();
+    //await setMinimumPrice();
+    await sleep(1000 * 60 * 5);
   }
 };
 
