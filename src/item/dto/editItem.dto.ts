@@ -6,6 +6,7 @@ import {
   IsArray,
   IsOptional,
   IsString,
+  IsBoolean,
 } from "class-validator";
 
 export class EditItemDto {
@@ -125,4 +126,8 @@ export class EditItemDto {
   @IsOptional()
   @IsString()
   location: string;
+
+  @IsOptional()
+  @IsBoolean()
+  ready: boolean;
 }

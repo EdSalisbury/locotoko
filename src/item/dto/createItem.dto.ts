@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsBoolean,
 } from "class-validator";
 
 export class CreateItemDto {
@@ -121,4 +122,8 @@ export class CreateItemDto {
   @IsOptional()
   @IsString()
   location: string;
+
+  @IsOptional()
+  @IsBoolean()
+  ready: boolean;
 }

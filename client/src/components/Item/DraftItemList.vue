@@ -15,13 +15,16 @@
         :filter-case-sensitive="false"
         class="pb-2"
       >
-        <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
         <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
-
-        <template v-slot:ebayListingId="data">
-          <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
-            {{ data.value.ebayListingId }}
-          </a>
+        <template v-slot:ready="data">
+          <b-form-group>
+            <input
+              type="checkbox"
+              style="width: 30px; height: 30px"
+              v-model="data.value.ready"
+              @change="ready(data.value.id, data.value.ready)"
+            />
+          </b-form-group>
         </template>
         <template v-slot:actions="data">
           <router-link :to="'/viewItem/' + data.value.id">
@@ -36,14 +39,6 @@
             </b-button>
           </router-link>
 
-          <b-button
-            v-if="!data.value.ebayListingId"
-            class="p-1 mr-1"
-            variant="primary"
-            @click="listItem(data.value.id)"
-          >
-            eBay</b-button
-          >
           <b-button class="p-1 mr-1" variant="success" @click="duplicateItem(data.value.id)">
             <b-icon-file-earmark-plus-fill />
           </b-button>
@@ -90,6 +85,7 @@ export default {
         { name: "location", title: "Location", editable: true },
         { name: "quantity", title: "Quantity" },
         { name: "price", title: "Price" },
+        { name: "ready", title: "Ready", editable: true },
         { name: "actions", title: "Actions", sortable: false, cellstyle: "text-nowrap" },
       ],
     };
@@ -141,6 +137,13 @@ export default {
       } else {
         alert("Error printing item label");
       }
+    },
+    async ready(id, value) {
+      console.log(id, value);
+      const request = {
+        ready: value,
+      };
+      await api.updateItem(this.token, id, request);
     },
   },
 };
