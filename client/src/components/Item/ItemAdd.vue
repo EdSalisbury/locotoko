@@ -29,40 +29,31 @@
           </b-row>
         </b-container>
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
-        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-        <TextInput label="Title" v-model="form.title" :required="true" />
 
-        <b-container fluid class="p-0" style="margin-top: 10px">
+        <b-container fluid class="p-0">
           <b-row class="m-0 p-0">
+            <b-col xs="3" class="m-0 pl-0 pr-2">
+              <SelectInput
+                label="Condition"
+                v-model="form.ebayConditionId"
+                :options="conditions"
+                @input="changeSpecifics"
+              />
+            </b-col>
             <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Quantity" v-model="form.quantity" />
             </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-0">
-              <TextInput label="Sold Quantity" v-model="form.quantitySold" />
-            </b-col>
-          </b-row>
-        </b-container>
-        <b-container fluid class="p-0" style="margin-top: 10px">
-          <b-row class="m-0 p-0">
             <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Original Price" v-model="form.price" />
+              <TextInput label="Price" v-model="form.price" />
             </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-0">
-              <TextInput label="Current Price" v-model="form.currentPrice" />
+            <b-col xs="3" class="m-0 p-0">
+              <SelectInput label="Acquisition" v-model="form.acquisitionId" :options="acquisitions" />
             </b-col>
-          </b-row>
-        </b-container>
-        <b-container fluid class="p-0" style="margin-top: 10px">
-          <b-row class="m-0 p-0">
-            <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Location" v-model="form.location" />
-            </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-0">
-              <TextInput label="eBay Listing ID" v-model="form.ebayListingId"
-            /></b-col>
           </b-row>
         </b-container>
 
+        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
+        <TextInput label="Title" v-model="form.title" :required="true" />
         <b-container fluid class="section">
           <h1>Description</h1>
           <b-form-textarea v-model="form.description" rows="5" max-rows="10" />
@@ -76,19 +67,9 @@
 
             <b-col xs="6" class="m-0 p-0">
               <b-container fluid class="m-0 p-0">
-                <b-row class="m-0 p-0">
+                <b-row class="m-0">
                   <b-col class="m-0 p-0">
-                    <SelectInput
-                      label="Condition"
-                      v-model="form.ebayConditionId"
-                      :options="conditions"
-                      @input="changeSpecifics"
-                    />
-                  </b-col>
-                </b-row>
-                <b-row class="m-0 pt-2">
-                  <b-col class="m-0 p-0">
-                    <SelectInput label="Acquisition" v-model="form.acquisitionId" :options="acquisitions" />
+                    <TextInput label="Location" v-model="form.location" />
                   </b-col>
                 </b-row>
               </b-container>
