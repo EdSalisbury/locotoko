@@ -5,7 +5,7 @@ import RegisterForm from "@/components/RegisterForm";
 import OwnerList from "@/components/OwnerList";
 import OwnerAdd from "@/components/OwnerAdd";
 import OwnerView from "@/components/OwnerView";
-import { ItemAdd, ItemEdit, ItemView, ItemList, SoldItemList } from "@/components/Item";
+import { ItemAdd, ItemEdit, ItemView, ActiveItemList, SoldItemList, DraftItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
 import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "../components/Acquisition";
 
@@ -19,8 +19,8 @@ const routes = [
   },
   {
     path: "/",
-    name: "items",
-    component: ItemList,
+    name: "home",
+    component: ActiveItemList,
   },
   {
     path: "/register",
@@ -38,14 +38,19 @@ const routes = [
     component: ItemEdit,
   },
   {
-    path: "/items",
-    name: "items",
-    component: ItemList,
+    path: "/activeItems",
+    name: "active items",
+    component: ActiveItemList,
   },
   {
     path: "/soldItems",
     name: "sold items",
     component: SoldItemList,
+  },
+  {
+    path: "/draftItems",
+    name: "draft items",
+    component: DraftItemList,
   },
   {
     path: "/addItem",

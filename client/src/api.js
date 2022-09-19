@@ -11,8 +11,8 @@ const apiHeaders = (token) => {
   };
 };
 
-const getItems = async (token) => {
-  const response = await fetch(apiUrl("items"), apiHeaders(token));
+const getDraftItems = async (token) => {
+  const response = await fetch(apiUrl("items") + "?draft=true", apiHeaders(token));
   return await response.json();
 };
 
@@ -234,7 +234,6 @@ const lookupProduct = async (token, upc) => {
 };
 
 export default {
-  getItems,
   getItem,
   createItem,
   updateItem,
@@ -259,4 +258,5 @@ export default {
   lookupProduct,
   getSoldItems,
   getActiveItems,
+  getDraftItems,
 };

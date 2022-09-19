@@ -65,7 +65,7 @@ export class ItemService {
     await this.getCategories();
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
-      where: { soldAt: null },
+      where: { soldAt: null, ebayListingId: { not: null } },
     });
 
     return items
@@ -74,6 +74,16 @@ export class ItemService {
         weeksActive: getWeeksDiff(item.createdAt, new Date()),
       }))
       .map(this.categoryMap);
+  }
+
+  async getDraftItems() {
+    await this.getCategories();
+    const items = await this.prisma.item.findMany({
+      select: this.itemSelection,
+      where: { ebayListingId: null },
+    });
+
+    return items.map(this.categoryMap);
   }
 
   async getItems() {
