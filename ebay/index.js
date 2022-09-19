@@ -323,12 +323,16 @@ const setMinimumPrice = async () => {
 
 const main = async () => {
   while (true) {
-    //await titleCheck();
-    await processSales();
-    await markdownItems();
-    //await listingCheck();
-    //await setMinimumPrice();
-    await sleep(1000 * 60 * 5);
+    try {
+      //await titleCheck();
+      await processSales();
+      await markdownItems();
+      //await listingCheck();
+      //await setMinimumPrice();
+      await sleep(1000 * 60 * 5);
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 
