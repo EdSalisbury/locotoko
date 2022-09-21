@@ -17,6 +17,7 @@ import { EbaySellerEventModule } from "./ebay-seller-event/ebay-seller-event.mod
 import { ProductModule } from "./product/product.module";
 import { AcquisitionModule } from "./acquisition/acquisition.module";
 import { PayoutModule } from "./payout/payout.module";
+import { EbayItemTransactionModule } from "./ebay-item-transaction/ebay-item-transaction.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -38,6 +39,7 @@ import { PayoutModule } from "./payout/payout.module";
     ProductModule,
     AcquisitionModule,
     PayoutModule,
+    EbayItemTransactionModule,
   ],
 })
 export class AppModule {}
