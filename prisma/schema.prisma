@@ -62,6 +62,7 @@ model Item {
   acquisitionId String?
   upc String?
   ready Boolean @default(false)
+  listedAt DateTime?
   
   @@map("items")
 }

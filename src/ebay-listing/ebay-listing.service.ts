@@ -134,6 +134,7 @@ export class EbayListingService {
 
       // Update item with eBay listing ID
       item.ebayListingId = ebayListingId.toString();
+      item.listedAt = new Date();
 
       return this.prisma.item.update({
         where: {

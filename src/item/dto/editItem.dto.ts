@@ -130,4 +130,8 @@ export class EditItemDto {
   @IsOptional()
   @IsBoolean()
   ready: boolean;
+
+  @IsDateString()
+  @IsOptional()
+  listedAt: string;
 }

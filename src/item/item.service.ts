@@ -28,6 +28,7 @@ export class ItemService {
     price: true,
     currentPrice: true,
     ready: true,
+    listedAt: true,
   };
 
   categories = [];

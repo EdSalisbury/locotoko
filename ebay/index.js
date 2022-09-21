@@ -1,3 +1,4 @@
+import { ConsoleLogger } from "@nestjs/common";
 import { default as axios } from "axios";
 import "dotenv/config";
 
@@ -37,6 +38,15 @@ const login = async () => {
   TOKEN = response.data.access_token;
 };
 
+const createEbayListing = async (id) => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
+  const request = {
+    itemId: id,
+  };
+  const response = await axios.post(url, request, getHeaders());
+  return response.data;
+};
+
 const getItems = async () => {
   const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
   const response = await axios.get(url, getHeaders());
@@ -51,6 +61,12 @@ const getActiveItems = async () => {
 
 const getSoldItems = async () => {
   const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=true";
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
+const getDraftItems = async () => {
+  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?draft=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -321,12 +337,50 @@ const setMinimumPrice = async () => {
   console.log("Done updating minimum prices.");
 };
 
+const listItem = async () => {
+  console.log("Listing ready item from drafts");
+  await login();
+
+  let drafts = await getDraftItems();
+  drafts.sort((a, b) => b.price - a.price);
+
+  let startTime = new Date();
+  startTime.setHours(startTime.getHours() - 24);
+  const items = await getItems();
+  let count = 0;
+  for (const item of items) {
+    if (item.listedAt && Date.parse(item.listedAt) > startTime) {
+      count++;
+    }
+  }
+
+  console.log(`Found ${count} items listed today`);
+  if (count < process.env.LISTINGS_PER_DAY) {
+    console.log("Looking for draft to list");
+
+    for (const item of drafts) {
+      if (item.ready) {
+        try {
+          console.log(`Listing ${item.id} - ${item.title} - ${item.price}`);
+          await createEbayListing(item.id);
+          console.log("Item listed successfully");
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }
+  console.log("No items to list!");
+};
+
 const main = async () => {
   while (true) {
     try {
       //await titleCheck();
       await processSales();
       await markdownItems();
+      await listItem();
       //await listingCheck();
       //await setMinimumPrice();
       await sleep(1000 * 60 * 5);
