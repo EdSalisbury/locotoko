@@ -374,19 +374,46 @@ const listItem = async () => {
   console.log("No items to list!");
 };
 
+const getEbayItemTransactions = async (itemId) => {
+  const url =
+    process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayItemTransactions/" + itemId;
+  const response = await axios.get(url, getHeaders());
+  return response.data;
+};
+
+const getShippedAtData = async () => {
+  console.log("Getting shipped data for items");
+  await login();
+
+  const items = await getSoldItems();
+  for (const item of items) {
+    console.log(item.id);
+    console.log(item.title);
+    console.log(item.ebayListingId);
+    const transactions = await getEbayItemTransactions(item.ebayListingId);
+    console.log(transactions);
+    for (const transaction of transactions) {
+      console.log(transaction);
+    }
+    return;
+  }
+};
+
 const main = async () => {
   while (true) {
     try {
       //await titleCheck();
+      //await listingCheck();
+      //await setMinimumPrice();
+
+      //await getShippedAtData();
       await processSales();
       await markdownItems();
       await listItem();
-      //await listingCheck();
-      //await setMinimumPrice();
-      await sleep(1000 * 60 * 5);
     } catch (e) {
       console.error(e);
     }
+    await sleep(1000 * 60 * 5);
   }
 };
 

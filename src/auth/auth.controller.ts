@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, LoginDto } from "./dto";
 
@@ -14,7 +8,9 @@ export class AuthController {
 
   @Post("register")
   register(@Body() dto: AuthDto) {
-    return this.authService.register(dto);
+    // Disabling for now
+    //return this.authService.register(dto);
+    return { error: "Registration not allowed at this time" };
   }
 
   @HttpCode(HttpStatus.OK)

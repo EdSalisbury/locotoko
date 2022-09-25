@@ -1,5 +1,9 @@
+const baseUrl = () => {
+  return window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+};
+
 const apiUrl = (resource, id = "", action = "") => {
-  return process.env.VUE_APP_API_BASE_URL + `/api/v1/${resource}` + (id ? `/${id}` : "") + (action ? `/${action}` : "");
+  return baseUrl() + `/api/v1/${resource}` + (id ? `/${id}` : "") + (action ? `/${action}` : "");
 };
 
 const apiHeaders = (token) => {
