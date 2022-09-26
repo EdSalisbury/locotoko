@@ -3040,6 +3040,11 @@ ipaddr.js@1.9.1:
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.9.1.tgz#bff38543eeb8984825079ff3a2a8e6cbd46781b3"
   integrity sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==
 
+ipp@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/ipp/-/ipp-2.0.1.tgz#9d28d71a3d075a4d029d30baea2a7be980741cb6"
+  integrity sha512-p5dO2BXAVDnkv6IhUBupwydkq5/uw+DE+MGXnYzziNK1AtuLgbT9dFfJ3f8pA+J21n43TYipm6et/hTDEFJU/A==
+
 is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"

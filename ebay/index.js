@@ -1,6 +1,7 @@
 import { ConsoleLogger } from "@nestjs/common";
 import { default as axios } from "axios";
 import "dotenv/config";
+import { nextTick } from "process";
 
 let TOKEN;
 
@@ -387,29 +388,61 @@ const getShippedAtData = async () => {
 
   const items = await getSoldItems();
   for (const item of items) {
-    console.log(item.id);
-    console.log(item.title);
-    console.log(item.ebayListingId);
-    const transactions = await getEbayItemTransactions(item.ebayListingId);
-    console.log(transactions);
-    for (const transaction of transactions) {
-      console.log(transaction);
+    console.log(`${item.ebayListingId} - ${item.title} - ${item.shippedAt}`);
+    if (item.shippedAt) {
+      continue;
     }
-    return;
+    let shippedAt = "";
+
+    const transactions = await getEbayItemTransactions(item.ebayListingId);
+    if (transactions.length === 0) {
+      shippedAt = item.soldAt;
+    }
+    for (const transaction of transactions) {
+      if (transaction.ShippedTime) {
+        shippedAt = transaction.ShippedTime;
+      }
+    }
+    if (shippedAt) {
+      await updateItem(item.id, {
+        shippedAt: shippedAt,
+      });
+    }
   }
+  console.log("Done getting shipped info");
 };
 
+const printPickList = async () => {
+  console.log("Printing pick list");
+  await login();
+
+  let toShip = [];
+  const items = await getSoldItems();
+  for (const item of items) {
+    if (!item.shippedAt) {
+      toShip.push(item);
+    }
+  }
+
+  for (const item of toShip) {
+    console.log(
+      `${item.id} - ${item.title} - ${item.location} - Qty ${item.quantitySold}`,
+    );
+  }
+
+  console.log("Finished with pick list");
+};
 const main = async () => {
   while (true) {
     try {
       //await titleCheck();
       //await listingCheck();
       //await setMinimumPrice();
-
       //await getShippedAtData();
-      await processSales();
-      await markdownItems();
-      await listItem();
+      //await processSales();
+      //await markdownItems();
+      //await listItem();
+      await printPickList();
     } catch (e) {
       console.error(e);
     }

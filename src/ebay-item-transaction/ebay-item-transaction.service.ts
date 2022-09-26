@@ -12,10 +12,13 @@ export class EbayItemTransactionService {
     }
 
     this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
-
-    const response = await this.ebay.trading.GetItemTransactions({
-      ItemID: itemId,
-    });
-    return JSON.stringify(response.TransactionArray) || [];
+    try {
+      const response = await this.ebay.trading.GetItemTransactions({
+        ItemID: itemId,
+      });
+      return JSON.stringify(response.TransactionArray.Transaction);
+    } catch {
+      return [];
+    }
   }
 }
