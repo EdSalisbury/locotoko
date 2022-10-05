@@ -139,7 +139,37 @@ export default {
       }
     },
     async ready(id, value) {
-      console.log(id, value);
+      const item = await api.getItem(this.token, id);
+      let errors = [];
+      if (value) {
+        if (item.title.length >= 75) {
+          errors.push(`Title too long (${item.title.length} chars)`);
+        }
+        if (parseInt(item.price) < 9.99) {
+          errors.push(`Original price is under 9.99 (${parseInt(item.price).toFixed(2)})`);
+        }
+        if (item.ebayConditionId === 0) {
+          errors.push("Condition not specified");
+        }
+        if (item.images.length === 0) {
+          errors.push("No photos added");
+        }
+        if (item.images.length > 12) {
+          errors.push(`Too many photos (${item.images.length})`);
+        }
+
+        if (errors.length > 0) {
+          this.$toast.error("Unable to ready item!</br>Reasons:</br>" + errors.join("</br>"), { duration: 0 });
+          for (const item of this.items) {
+            if (item.id === id) {
+              item.ready = false;
+              break;
+            }
+          }
+          return false;
+        }
+      }
+
       const request = {
         ready: value,
       };
