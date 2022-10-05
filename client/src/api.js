@@ -87,8 +87,7 @@ const deleteItem = async (token, id) => {
 };
 
 const getUsers = async (token) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/users";
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl("users"), {
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -97,8 +96,7 @@ const getUsers = async (token) => {
 };
 
 const getOwners = async (token) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/owners";
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl("owners"), {
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -107,8 +105,7 @@ const getOwners = async (token) => {
 };
 
 const getEbayCategories = async (token) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayCategories";
-  const response = await fetch(url, {
+  const response = await fetch(apiUrl("ebayCategories"), {
     headers: {
       Authorization: "Bearer " + token,
     },
