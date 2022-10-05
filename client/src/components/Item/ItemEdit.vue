@@ -31,7 +31,15 @@
 
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-        <TextInput label="Title" v-model="form.title" :max-size="75" :required="true" />
+        <TextInput
+          label="Title"
+          v-model="form.title"
+          :max-size="75"
+          :required="true"
+          :maxLength="75"
+          :minLength="50"
+          :checkState="true"
+        />
 
         <b-container fluid class="p-0" style="margin-top: 10px">
           <b-row class="m-0 p-0">

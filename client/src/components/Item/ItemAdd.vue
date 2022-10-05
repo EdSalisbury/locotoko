@@ -53,7 +53,14 @@
         </b-container>
 
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
-        <TextInput label="Title" v-model="form.title" :required="true" />
+        <TextInput
+          label="Title"
+          v-model="form.title"
+          :required="true"
+          :maxLength="75"
+          :minLength="50"
+          :checkState="true"
+        />
         <b-container fluid class="section">
           <h1>Description</h1>
           <b-form-textarea v-model="form.description" rows="5" max-rows="10" />
