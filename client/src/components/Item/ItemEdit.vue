@@ -327,16 +327,7 @@ export default {
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
 
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
-      const response = await fetch(url, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify(this.payload),
-      });
-      await response.json();
+      await api.updateItem(this.token, itemId, this.payload);
 
       if (this.form.ebayListingId !== null) {
         const response = await api.updateEbayListing(token, itemId, {

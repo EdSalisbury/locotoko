@@ -24,6 +24,8 @@
 
 <script>
 import TextInput from "@/components/TextInput";
+import api from "@/api";
+
 export default {
   components: {
     TextInput,
@@ -39,18 +41,20 @@ export default {
   methods: {
     async onSubmit(event) {
       event.preventDefault();
+      const data = await api.login(this.form);
+
       //const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/auth/login";
-      const url =
-        window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v1/auth/login";
-      console.log(url);
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.form),
-      });
-      const data = await response.json();
+      // const url =
+      //   window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v1/auth/login";
+      // console.log(url);
+      // const response = await fetch(url, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(this.form),
+      // });
+      // const data = await response.json();
       const token = data.access_token;
       this.$cookie.set("token", token, {
         expires: "24h",

@@ -1,4 +1,7 @@
 const baseUrl = () => {
+  if (process.env.VUE_APP_API_BASE_URL) {
+    return process.env.VUE_APP_API_BASE_URL;
+  }
   return window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
 };
 
@@ -13,6 +16,18 @@ const apiHeaders = (token) => {
       Authorization: `Bearer ${token}`,
     },
   };
+};
+
+const login = async (body) => {
+  const url = baseUrl() + "/api/v1/auth/login";
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await response.json();
 };
 
 const getDraftItems = async (token) => {
@@ -238,6 +253,7 @@ const lookupProduct = async (token, upc) => {
 };
 
 export default {
+  login,
   getItem,
   createItem,
   updateItem,
