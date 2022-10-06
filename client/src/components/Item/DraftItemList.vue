@@ -142,11 +142,11 @@ export default {
       const item = await api.getItem(this.token, id);
       let errors = [];
       if (value) {
-        if (item.title.length >= 75) {
+        if (item.title.length > 75) {
           errors.push(`Title too long (${item.title.length} chars)`);
         }
-        if (parseInt(item.price) < 9.99) {
-          errors.push(`Original price is under 9.99 (${parseInt(item.price).toFixed(2)})`);
+        if (parseFloat(item.price) < 5.99) {
+          errors.push(`Original price is under $5.99 ($${parseFloat(item.price).toFixed(2)})`);
         }
         if (item.ebayConditionId === 0) {
           errors.push("Condition not specified");
