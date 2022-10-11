@@ -22,7 +22,7 @@ const getHeaders = () => {
 
 const apiUrl = (resource, id = "", action = "") => {
   return (
-    process.env.VUE_APP_API_BASE_URL +
+    process.env.LOCAL_API_BASE_URL +
     `/api/v1/${resource}` +
     (id ? `/${id}` : "") +
     (action ? `/${action}` : "")
@@ -30,7 +30,7 @@ const apiUrl = (resource, id = "", action = "") => {
 };
 
 const login = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/auth/login";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/auth/login";
   const request = {
     email: process.env.EBAY_EMAIL,
     password: process.env.EBAY_PASSWORD,
@@ -40,7 +40,7 @@ const login = async () => {
 };
 
 const createEbayListing = async (id) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings";
   const request = {
     itemId: id,
   };
@@ -49,31 +49,31 @@ const createEbayListing = async (id) => {
 };
 
 const getItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
 const getActiveItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=false";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?sold=false";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
 const getSoldItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?sold=true";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?sold=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
 const getDraftItems = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items?draft=true";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?draft=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
 const getItem = async (itemId) => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items/" + itemId;
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -88,7 +88,7 @@ const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
   console.log(itemId, quantitySold, endTime, soldPrice);
   try {
     const item = await getItem(itemId);
-    const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + itemId;
+    const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items/" + itemId;
     const request = {
       soldPrice: soldPrice,
       quantitySold: item.quantitySold + quantitySold,
@@ -113,11 +113,41 @@ const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
 };
 
 const getSellerEvents = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebaySellerEvents";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebaySellerEvents";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
+const getEbayOrders = async () => {
+  const response = await axios.get(apiUrl("ebayOrders"), getHeaders());
+  return response.data;
+};
+
+const processNewSales = async () => {
+  console.log("Processing sales... ");
+  await login();
+  const orders = await getEbayOrders();
+  for (const order of orders) {
+    for (const ebayItem of order.items) {
+      const item = await getItemByEbayItemId(ebayItem.ebayItemId);
+      if (!item) {
+        console.error(
+          `Unable to find item with eBay Listing ID: ${ebayItem.ItemID} (${ebayItem.Title})`,
+        );
+        continue;
+      }
+      if (item.soldAt !== order.paidTime) {
+        console.log(`Marking ${item.title} as sold`);
+        const request = {
+          quantitySold: item.quantitySold + ebayItem.quantity,
+          soldAt: order.paidTime,
+        };
+        await updateItem(item.id, request);
+      }
+    }
+  }
+  console.log("Done processing sales.");
+};
 const processSales = async () => {
   console.log("Processing sales... ");
   await login();
@@ -208,24 +238,22 @@ const markdownItems = async () => {
   }
   const items = await getActiveItems();
   for (let item of items) {
-    const origPrice = Number(item.price).toFixed(2);
-    const currPrice = Number(item.currentPrice).toFixed(2);
+    let newCurrentPrice = item.price * (1 - markdownRate * item.weeksActive);
+    let currentPrice = parseFloat(Number(item.currentPrice).toFixed(2));
+    let origalPrice = parseFloat(Number(item.price).toFixed(2));
 
-    let newCurrPrice = (
-      origPrice *
-      (1 - markdownRate * item.weeksActive)
-    ).toFixed(2);
-
-    if (newCurrPrice < 5.99) {
-      newCurrPrice = 5.99;
+    if (newCurrentPrice < 5.99) {
+      newCurrentPrice = 5.99;
     }
 
-    if (currPrice != newCurrPrice) {
+    newCurrentPrice = newCurrentPrice.toFixed(2);
+
+    if (currentPrice != newCurrentPrice) {
       console.log(
-        `Updating ${item.id} (${item.title}) price to ${newCurrPrice} (Originally ${origPrice})`,
+        `Updating ${item.id} (${item.title}) price to ${newCurrentPrice} (Originally ${origalPrice})`,
       );
       const itemResponse = await updateItem(item.id, {
-        currentPrice: newCurrPrice,
+        currentPrice: newCurrentPrice,
       });
       if (itemResponse.status !== 200) {
         continue;
@@ -237,14 +265,14 @@ const markdownItems = async () => {
 };
 
 const getAllEbayListings = async () => {
-  const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings";
+  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
 const getEbayListing = async (ebayListingId) => {
   const url =
-    process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayListings/" + ebayListingId;
+    process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings/" + ebayListingId;
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -377,7 +405,7 @@ const listItem = async () => {
 
 const getEbayItemTransactions = async (itemId) => {
   const url =
-    process.env.VUE_APP_API_BASE_URL + "/api/v1/ebayItemTransactions/" + itemId;
+    process.env.LOCAL_API_BASE_URL + "/api/v1/ebayItemTransactions/" + itemId;
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
@@ -439,10 +467,10 @@ const main = async () => {
       //await listingCheck();
       //await setMinimumPrice();
       //await getShippedAtData();
-      //await processSales();
-      //await markdownItems();
-      //await listItem();
-      await printPickList();
+      await processNewSales();
+      await markdownItems();
+      await listItem();
+      //await printPickList();
     } catch (e) {
       console.error(e);
     }

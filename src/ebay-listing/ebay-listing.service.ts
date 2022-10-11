@@ -201,7 +201,7 @@ export class EbayListingService {
             CategoryID: item.ebayCategoryId,
           },
           PostalCode: this.config.get("POSTAL_CODE"),
-          Quantity: item.quantity,
+          Quantity: item.quantity - item.quantitySold,
           StartPrice: {
             "#value": item.currentPrice.toString(),
             "@_currencyID": "USD",

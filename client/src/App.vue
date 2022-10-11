@@ -10,6 +10,7 @@
         <b-nav-item to="/owners">Owners</b-nav-item>
         <b-nav-item to="/templates">Templates</b-nav-item>
         <b-nav-item to="/acquisitions">Acquisitions</b-nav-item>
+        <b-nav-item to="/orders">Orders</b-nav-item>
 
         <b-nav-item to="/register">Register</b-nav-item>
       </b-navbar-nav>

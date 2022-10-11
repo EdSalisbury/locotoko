@@ -284,18 +284,14 @@ export default {
       }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
-
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify(this.payload),
-      });
-      await response.json();
-      this.$router.push({ path: "/items" });
+      try {
+        await api.createItem(this.token, this.payload);
+        this.$toast.success("Add Item Successful");
+        this.$router.push({ path: "/draftItems" });
+      } catch (err) {
+        this.$toast.error("Add Item Unsuccessful!</br>Reasons:</br>" + err, { duration: 0 });
+        console.error(err);
+      }
     },
   },
 };

@@ -8,6 +8,7 @@ import OwnerView from "@/components/OwnerView";
 import { ItemAdd, ItemEdit, ItemView, ActiveItemList, SoldItemList, DraftItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
 import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "../components/Acquisition";
+import { OrderList, OrderView } from "@/components/Order";
 
 Vue.use(VueRouter);
 
@@ -112,6 +113,16 @@ const routes = [
     name: "edit acquisition",
     component: AcquisitionEdit,
   },
+  {
+    path: "/orders",
+    name: "orders",
+    component: OrderList,
+  },
+  {
+    path: "/orders/:id",
+    name: "order view",
+    component: OrderView,
+  }
 ];
 
 const router = new VueRouter({

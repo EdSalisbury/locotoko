@@ -249,6 +249,16 @@ const lookupProduct = async (token, upc) => {
   return await response.json();
 };
 
+const getOrders = async (token) => {
+  const response = await fetch(apiUrl("ebayOrders"), apiHeaders(token));
+  return await response.json();
+};
+
+const getOrder = async (token, id) => {
+  const response = await fetch(apiUrl("ebayOrders", id), apiHeaders(token));
+  return await response.json();
+};
+
 export default {
   login,
   getItem,
@@ -276,4 +286,6 @@ export default {
   getSoldItems,
   getActiveItems,
   getDraftItems,
+  getOrders,
+  getOrder,
 };
