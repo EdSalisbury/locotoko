@@ -1,7 +1,5 @@
 <template>
-  <!-- <b-card> -->
-  <!-- <b-card-body> -->
-  <b-container fluid class="m-0 p-0">
+  <b-container fluid class="m-0 p-0" id="packing-slip">
     <b-row fluid>
       <b-col fluid style="font-size: 3em">
         thebluedragonshoard.com<br />
@@ -21,7 +19,7 @@
     <b-row class="m-0 p-0">
       <b-col xs="6" class="m-0 pl-0 pr-2" style="font-size: 3em">
         <h1>Order ID: {{ order.id }}</h1>
-        <h1>Shipped Date: {{ new Date(Date.now()).toLocaleString().split(',')[0] }}</h1>
+        <h1>Shipped Date: {{ new Date(Date.now()).toLocaleString().split(",")[0] }}</h1>
         <h1>Ship To:</h1>
         {{ order.address.Name }}<br />
         {{ order.address.Street1 }}<br />
@@ -61,8 +59,6 @@
       <b-col class="cell" style="text-align: right"><b-img src="/qr_code.png" height="300" width="300" /></b-col>
     </b-row>
   </b-container>
-  <!-- </b-card-body> -->
-  <!-- </b-card> -->
 </template>
 <script>
 import api from "@/api";
@@ -82,7 +78,6 @@ export default {
     const id = this.$route.params.id;
     this.token = this.$cookie.get("token");
     this.order = await api.getOrder(this.token, id);
-    console.log(this.order);
   },
 };
 </script>

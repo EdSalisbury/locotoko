@@ -33,8 +33,13 @@ export class EbayOrderService {
     let maxPages = 1;
 
     let request = {
-      NumberOfDays: 14,
+      NumberOfDays: 4,
       OrderRole: "Seller",
+      // OutputSelector: [
+      //   "PaginationResult.TotalNumberOfPages",
+      //   "OrderArray.Order.OrderID",
+      //   "OrderArray.Order.TransactionArray.Transaction.ShippedTime",
+      // ],
       Pagination: {
         PageNumber: pageNumber,
       },
@@ -54,12 +59,14 @@ export class EbayOrderService {
         orders.push(...response.OrderArray.Order);
       }
     }
-    return orders
-      .filter(
-        (order) =>
-          order.TransactionArray.Transaction[0].ShippedTime === undefined,
-      )
-      .map(this.orderMap);
+    return (
+      orders
+        // .filter(
+        //   (order) =>
+        //     order.TransactionArray.Transaction[0].ShippedTime === undefined,
+        // )
+        .map(this.orderMap)
+    );
   }
 
   async getEbayOrder(orderId: string) {
