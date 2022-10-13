@@ -15,7 +15,24 @@
         class="pb-2"
       >
         <template v-slot:packingSlip="data">
-          <PackingSlip :order="data.value" :ref="data.value.id" />
+          <VueHtml2pdf
+            :show-layout="false"
+            :float-layout="true"
+            :enable-download="false"
+            :preview-modal="true"
+            filename="myPDF"
+            :pdf-quality="2"
+            :manual-pagination="true"
+            pdf-format="a6"
+            pdf-orientation="portrait"
+            pdf-content-width="100%"
+            :ref="data.value.id"
+            :html-to-pdf-options="htmlToPdfOptions"
+          >
+            <section slot="pdf-content">
+              <PackingSlip :order="data.value" />
+            </section>
+          </VueHtml2pdf>
         </template>
         <template v-slot:actions="data">
           <router-link :to="'/orders/' + data.value.id">
@@ -35,21 +52,29 @@
 <script>
 import api from "../../api";
 import VueBootstrapTable from "vue2-bootstrap-table2";
+import VueHtml2pdf from "vue-html2pdf";
 import PackingSlip from "./PackingSlip";
 
 export default {
   components: {
     VueBootstrapTable: VueBootstrapTable,
     PackingSlip,
+    VueHtml2pdf,
   },
   methods: {
     printPackingSlip(orderId) {
-      this.$refs[orderId].$refs.html2Pdf.generatePdf();
+      this.$refs[orderId].generatePdf();
     },
   },
   data() {
     return {
       data: [],
+      htmlToPdfOptions: {
+        margin: 1,
+        jsPDF: {
+          format: "a6",
+        },
+      },
       columns: [
         { name: "name", title: "Name" },
         { name: "total", title: "Total" },

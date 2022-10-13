@@ -28,6 +28,28 @@ export class EbayOrderService {
     paidTime: order.PaidTime,
   });
 
+  orderTotal = async (order) => {
+    let taxes = 0;
+    let total = 0;
+
+    for (let i = 0; i < order.items.length; i++) {
+      const item = await this.prisma.item.findFirst({
+        select: { id: true, location: true },
+        where: { ebayListingId: order.items[i].ebayItemId.toString() },
+      });
+      if (item) {
+        order.items[i].id = item.id;
+        order.items[i].location = item.location;
+      }
+      taxes += order.items[i].salesTax;
+      total += order.items[i].extended;
+      total += taxes;
+    }
+    order.salesTax = taxes.toFixed(2);
+    order.total = total.toFixed(2);
+    return order;
+  };
+
   async getEbayOrders() {
     let pageNumber = 1;
     let maxPages = 1;
@@ -35,11 +57,6 @@ export class EbayOrderService {
     let request = {
       NumberOfDays: 4,
       OrderRole: "Seller",
-      // OutputSelector: [
-      //   "PaginationResult.TotalNumberOfPages",
-      //   "OrderArray.Order.OrderID",
-      //   "OrderArray.Order.TransactionArray.Transaction.ShippedTime",
-      // ],
       Pagination: {
         PageNumber: pageNumber,
       },
@@ -59,13 +76,15 @@ export class EbayOrderService {
         orders.push(...response.OrderArray.Order);
       }
     }
-    return (
+
+    return await Promise.all(
       orders
-        // .filter(
-        //   (order) =>
-        //     order.TransactionArray.Transaction[0].ShippedTime === undefined,
-        // )
+        .filter(
+          (order) =>
+            order.TransactionArray.Transaction[0].ShippedTime === undefined,
+        )
         .map(this.orderMap)
+        .map(this.orderTotal),
     );
   }
 
