@@ -14,7 +14,15 @@
         :filter-case-sensitive="false"
         class="pb-2"
       >
-        <template v-slot:packingSlip="data">
+        <template v-slot:actions="data">
+          <router-link :to="'/orders/' + data.value.id">
+            <b-button class="p-1 mr-1" variant="primary">
+              <b-icon-eye-fill />
+            </b-button>
+          </router-link>
+          <b-button class="p-1 mr-1" variant="primary" @click="printPackingSlip(data.value.id)">
+            <b-icon-printer-fill />
+          </b-button>
           <VueHtml2pdf
             :show-layout="false"
             :float-layout="true"
@@ -22,8 +30,8 @@
             :preview-modal="true"
             filename="myPDF"
             :pdf-quality="2"
+            :scale="5"
             :manual-pagination="true"
-            pdf-format="a6"
             pdf-orientation="portrait"
             pdf-content-width="100%"
             :ref="data.value.id"
@@ -34,17 +42,28 @@
             </section>
           </VueHtml2pdf>
         </template>
-        <template v-slot:actions="data">
-          <router-link :to="'/orders/' + data.value.id">
-            <b-button class="p-1 mr-1" variant="primary">
-              <b-icon-eye-fill />
-            </b-button>
-          </router-link>
-          <b-button class="p-1 mr-1" variant="primary" @click="printPackingSlip(data.value.id)">
-            <b-icon-printer-fill />
-          </b-button>
-        </template>
       </vue-bootstrap-table>
+      <b-button @click="printAllPackingSlips" variant="primary">Print All</b-button>
+      <VueHtml2pdf
+        :show-layout="false"
+        :float-layout="true"
+        :enable-download="false"
+        :preview-modal="true"
+        filename="myPDF"
+        :scale="5"
+        :pdf-quality="2"
+        :manual-pagination="true"
+        pdf-orientation="portrait"
+        pdf-content-width="100%"
+        ref="allPackingSlips"
+        :html-to-pdf-options="htmlToPdfOptions"
+      >
+        <section slot="pdf-content">
+          <div v-for="order in data" :key="order.id" class="packingSlip">
+            <PackingSlip :order="order" />
+          </div>
+        </section>
+      </VueHtml2pdf>
     </b-card-body>
   </b-card>
 </template>
@@ -65,21 +84,27 @@ export default {
     printPackingSlip(orderId) {
       this.$refs[orderId].generatePdf();
     },
+    printAllPackingSlips() {
+      this.$refs.allPackingSlips.generatePdf();
+    },
   },
   data() {
     return {
       data: [],
       htmlToPdfOptions: {
-        margin: 1,
+        margin: 0.2,
+        image: {
+          type: "png",
+        },
         jsPDF: {
-          format: "a6",
+          unit: "in",
+          format: [8, 12],
         },
       },
       columns: [
         { name: "name", title: "Name" },
         { name: "total", title: "Total" },
         { name: "actions", title: "Actions" },
-        { name: "packingSlip", title: "PackingSlip" },
       ],
     };
   },
@@ -89,3 +114,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.packingSlip {
+  page-break-after: always;
+}
+</style>

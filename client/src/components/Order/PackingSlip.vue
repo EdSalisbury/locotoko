@@ -7,7 +7,7 @@
         Twitter: @BluDragonsHoard
       </b-col>
       <b-col fluid>
-        <b-img fluid src="/logo.png" />
+        <b-img fluid src="/logo.png" style="margin-top: 5px" />
       </b-col>
       <b-col fluid class="text" style="text-align: right">
         4518 South Valdai Circle<br />
@@ -18,8 +18,6 @@
 
     <b-row class="m-0 p-0">
       <b-col xs="6" class="m-0 pl-0 pr-2 address">
-        <h1>Order ID: {{ order.id }}</h1>
-        <h1>Shipped Date: {{ new Date(Date.now()).toLocaleString().split(",")[0] }}</h1>
         <h1>Ship To:</h1>
         {{ order.address.Name }}<br />
         {{ order.address.Street1 }}<br />
@@ -27,6 +25,10 @@
         {{ order.address.CityName }},
         {{ order.address.StateOrProvince }}
         {{ order.address.PostalCode }}
+      </b-col>
+      <b-col xs="6" class="m-0 pl-0 pr-2 address" style="text-align: right">
+        <h1>Order ID: {{ order.id }}</h1>
+        <h1>Shipped Date: {{ new Date(Date.now()).toLocaleString().split(",")[0] }}</h1>
       </b-col>
     </b-row>
 
@@ -52,9 +54,9 @@
     </b-row>
 
     <b-row fluid style="margin-top: 10px">
-      <b-col class="text">Use code BLUEDRAGON15 to take an extra 15% off 3+ items! (Expires Nov 1, 2022)</b-col>
-      <b-col></b-col>
-      <b-col class="text" style="text-align: right"><b-img src="/qr_code.png" height="50" width="50" /></b-col>
+      <b-col xs="8" class="text">Use code BLUEDRAGON15 to take an extra 15% off 3+ items! (Expires Nov 1, 2022)</b-col>
+
+      <b-col xs="4" class="text" style="text-align: right"><b-img src="/qr_code.png" width="150" height="150" /></b-col>
     </b-row>
   </b-container>
 </template>
@@ -77,25 +79,25 @@ export default {
 </script>
 <style>
 .cell {
-  font-size: 0.45em;
+  font-size: 0.8em;
 }
 
 .header {
-  font-size: 0.5em;
+  font-size: 0.8em;
 }
 .text {
-  font-size: 0.5em;
+  font-size: 0.8em;
 }
 .address {
-  font-size: 0.6em;
+  font-size: 0.9em;
 }
 
 h1 {
-  font-size: 0.75em !important;
+  font-size: 1em !important;
 }
 
 #itemTable.table > tbody > tr > td,
 #itemTable.table > thead > tr > th {
-  padding: 2px;
+  padding: 5px;
 }
 </style>

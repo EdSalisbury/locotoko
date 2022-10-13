@@ -22,7 +22,9 @@ export class EbayOrderService {
     address: order.ShippingAddress,
     subtotal: order.Subtotal.value,
     items: order.TransactionArray.Transaction.map(this.transactionMap),
-    shippingMethod: order.ShippingServiceSelected.ShippingService,
+    shippingMethod: this.shippingMethod(
+      order.ShippingServiceSelected.ShippingService,
+    ),
     shippingCost:
       order.ShippingServiceSelected.ShippingServiceCost.value.toFixed(2),
     paidTime: order.PaidTime,
@@ -48,6 +50,12 @@ export class EbayOrderService {
     order.salesTax = taxes.toFixed(2);
     order.total = total.toFixed(2);
     return order;
+  };
+
+  shippingMethod = (method) => {
+    if (method === "USPSFirstClass") return "USPS First Class";
+    if (method === "USPSPriority") return "USPS Priority";
+    return method;
   };
 
   async getEbayOrders() {
