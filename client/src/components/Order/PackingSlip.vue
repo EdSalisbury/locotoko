@@ -36,9 +36,7 @@
       </template>
       <template #cell(item)="data">
         {{ data.item.title }}<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item ID: {{ data.item.id }}<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eBay Item ID: {{ data.item.ebayItemId }}<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Location: {{ data.item.location }}
+        Item ID: {{ data.item.id }} eBay Item ID: {{ data.item.ebayItemId }} Location: {{ data.item.location }}
       </template>
     </b-table>
 
@@ -79,7 +77,7 @@ export default {
 </script>
 <style>
 .cell {
-  font-size: 0.5em;
+  font-size: 0.45em;
 }
 
 .header {
@@ -89,11 +87,11 @@ export default {
   font-size: 0.5em;
 }
 .address {
-  font-size: 0.75em;
+  font-size: 0.6em;
 }
 
 h1 {
-  font-size: 1em !important;
+  font-size: 0.75em !important;
 }
 
 #itemTable.table > tbody > tr > td,

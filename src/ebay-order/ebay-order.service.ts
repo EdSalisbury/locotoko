@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { EbayService } from "../ebay/ebay.service";
 import { PrismaService } from "../prisma/prisma.service";
-
+import { decodeSpecialCharsInObject } from "src/util";
 @Injectable()
 export class EbayOrderService {
   constructor(private ebay: EbayService, private prisma: PrismaService) {}
@@ -77,14 +77,16 @@ export class EbayOrderService {
       }
     }
 
-    return await Promise.all(
-      orders
-        .filter(
-          (order) =>
-            order.TransactionArray.Transaction[0].ShippedTime === undefined,
-        )
-        .map(this.orderMap)
-        .map(this.orderTotal),
+    return decodeSpecialCharsInObject(
+      await Promise.all(
+        orders
+          .filter(
+            (order) =>
+              order.TransactionArray.Transaction[0].ShippedTime === undefined,
+          )
+          .map(this.orderMap)
+          .map(this.orderTotal),
+      ),
     );
   }
 
@@ -98,26 +100,8 @@ export class EbayOrderService {
     };
 
     const response = await this.ebay.trading.GetOrders(request);
-    const order = response.OrderArray.Order.map(this.orderMap)[0];
-
-    let taxes = 0;
-    let total = 0;
-
-    for (let i = 0; i < order.items.length; i++) {
-      const item = await this.prisma.item.findFirst({
-        select: { id: true, location: true },
-        where: { ebayListingId: order.items[i].ebayItemId.toString() },
-      });
-      if (item) {
-        order.items[i].id = item.id;
-        order.items[i].location = item.location;
-      }
-      taxes += order.items[i].salesTax;
-      total += order.items[i].extended;
-      total += taxes;
-    }
-    order.salesTax = taxes.toFixed(2);
-    order.total = total.toFixed(2);
-    return order;
+    return await response.OrderArray.Order.map(this.orderMap).map(
+      this.orderTotal,
+    )[0];
   }
 }
