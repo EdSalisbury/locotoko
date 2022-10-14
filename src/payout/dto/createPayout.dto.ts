@@ -1,11 +1,16 @@
-import { IsNotEmpty, IsDecimal, IsString, IsDateString } from "class-validator";
+import {
+  IsNotEmpty,
+  IsCurrency,
+  IsString,
+  IsDateString,
+} from "class-validator";
 
 export class CreatePayoutDto {
   @IsString()
   @IsNotEmpty()
   ownerId: string;
 
-  @IsDecimal()
+  @IsCurrency()
   @IsNotEmpty()
   amount: number;
 

@@ -327,8 +327,9 @@ export default {
       this.payload.shipSizeHeightInches = parseInt(this.payload.size.height);
       this.payload.shipSizeDepthInches = parseInt(this.payload.size.length);
 
-      this.payload.price = parseFloat(this.payload.price).toFixed(2);
-
+      this.payload.price = Number(this.payload.price).toFixed(2);
+      this.payload.currentPrice = Number(this.payload.currentPrice).toFixed(2);
+      
       const token = this.$cookie.get("token");
 
       const itemId = this.$route.params.id.toString();

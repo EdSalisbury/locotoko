@@ -78,6 +78,11 @@ const getItem = async (itemId) => {
   return response.data;
 };
 
+const getOwner = async (ownerId) => {
+  const response = await axios.get(apiUrl("owners", ownerId), getHeaders());
+  return response.data;
+};
+
 const getItemByEbayItemId = async (ebayItemId) => {
   const items = await getItems();
   const filtered = items.filter((item) => item.ebayListingId == ebayItemId);
@@ -176,23 +181,38 @@ const processSales = async () => {
 
 const processPayouts = async () => {
   await login();
-  const startDate = new Date(
-    date.getFullYear(),
-    date.getMonth() - 1,
-    1,
-  ).toISOString();
-  const endDate = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    1,
-  ).toISOString();
+  const date = new Date();
+  const startDate = Date.parse(
+    new Date(date.getFullYear(), date.getMonth() - 2, 1),
+  );
+  const endDate = Date.parse(
+    new Date(date.getFullYear(), date.getMonth() - 1, 1),
+  );
+  const reportDate = new Date(date.getFullYear(), date.getMonth());
 
-  const soldItems = await getItems((sold = true)).filter((item) => {
-    item.soldAt >= startDate && item.soldAt <= endDate;
+  const soldItems = (await getSoldItems()).filter(
+    (item) =>
+      Date.parse(item.soldAt) >= startDate && Date.parse(item.soldAt) < endDate,
+  );
+
+  let totals = {};
+  soldItems.forEach((item) => {
+    if (!totals[item.ownerId]) {
+      totals[item.ownerId] = 0;
+    }
+    totals[item.ownerId] += parseFloat(item.currentPrice);
   });
 
-  soldItems.forEach((item) => {
-    // TODO: Process sold items
+  Object.keys(totals).forEach(async (ownerId) => {
+    console.log(ownerId);
+    const owner = await getOwner(ownerId);
+    console.log(owner);
+    const payout = {
+      ownerId: ownerId,
+      date: reportDate,
+      amount: totals[ownerId] * owner.rate,
+    };
+    console.log(payout);
   });
 };
 
@@ -463,13 +483,16 @@ const printPickList = async () => {
 const main = async () => {
   while (true) {
     try {
+      //await processPayouts();
       //await titleCheck();
       //await listingCheck();
       //await setMinimumPrice();
       //await getShippedAtData();
+
       await processNewSales();
       await markdownItems();
       await listItem();
+
       //await printPickList();
     } catch (e) {
       console.error(e);
