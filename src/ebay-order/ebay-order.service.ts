@@ -108,8 +108,10 @@ export class EbayOrderService {
     };
 
     const response = await this.ebay.trading.GetOrders(request);
-    return await response.OrderArray.Order.map(this.orderMap).map(
-      this.orderTotal,
-    )[0];
+    return decodeSpecialCharsInObject(
+      await response.OrderArray.Order.map(this.orderMap).map(
+        this.orderTotal,
+      )[0],
+    );
   }
 }

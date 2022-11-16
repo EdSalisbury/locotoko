@@ -79,21 +79,27 @@ export default {
 </script>
 <style>
 .cell {
-  font-size: 0.8em;
+  font-size: 1.1em;
+  color: black;
 }
 
 .header {
-  font-size: 0.8em;
+  font-size: 1.1em;
+  color: black;
 }
 .text {
-  font-size: 0.8em;
+  font-size: 1.1em;
+  color: black;
 }
 .address {
-  font-size: 0.9em;
+  font-size: 1.1em;
+  color: black;
 }
 
 h1 {
-  font-size: 1em !important;
+  font-size: 1.1em !important;
+  font-weight: 1000;
+  color: black;
 }
 
 #itemTable.table > tbody > tr > td,
