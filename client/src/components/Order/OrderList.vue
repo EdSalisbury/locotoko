@@ -2,7 +2,8 @@
   <b-card>
     <b-card-title>Orders</b-card-title>
     <b-card-body>
-      <b-button @click="printAllPackingSlips" variant="primary">Print All</b-button>
+      <b-button @click="printAllPackingSlips" variant="primary" class="mr-2">Print All</b-button>
+      <router-link to="/picks"><b-button variant="primary">Pick List</b-button></router-link>
       <vue-bootstrap-table
         :columns="columns"
         :values="data"

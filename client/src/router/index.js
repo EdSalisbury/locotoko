@@ -8,7 +8,7 @@ import OwnerView from "@/components/OwnerView";
 import { ItemAdd, ItemEdit, ItemView, ActiveItemList, SoldItemList, DraftItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
 import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "../components/Acquisition";
-import { OrderList, OrderView } from "@/components/Order";
+import { OrderList, OrderView, PickList } from "@/components/Order";
 
 Vue.use(VueRouter);
 
@@ -122,7 +122,12 @@ const routes = [
     path: "/orders/:id",
     name: "order view",
     component: OrderView,
-  }
+  },
+  {
+    path: "/picks",
+    name: "pick list",
+    component: PickList,
+  },
 ];
 
 const router = new VueRouter({

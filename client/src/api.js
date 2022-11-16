@@ -254,6 +254,11 @@ const getOrders = async (token) => {
   return await response.json();
 };
 
+const getPicks = async (token) => {
+  const response = await fetch(apiUrl("picks"), apiHeaders(token));
+  return await response.json();
+};
+
 const getOrder = async (token, id) => {
   const response = await fetch(apiUrl("ebayOrders", id), apiHeaders(token));
   return await response.json();
@@ -288,4 +293,5 @@ export default {
   getDraftItems,
   getOrders,
   getOrder,
+  getPicks,
 };

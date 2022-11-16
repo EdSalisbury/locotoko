@@ -62,7 +62,7 @@ export class EbayOrderService {
     let maxPages = 1;
 
     let request = {
-      NumberOfDays: 4,
+      NumberOfDays: 14,
       OrderRole: "Seller",
       Pagination: {
         PageNumber: pageNumber,
