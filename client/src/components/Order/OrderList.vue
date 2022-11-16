@@ -2,18 +2,21 @@
   <b-card>
     <b-card-title>Orders</b-card-title>
     <b-card-body>
+      <b-button @click="printAllPackingSlips" variant="primary">Print All</b-button>
       <vue-bootstrap-table
         :columns="columns"
         :values="data"
         :show-filter="true"
         :show-column-picker="false"
         :sortable="true"
-        :paginated="true"
+        :paginated="false"
+        :page-size="999"
         :selectable="false"
         :multi-column-sortable="false"
         :filter-case-sensitive="false"
         class="pb-2"
       >
+        <template v-slot:total="data"> ${{ Number(data.value.total).toFixed(2) }} </template>
         <template v-slot:actions="data">
           <router-link :to="'/orders/' + data.value.id">
             <b-button class="p-1 mr-1" variant="primary">

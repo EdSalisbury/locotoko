@@ -25,14 +25,13 @@ export class EbayOrderService {
     shippingMethod: this.shippingMethod(
       order.ShippingServiceSelected.ShippingService,
     ),
-    shippingCost:
-      order.ShippingServiceSelected.ShippingServiceCost.value.toFixed(2),
+    shippingCost: order.ShippingServiceSelected.ShippingServiceCost.value,
     paidTime: order.PaidTime,
   });
 
   orderTotal = async (order) => {
-    let taxes = 0;
-    let total = 0;
+    let taxes = 0.0;
+    let total = 0.0;
 
     for (let i = 0; i < order.items.length; i++) {
       const item = await this.prisma.item.findFirst({
@@ -47,8 +46,8 @@ export class EbayOrderService {
       total += order.items[i].extended;
       total += taxes;
     }
-    order.salesTax = taxes.toFixed(2);
-    order.total = total.toFixed(2);
+    order.salesTax = taxes;
+    order.total = total;
     return order;
   };
 

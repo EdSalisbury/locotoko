@@ -33,9 +33,9 @@
     </b-row>
 
     <b-table :items="order.items" :fields="fields" striped bordered style="margin-top: 10px" id="itemTable">
-      <template #cell(extended)="data">
-        {{ data.item.quantity * data.item.price }}
-      </template>
+      <template #cell(price)="data"> ${{ data.item.price.toFixed(2) }} </template>
+      <template #cell(extended)="data"> ${{ (data.item.quantity * data.item.price).toFixed(2) }} </template>
+
       <template #cell(item)="data">
         {{ data.item.title }}<br />
         Item ID: {{ data.item.id }} eBay Item ID: {{ data.item.ebayItemId }} Location: {{ data.item.location }}
@@ -46,15 +46,15 @@
       <b-col xs="11"></b-col>
       <b-col class="text" style="text-align: right">
         Shipping Method: {{ order.shippingMethod }}<br />
-        Subtotal: ${{ order.subtotal }}<br />
-        Sales Tax: ${{ order.salesTax }}<br />
-        Shipping: ${{ order.shippingCost }}<br />
-        Total: ${{ order.total }}
+        Subtotal: ${{ order.subtotal.toFixed(2) }}<br />
+        Sales Tax: ${{ order.salesTax.toFixed(2) }}<br />
+        Shipping: ${{ order.shippingCost.toFixed(2) }}<br />
+        Total: ${{ order.total.toFixed(2) }}
       </b-col>
     </b-row>
 
     <b-row fluid style="margin-top: 10px">
-      <b-col xs="8" class="text">Use code BLUEDRAGON15 to take an extra 15% off 3+ items! (Expires Nov 1, 2022)</b-col>
+      <b-col xs="8" class="text">Come back often to see what new items we have in stock!</b-col>
 
       <b-col xs="4" class="text" style="text-align: right"><b-img src="/qr_code.png" width="150" height="150" /></b-col>
     </b-row>
