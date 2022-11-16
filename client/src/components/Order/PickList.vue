@@ -5,7 +5,7 @@
       <vue-bootstrap-table
         :columns="columns"
         :values="data"
-        :show-filter="true"
+        :show-filter="false"
         :show-column-picker="false"
         :sortable="true"
         :paginated="false"
@@ -32,7 +32,7 @@ export default {
     return {
       data: [],
       columns: [
-        { name: "name", title: "Name" },
+        { name: "title", title: "Title" },
         { name: "id", title: "Item ID" },
         { name: "location", title: "Location" },
       ],
@@ -40,7 +40,7 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
-    console.log("Created");
     this.data = await api.getPicks(this.token);
   },
 };
+</script>
