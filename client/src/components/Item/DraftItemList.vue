@@ -94,6 +94,7 @@ export default {
     this.token = this.$cookie.get("token");
     this.items = await api.getDraftItems(this.token);
     this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+    console.log(this.items);
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
         [columnTitle]: newValue,

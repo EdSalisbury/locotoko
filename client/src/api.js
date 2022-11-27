@@ -18,6 +18,13 @@ const apiHeaders = (token) => {
   };
 };
 
+const itemMap = (item) => ({
+  ...item,
+  price: parseFloat(item.price),
+  currentPrice: parseFloat(item.currentPrice),
+  soldPrice: parseFloat(item.soldPrice),
+});
+
 const login = async (body) => {
   const url = baseUrl() + "/api/v1/auth/login";
   const response = await fetch(url, {
@@ -32,17 +39,20 @@ const login = async (body) => {
 
 const getDraftItems = async (token) => {
   const response = await fetch(apiUrl("items") + "?draft=true", apiHeaders(token));
-  return await response.json();
+  const items = await response.json();
+  return items.map(itemMap);
 };
 
 const getActiveItems = async (token) => {
   const response = await fetch(apiUrl("items") + "?sold=false", apiHeaders(token));
-  return await response.json();
+  const items = await response.json();
+  return items.map(itemMap);
 };
 
 const getSoldItems = async (token) => {
   const response = await fetch(apiUrl("items") + "?sold=true", apiHeaders(token));
-  return await response.json();
+  const items = await response.json();
+  return items.map(itemMap);
 };
 
 const getItem = async (token, id) => {
