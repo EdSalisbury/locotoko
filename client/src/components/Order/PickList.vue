@@ -32,15 +32,16 @@ export default {
     return {
       data: [],
       columns: [
+        { name: "location", title: "Location" },
         { name: "title", title: "Title" },
         { name: "id", title: "Item ID" },
-        { name: "location", title: "Location" },
       ],
     };
   },
   async created() {
     this.token = this.$cookie.get("token");
     this.data = await api.getPicks(this.token);
+    this.data.sort((a, b) => (a.location > b.location ? 1 : -1));
   },
 };
 </script>
