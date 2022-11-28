@@ -81,6 +81,7 @@ export class EbayListingService {
             PictureURL: imageUrls,
           },
           ListingDuration: "GTC",
+          UPC: item.upc,
           ListingType: "FixedPriceItem",
           SellerProfiles: {
             SellerPaymentProfile: {
@@ -210,6 +211,7 @@ export class EbayListingService {
             PictureURL: imageUrls,
           },
           ListingDuration: "GTC",
+          UPC: item.upc,
           ListingType: "FixedPriceItem",
           SellerProfiles: {
             SellerPaymentProfile: {
