@@ -132,8 +132,6 @@ export default {
     this.draftItems = this.items.filter((item) => item.status === "draft");
     this.soldItems = this.items.filter((item) => item.status === "sold");
 
-    console.log(this.draftItems);
-
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
         [columnTitle]: newValue,
@@ -166,10 +164,10 @@ export default {
         if (item.title.length > 75) {
           errors.push(`Title too long (${item.title.length} chars)`);
         }
-        if (parseFloat(item.price) < 5.99) {
-          errors.push(`Original price is under $5.99 ($${parseFloat(item.price).toFixed(2)})`);
+        if (parseFloat(item.price) < 9.99) {
+          errors.push(`Original price is under $9.99 ($${parseFloat(item.price).toFixed(2)})`);
         }
-        if (item.ebayConditionId === 0) {
+        if (item.ebayConditionId === 0 && !item.ebayCategoryName.includes("Vintage")) {
           errors.push("Condition not specified");
         }
         if (item.images.length === 0) {
