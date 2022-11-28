@@ -43,6 +43,12 @@ const getDraftItems = async (token) => {
   return items.map(itemMap);
 };
 
+const getItems = async (token) => {
+  const response = await fetch(apiUrl("items"), apiHeaders(token));
+  const items = await response.json();
+  return items.map(itemMap);
+};
+
 const getActiveItems = async (token) => {
   const response = await fetch(apiUrl("items") + "?sold=false", apiHeaders(token));
   const items = await response.json();
@@ -304,4 +310,5 @@ export default {
   getOrders,
   getOrder,
   getPicks,
+  getItems,
 };

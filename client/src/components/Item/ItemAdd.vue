@@ -287,7 +287,7 @@ export default {
       try {
         await api.createItem(this.token, this.payload);
         this.$toast.success("Add Item Successful");
-        this.$router.push({ path: "/draftItems" });
+        this.$router.push({ path: "/items" });
       } catch (err) {
         this.$toast.error("Add Item Unsuccessful!</br>Reasons:</br>" + err, { duration: 0 });
         console.error(err);

@@ -47,6 +47,21 @@ export class ItemService {
     location: item.location || "Unknown",
   });
 
+  getStatus = (item) => {
+    if (item.soldAt) {
+      return "sold";
+    }
+    if (item.ebayListingId) {
+      return "active";
+    }
+    return "draft";
+  };
+
+  statusMap = (item) => ({
+    ...item,
+    status: this.getStatus(item),
+  });
+
   constructor(
     private prisma: PrismaService,
     private ptouch: PtouchService,
@@ -92,7 +107,7 @@ export class ItemService {
       where: { ebayListingId: null },
     });
 
-    return items.map(this.categoryMap).map(this.locationMap);;
+    return items.map(this.categoryMap).map(this.locationMap);
   }
 
   async getItems() {
@@ -107,7 +122,8 @@ export class ItemService {
         weeksActive: getWeeksDiff(item.createdAt, new Date()),
       }))
       .map(this.categoryMap)
-      .map(this.locationMap);;
+      .map(this.locationMap)
+      .map(this.statusMap);
   }
 
   async getItemById(itemId: string) {
