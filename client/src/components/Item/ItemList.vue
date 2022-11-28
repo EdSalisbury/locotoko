@@ -2,16 +2,17 @@
   <b-card>
     <b-card-title>Items</b-card-title>
     <b-card-body>
-      <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
-
-      <b-button class="m-2" variant="primary" @click="showAll">Show All</b-button>
-
-      <b-button class="m-2" variant="primary" @click="showDrafts">Show Drafts</b-button>
-
-      <b-button class="m-2" variant="primary" @click="showActive">Show Active</b-button>
-
-      <b-button class="m-2" variant="primary" @click="showSold">Show Sold</b-button>
-
+      <b-button-toolbar>
+        <b-button-group class="mx-1">
+          <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
+        </b-button-group>
+        <b-button-group class="mx-1">
+          <b-button variant="primary" @click="showAll">Show All</b-button>
+          <b-button variant="primary" @click="showDrafts">Show Drafts</b-button>
+          <b-button variant="primary" @click="showActive">Show Active</b-button>
+          <b-button variant="primary" @click="showSold">Show Sold</b-button>
+        </b-button-group>
+      </b-button-toolbar>
       <vue-bootstrap-table
         :columns="columns"
         :values="items"
@@ -35,9 +36,8 @@
         </template>
         <template v-slot:actions="data">
           <b-button-toolbar>
-            <b-button-group class="mx-1">
+            <b-button-group class="mx-1" v-if="data.value.status === 'draft'">
               <input
-                :v-if="data.value.status == draft"
                 type="checkbox"
                 v-model="data.value.ready"
                 style="height: 34px; width: 34px"
@@ -109,8 +109,7 @@ export default {
         { name: "quantitySold", title: "Sold" },
         { name: "price", title: "OP" },
         { name: "currentPrice", title: "CP" },
-        { name: "status", title: "Status" },
-        // { name: "ready", title: "Ready", editable: true },
+        { name: "status", title: "Status", visible: false },
         {
           name: "ebayListingId",
           title: "eBay Listing ID",
@@ -132,6 +131,8 @@ export default {
     this.activeItems = this.items.filter((item) => item.status === "active");
     this.draftItems = this.items.filter((item) => item.status === "draft");
     this.soldItems = this.items.filter((item) => item.status === "sold");
+
+    console.log(this.draftItems);
 
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
