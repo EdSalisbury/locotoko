@@ -28,59 +28,55 @@
         <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
         <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
 
-        <template v-slot:ready="data">
-          <b-form-group>
-            <input
-              type="checkbox"
-              style="width: 30px; height: 30px"
-              v-model="data.value.ready"
-              @change="ready(data.value.id, data.value.ready)"
-            />
-          </b-form-group>
-        </template>
-
         <template v-slot:ebayListingId="data">
           <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
             {{ data.value.ebayListingId }}
           </a>
         </template>
         <template v-slot:actions="data">
-          <router-link :to="'/viewItem/' + data.value.id">
-            <b-button class="p-1 mr-1" variant="primary">
-              <b-icon-eye-fill />
-            </b-button>
-          </router-link>
+          <b-button-toolbar>
+            <b-button-group class="mx-1">
+              <input
+                :v-if="data.value.status == draft"
+                type="checkbox"
+                v-model="data.value.ready"
+                style="height: 34px; width: 34px"
+                class="p-1"
+                @change="ready(data.value.id, data.value.ready)"
+              /> </b-button-group
+            ><b-button-group class="mx-1">
+              <router-link :to="'/viewItem/' + data.value.id">
+                <b-button class="p-1" variant="primary">
+                  <b-icon-eye-fill />
+                </b-button>
+              </router-link>
 
-          <router-link :to="'/editItem/' + data.value.id">
-            <b-button class="p-1 mr-1" variant="primary">
-              <b-icon-pencil-fill />
-            </b-button>
-          </router-link>
+              <router-link :to="'/editItem/' + data.value.id">
+                <b-button class="p-1" variant="primary">
+                  <b-icon-pencil-fill />
+                </b-button>
+              </router-link>
 
-          <b-button
-            v-if="!data.value.ebayListingId"
-            class="p-1 mr-1"
-            variant="primary"
-            @click="listItem(data.value.id)"
-          >
-            eBay</b-button
-          >
-          <b-button class="p-1 mr-1" variant="success" @click="duplicateItem(data.value.id)">
-            <b-icon-file-earmark-plus-fill />
-          </b-button>
+              <b-button v-if="!data.value.ebayListingId" class="p-1" variant="primary" @click="listItem(data.value.id)">
+                eBay</b-button
+              >
 
-          <b-button class="p-1 mr-1" variant="primary" @click="printItemLabel(data.value.id)">
-            <b-icon-printer-fill />
-          </b-button>
+              <b-button class="p-1" variant="success" @click="duplicateItem(data.value.id)">
+                <b-icon-file-earmark-plus-fill />
+              </b-button>
 
-          <b-button
-            v-if="!data.value.ebayListingId"
-            class="p-1 m-0"
-            variant="danger"
-            @click="deleteItem(data.value.id)"
-          >
-            <b-icon-trash-fill />
-          </b-button>
+              <b-button class="p-1" variant="primary" @click="printItemLabel(data.value.id)">
+                <b-icon-printer-fill />
+              </b-button>
+              <b-button
+                v-if="!data.value.ebayListingId"
+                class="p-1"
+                variant="danger"
+                @click="deleteItem(data.value.id)"
+              >
+                <b-icon-trash-fill />
+              </b-button> </b-button-group
+          ></b-button-toolbar>
         </template>
       </vue-bootstrap-table>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
@@ -114,7 +110,7 @@ export default {
         { name: "price", title: "OP" },
         { name: "currentPrice", title: "CP" },
         { name: "status", title: "Status" },
-        { name: "ready", title: "Ready", editable: true },
+        // { name: "ready", title: "Ready", editable: true },
         {
           name: "ebayListingId",
           title: "eBay Listing ID",
