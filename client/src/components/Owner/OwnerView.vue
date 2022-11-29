@@ -3,47 +3,56 @@
     <b-card-title>Owner</b-card-title>
     <b-card-body>
       <b-table stacked :items="owner" :fields="fields"> </b-table>
+      <b-container v-for="(items, index) in this.monthlyItems" :key="index">
+        <vue-bootstrap-table
+          :columns="columns"
+          :values="items"
+          :show-filter="false"
+          :show-column-picker="false"
+          :sortable="true"
+          :paginated="false"
+          :selectable="false"
+          :multi-column-sortable="false"
+          :filter-case-sensitive="false"
+          class="pb-2"
+          ref="itemTable"
+        >
+          <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
+          <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
 
-      <vue-bootstrap-table
-        :columns="columns"
-        :values="items"
-        :show-filter="false"
-        :show-column-picker="false"
-        :sortable="true"
-        :paginated="false"
-        :selectable="false"
-        :multi-column-sortable="false"
-        :filter-case-sensitive="false"
-        class="pb-2"
-        ref="itemTable"
-      >
-        <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
-        <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
+          <template v-slot:ebayListingId="data">
+            <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
+              {{ data.value.ebayListingId }}
+            </a>
+          </template>
+          <template v-slot:actions="data">
+            <b-button-toolbar>
+              <b-button-group class="mx-1">
+                <router-link :to="'/viewItem/' + data.value.id">
+                  <b-button class="p-1" variant="primary">
+                    <b-icon-eye-fill />
+                  </b-button>
+                </router-link>
 
-        <template v-slot:ebayListingId="data">
-          <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
-            {{ data.value.ebayListingId }}
-          </a>
-        </template>
-        <template v-slot:actions="data">
-          <b-button-toolbar>
-            <b-button-group class="mx-1">
-              <router-link :to="'/viewItem/' + data.value.id">
-                <b-button class="p-1" variant="primary">
-                  <b-icon-eye-fill />
-                </b-button>
-              </router-link>
+                <router-link :to="'/editItem/' + data.value.id">
+                  <b-button class="p-1" variant="primary">
+                    <b-icon-pencil-fill />
+                  </b-button>
+                </router-link>
+              </b-button-group>
+            </b-button-toolbar>
+          </template>
+        </vue-bootstrap-table>
 
-              <router-link :to="'/editItem/' + data.value.id">
-                <b-button class="p-1" variant="primary">
-                  <b-icon-pencil-fill />
-                </b-button>
-              </router-link>
-            </b-button-group>
-          </b-button-toolbar>
-        </template>
-      </vue-bootstrap-table>
-
+        <b-row style="background: #ccc; padding: 5px; margin: 5px; border: 1px black solid">
+          <b-col
+            ><b>Total for {{ months[index] }}:</b>
+          </b-col>
+          <b-col class="text-right">
+            <b>${{ monthlyTotals[index] }}</b>
+          </b-col>
+        </b-row>
+      </b-container>
       <b-row style="background: #ccc; padding: 5px; margin: 5px; border: 1px black solid">
         <b-col><b>Total:</b> </b-col>
         <b-col class="text-right">
@@ -67,6 +76,7 @@ export default {
       owner: [{}],
       token: "",
       total: 0.0,
+      tableKey: 0,
       columns: [
         {
           name: "title",
@@ -74,6 +84,7 @@ export default {
         },
         { name: "price", title: "Original Price" },
         { name: "soldPrice", title: "Sold Price" },
+        { name: "soldAt", title: "Sold Time" },
         {
           name: "ebayListingId",
           title: "eBay Listing ID",
@@ -82,6 +93,9 @@ export default {
       ],
       fields: ["name", "rate"],
       items: [],
+      monthlyTotals: [],
+      monthlyItems: [],
+      months: [],
     };
   },
   async created() {
@@ -92,7 +106,31 @@ export default {
     const allItems = await api.getItems(this.token);
     this.items = allItems.filter((item) => item.status === "sold" && item.ownerId === ownerId);
     this.total = 0;
-    this.items.forEach((item) => (this.total += item.soldPrice));
+    var monthlyTotals = [];
+    var monthlyItems = [];
+
+    this.items.forEach((item) => {
+      this.total += item.soldPrice;
+      const soldDate = new Date(item.soldAt);
+      //const month = soldDate.toLocaleString("default", { month: "long" });
+      //const year = soldDate.getFullYear();
+      const key = `${soldDate.getFullYear()}-${("0" + (soldDate.getMonth() + 1)).slice(-2)}`;
+      if (!monthlyTotals[key]) {
+        monthlyTotals[key] = 0;
+      }
+      if (!monthlyItems[key]) {
+        monthlyItems[key] = [];
+      }
+      monthlyItems[key].push(item);
+      monthlyTotals[key] += item.soldPrice;
+    });
+
+    const months = Object.keys(monthlyItems).sort();
+    months.forEach((key) => {
+      this.monthlyItems.push(monthlyItems[key]);
+      this.monthlyTotals.push(monthlyTotals[key]);
+      this.months.push(key);
+    });
   },
 };
 </script>
