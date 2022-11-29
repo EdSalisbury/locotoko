@@ -111,12 +111,13 @@ const getUsers = async (token) => {
   return await response.json();
 };
 
+const getOwner = async (token, id) => {
+  const response = await fetch(apiUrl("owners", id), apiHeaders(token));
+  return await response.json();
+};
+
 const getOwners = async (token) => {
-  const response = await fetch(apiUrl("owners"), {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
+  const response = await fetch(apiUrl("owners"), apiHeaders(token));
   return await response.json();
 };
 
@@ -289,6 +290,7 @@ export default {
   printItemLabel,
   getUsers,
   getOwners,
+  getOwner,
   getEbayCategories,
   getTemplates,
   getTemplate,

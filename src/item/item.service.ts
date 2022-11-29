@@ -30,6 +30,7 @@ export class ItemService {
     ready: true,
     listedAt: true,
     shippedAt: true,
+    soldPrice: true,
   };
 
   categories = [];
