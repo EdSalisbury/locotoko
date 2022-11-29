@@ -122,16 +122,10 @@ export default {
       ],
     };
   },
+
   async created() {
     this.token = this.$cookie.get("token");
-    this.items = await api.getItems(this.token);
-    this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-
-    this.allItems = [...this.items];
-    this.activeItems = this.items.filter((item) => item.status === "active");
-    this.draftItems = this.items.filter((item) => item.status === "draft");
-    this.soldItems = this.items.filter((item) => item.status === "sold");
-
+    await this.getItems();
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
         [columnTitle]: newValue,
@@ -144,15 +138,35 @@ export default {
     });
   },
   methods: {
+    async getItems() {
+      this.items = await api.getItems(this.token);
+      this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+      this.allItems = [...this.items];
+      this.activeItems = this.items.filter((item) => item.status === "active");
+      this.draftItems = this.items.filter((item) => item.status === "draft");
+      this.soldItems = this.items.filter((item) => item.status === "sold");
+    },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);
       item.id = "";
       item.title += " Copy";
       item.ebayListingId = "";
+      item.soldAt = null;
+      item.soldPrice = "0.00";
+      item.shippedAt = null;
+      item.quantitySold = 0;
+      item.currentPrice = item.price;
+      item.createdAt = null;
+      item.updatedAt = null;
+      item.quantity = 0;
+      item.location = null;
+      item.listedAt = null;
+      item.ready = false;
+      item.listingUserId = this.$cookie.get("userId");
+
       item.specifics = JSON.stringify(item.specifics);
       await api.createItem(this.token, item);
-      this.items = await api.getActiveItems(this.token);
-      this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+      await this.getItems();
     },
     async listItem(id) {
       await itemUtils.listItem(id, this);
@@ -209,8 +223,7 @@ export default {
     async deleteItem(id) {
       const response = await api.deleteItem(this.token, id);
       if (response.status == 204) {
-        this.items = await api.getActiveItems(this.token);
-        this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+        await this.getItems();
       } else {
         console.error(response);
       }
