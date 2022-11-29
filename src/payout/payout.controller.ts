@@ -1,19 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from "@nestjs/common";
-import { GetUser } from "../auth/decorator";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+
 import { JwtGuard } from "../auth/guard";
 import { PayoutService } from "./payout.service";
-import { CreatePayoutDto, EditPayoutDto } from "./dto";
+import { CreatePayoutDto } from "./dto";
 
 @UseGuards(JwtGuard)
 @Controller("Payouts")
@@ -33,16 +22,5 @@ export class PayoutController {
   @Post()
   createPayout(@Body() dto: CreatePayoutDto) {
     return this.payoutService.createPayout(dto);
-  }
-
-  @Patch(":id")
-  editPayout(@Param("id") payoutId: string, @Body() dto: EditPayoutDto) {
-    return this.payoutService.editPayout(payoutId, dto);
-  }
-
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @Delete(":id")
-  deletePayout(@Param("id") payoutId: string) {
-    return this.payoutService.deletePayout(payoutId);
   }
 }
