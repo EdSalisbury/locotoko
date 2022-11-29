@@ -43,6 +43,13 @@
           </b-button-toolbar>
         </template>
       </vue-bootstrap-table>
+
+      <b-row style="background: #ccc; padding: 5px; margin: 5px; border: 1px black solid">
+        <b-col><b>Total:</b> </b-col>
+        <b-col class="text-right">
+          <b>${{ parseFloat(this.total).toFixed(2) }}</b>
+        </b-col>
+      </b-row>
     </b-card-body>
   </b-card>
 </template>
@@ -59,6 +66,7 @@ export default {
     return {
       owner: [{}],
       token: "",
+      total: 0.0,
       columns: [
         {
           name: "title",
@@ -83,6 +91,8 @@ export default {
     this.owner = [this.owner];
     const allItems = await api.getItems(this.token);
     this.items = allItems.filter((item) => item.status === "sold" && item.ownerId === ownerId);
+    this.total = 0;
+    this.items.forEach((item) => (this.total += item.soldPrice));
   },
 };
 </script>
