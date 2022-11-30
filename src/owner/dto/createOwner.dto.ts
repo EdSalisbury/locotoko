@@ -3,7 +3,6 @@ import {
   IsNumber,
   IsString,
 } from "class-validator";
-import { isFloat32Array } from "util/types";
 
 export class CreateOwnerDto {
   @IsString()

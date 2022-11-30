@@ -121,6 +121,15 @@ const getOwners = async (token) => {
   return await response.json();
 };
 
+const updateOwner = async (token, id, payload) => {
+  const response = await fetch(apiUrl("owners", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(payload),
+  });
+  return await response.json();
+};
+
 const getEbayCategories = async (token) => {
   const response = await fetch(apiUrl("ebayCategories"), {
     headers: {
@@ -291,6 +300,7 @@ export default {
   getUsers,
   getOwners,
   getOwner,
+  updateOwner,
   getEbayCategories,
   getTemplates,
   getTemplate,

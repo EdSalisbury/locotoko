@@ -6,7 +6,7 @@ import { ItemAdd, ItemEdit, ItemView, ItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
 import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "../components/Acquisition";
 import { OrderList, OrderView, PickList } from "@/components/Order";
-import { OwnerList, OwnerView, OwnerAdd } from "@/components/Owner";
+import { OwnerList, OwnerView, OwnerAdd, OwnerEdit } from "@/components/Owner";
 
 Vue.use(VueRouter);
 
@@ -60,6 +60,11 @@ const routes = [
     path: "/addOwner",
     name: "add owner",
     component: OwnerAdd,
+  },
+  {
+    path: "/editOwner/:id",
+    name: "edit owner",
+    component: OwnerEdit,
   },
   {
     path: "/templates/:id",
