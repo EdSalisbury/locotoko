@@ -158,7 +158,7 @@ export default {
       item.currentPrice = item.price;
       item.createdAt = null;
       item.updatedAt = null;
-      item.quantity = 0;
+      item.quantity = 1;
       item.location = null;
       item.listedAt = null;
       item.ready = false;
@@ -183,6 +183,9 @@ export default {
         }
         if (item.ebayConditionId === 0 && !item.ebayCategoryName.includes("Vintage")) {
           errors.push("Condition not specified");
+        }
+        if (item.quantity < 1) {
+          errors.push("Quantity is < 1");
         }
         if (item.images.length === 0) {
           errors.push("No photos added");
