@@ -415,7 +415,12 @@ const listItem = async () => {
           console.log("Item listed successfully");
           return;
         } catch (e) {
-          console.error(e);
+          console.error("ERROR: " + e.response.data.LongMessage);
+          const request = {
+            ready: false,
+          };
+          console.log(`Marking item ${item.id} as NOT ready`);
+          await updateItem(item.id, request);
         }
       }
     }
@@ -460,27 +465,10 @@ const getShippedAtData = async () => {
   console.log("Done getting shipped info");
 };
 
-const printPickList = async () => {
-  console.log("Printing pick list");
-  await login();
-
-  let toShip = [];
-  const items = await getSoldItems();
-  for (const item of items) {
-    if (!item.shippedAt) {
-      toShip.push(item);
-    }
-  }
-
-  for (const item of toShip) {
-    console.log(
-      `${item.id} - ${item.title} - ${item.location} - Qty ${item.quantitySold}`,
-    );
-  }
-
-  console.log("Finished with pick list");
-};
 const main = async () => {
+  console.log("Sleeping 1 minute to wait for the server to come up...");
+  sleep(1000 * 60);
+
   while (true) {
     try {
       //await processPayouts();
@@ -492,8 +480,6 @@ const main = async () => {
       await processNewSales();
       await markdownItems();
       await listItem();
-
-      //await printPickList();
     } catch (e) {
       console.error(e);
     }
