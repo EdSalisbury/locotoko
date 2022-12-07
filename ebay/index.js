@@ -146,6 +146,7 @@ const processNewSales = async () => {
         const request = {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
+          soldPrice: item.price,
         };
         await updateItem(item.id, request);
       }
