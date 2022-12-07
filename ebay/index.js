@@ -225,7 +225,9 @@ const updateItem = async (id, request) => {
     return response;
   } catch (e) {
     console.error(
-      `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
+      `Unable to update item ${id} with payload:\n${JSON.stringify(
+        request,
+      )}:\n${JSON.stringify(e.response.data)}\n\n`,
     );
     return e.response;
   }
@@ -436,32 +438,32 @@ const getEbayItemTransactions = async (itemId) => {
   return response.data;
 };
 
-const getShippedAtData = async () => {
+const updateShippedData = async () => {
   console.log("Getting shipped data for items");
   await login();
 
   const items = await getSoldItems();
   for (const item of items) {
-    console.log(`${item.ebayListingId} - ${item.title} - ${item.shippedAt}`);
-    if (item.shippedAt) {
+    if (item.shippedAt && item.soldAt && item.soldPrice) {
       continue;
     }
-    let shippedAt = "";
-
+    console.log(
+      `${item.ebayListingId} - ${item.title} - Shipped At: ${item.shippedAt} Sold At: ${item.soldAt} Sold Price: ${item.soldPrice}`,
+    );
+    let request = {};
     const transactions = await getEbayItemTransactions(item.ebayListingId);
     if (transactions.length === 0) {
-      shippedAt = item.soldAt;
-    }
-    for (const transaction of transactions) {
-      if (transaction.ShippedTime) {
-        shippedAt = transaction.ShippedTime;
+      request.shippedAt = item.soldAt;
+      request.soldPrice = parseFloat(item.currentPrice).toFixed(2);
+    } else {
+      for (const transaction of transactions) {
+        if (transaction.ShippedTime) {
+          request.shippedAt = transaction.ShippedTime;
+          request.soldPrice = transaction.AmountPaid.value.toFixed(2);
+        }
       }
     }
-    if (shippedAt) {
-      await updateItem(item.id, {
-        shippedAt: shippedAt,
-      });
-    }
+    await updateItem(item.id, request);
   }
   console.log("Done getting shipped info");
 };
@@ -476,7 +478,7 @@ const main = async () => {
       //await titleCheck();
       //await listingCheck();
       //await setMinimumPrice();
-      //await getShippedAtData();
+      //await updateShippedData();
 
       await processNewSales();
       await markdownItems();
