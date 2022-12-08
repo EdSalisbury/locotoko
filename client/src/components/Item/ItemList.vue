@@ -195,7 +195,7 @@ export default {
         }
 
         if (errors.length > 0) {
-          this.$toast.error("Unable to ready item!</br>Reasons:</br>" + errors.join("</br>"), { duration: 0 });
+          this.$toast.error("Unable to ready item!<br />Reasons:<br />" + errors.join("<br />"), { duration: 0 });
           for (const item of this.items) {
             if (item.id === id) {
               item.ready = false;

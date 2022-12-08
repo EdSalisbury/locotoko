@@ -289,7 +289,7 @@ export default {
         this.$toast.success("Add Item Successful");
         this.$router.push({ path: "/items" });
       } catch (err) {
-        this.$toast.error("Add Item Unsuccessful!</br>Reasons:</br>" + err, { duration: 0 });
+        this.$toast.error("Add Item Unsuccessful!<br />Reasons:<br />" + err.response.data.ShortMessage, { duration: 0 });
         console.error(err);
       }
     },

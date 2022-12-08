@@ -64,7 +64,9 @@ export class EbayListingService {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
           ConditionID: item.ebayConditionId,
-          Description: item.description.replaceAll("\n", "&lt;br&gt;\n"),
+          Description: {
+            __cdata: item.description.replaceAll("\n", "<br />\n"),
+          },
           Currency: this.config.get("CURRENCY"),
           Country: this.config.get("COUNTRY"),
           ItemSpecifics: this.getSpecificArray(item.specifics),
@@ -197,7 +199,9 @@ export class EbayListingService {
           Title: item.title + "-" + item.id.slice(-4),
           ConditionID: item.ebayConditionId,
           ItemSpecifics: this.getSpecificArray(item.specifics),
-          Description: item.description.replaceAll("\n", "&lt;br&gt;\n"),
+          Description: {
+            __cdata: item.description.replaceAll("\n", "<br />\n"),
+          },
           Currency: this.config.get("CURRENCY"),
           Country: this.config.get("COUNTRY"),
           PrimaryCategory: {

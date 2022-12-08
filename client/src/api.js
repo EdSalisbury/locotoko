@@ -1,3 +1,5 @@
+import { default as axios } from "axios";
+
 const baseUrl = () => {
   if (process.env.VUE_APP_API_BASE_URL) {
     return process.env.VUE_APP_API_BASE_URL;
@@ -213,20 +215,14 @@ const deleteTemplate = async (token, id) => {
   });
 };
 
-const createEbayListing = async (token, body) => {
-  return await fetch(apiUrl("ebayListings"), {
-    method: "POST",
-    ...apiHeaders(token),
-    body: JSON.stringify(body),
-  });
+const createEbayListing = async (token, request) => {
+  const response = await axios.post(apiUrl("ebayListings"), request, apiHeaders(token));
+  return response.data;
 };
 
-const updateEbayListing = async (token, id, body) => {
-  return await fetch(apiUrl("ebayListings", id), {
-    method: "PATCH",
-    ...apiHeaders(token),
-    body: JSON.stringify(body),
-  });
+const updateEbayListing = async (token, id, request) => {
+  const response = await axios.patch(apiUrl("ebayListings", id), request, apiHeaders(token));
+  return response.data;
 };
 
 const getEbayConditions = async (token, categoryId) => {

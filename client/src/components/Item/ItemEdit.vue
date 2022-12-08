@@ -329,7 +329,7 @@ export default {
 
       this.payload.price = Number(this.payload.price).toFixed(2);
       this.payload.currentPrice = Number(this.payload.currentPrice).toFixed(2);
-      
+
       const token = this.$cookie.get("token");
 
       const itemId = this.$route.params.id.toString();
@@ -339,23 +339,20 @@ export default {
       await api.updateItem(this.token, itemId, this.payload);
 
       if (this.form.ebayListingId !== null) {
-        const response = await api.updateEbayListing(token, itemId, {
-          itemId: itemId,
-        });
-
-        if (response.status == 200) {
-          this.$toast.success("Update Listing Successful");
-        } else {
-          const err = await response.json();
-          const msgs = err.message.map((msg) => "<li>" + msg.ShortMessage + "</li>");
-
-          let msg = "<ul>" + msgs.join("") + "</ul>";
-          this.$toast.error("Update Listing Unsuccessful!</br>Reasons:</br>" + msg, { duration: 0 });
+        try {
+          const response = await api.updateEbayListing(token, itemId, {
+            itemId: itemId,
+          });
+          console.log(response);
+          this.$toast.success("Edit Item Successful");
+          this.$router.push({ path: "/items" });
+        } catch (err) {
+          this.$toast.error("Edit Item Unsuccessful!</br>Reasons:</br>" + err.response.data.ShortMessage, {
+            duration: 0,
+          });
           console.error(err);
         }
       }
-
-      this.$router.push({ path: "/items" });
     },
   },
 };
