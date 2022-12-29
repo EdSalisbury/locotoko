@@ -1,5 +1,6 @@
 import { ConsoleLogger } from "@nestjs/common";
 import { default as axios } from "axios";
+import { config } from "dotenv";
 import "dotenv/config";
 import { nextTick } from "process";
 
@@ -248,6 +249,43 @@ const updateEbayListing = async (id) => {
       `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
     );
     return e.response;
+  }
+};
+
+const getMarkdownPercentage = async (price, shippingPrice, weeksActive) => {
+  let pct = 0;
+  let markdownPrice = 0;
+  while (markdownPrice < config.MIN_PRICE) {
+    pct = (weeksActive - config.WEEKS_BEFORE_MARKDOWN) * 5;
+    markdownPrice = ((100 - pct) / 100) * (price + shippingPrice);
+  }
+  return pct;
+};
+
+const newMarkdownItems = async () => {
+  console.log("Marking down items... ");
+  await login();
+  const items = await getActiveItems();
+  for (let item of items) {
+    const pct = getMarkdownPercentage(
+      item.price,
+      item.shippingPrice,
+      item.weeksActive,
+    );
+    if (item.markdownPct === pct) {
+      continue;
+    }
+    if (item.markdownPct) {
+      // Remove from current markdown
+    }
+    // Get appropriate markdown
+    // If it doesn't exist, add it
+    // Add to appropriate markdown
+    // If successful:
+    const request = {
+      markdownPct: pct,
+    };
+    await updateItem(item.id, request);
   }
 };
 

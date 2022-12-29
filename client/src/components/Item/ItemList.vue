@@ -174,6 +174,9 @@ export default {
     async ready(id, value) {
       const item = await api.getItem(this.token, id);
       let errors = [];
+
+      const ebayConditions = await api.getEbayConditions(this.token, item.ebayCategoryId);
+
       if (value) {
         if (item.title.length > 75) {
           errors.push(`Title too long (${item.title.length} chars)`);
@@ -181,7 +184,7 @@ export default {
         if (parseFloat(item.price) < 9.99) {
           errors.push(`Original price is under $9.99 ($${parseFloat(item.price).toFixed(2)})`);
         }
-        if (item.ebayConditionId === 0 && !item.ebayCategoryName.includes("Vintage")) {
+        if (item.ebayConditionId === 0 && ebayConditions.length > 0) {
           errors.push("Condition not specified");
         }
         if (item.quantity < 1) {
