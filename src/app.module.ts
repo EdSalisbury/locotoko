@@ -20,6 +20,7 @@ import { PayoutModule } from "./payout/payout.module";
 import { EbayItemTransactionModule } from "./ebay-item-transaction/ebay-item-transaction.module";
 import { EbayOrderModule } from "./ebay-order/ebay-order.module";
 import { PickModule } from './pick/pick.module';
+import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -44,6 +45,7 @@ import { PickModule } from './pick/pick.module';
     EbayItemTransactionModule,
     EbayOrderModule,
     PickModule,
+    EbayMarkdownModule,
   ],
 })
 export class AppModule {}
