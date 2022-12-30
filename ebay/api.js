@@ -30,7 +30,7 @@ export const login = async () => {
   TOKEN = response.data.access_token;
 };
 
-const createEbayListing = async (id) => {
+export const createEbayListing = async (id) => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings";
   const request = {
     itemId: id,
@@ -39,7 +39,7 @@ const createEbayListing = async (id) => {
   return response.data;
 };
 
-const getItems = async () => {
+export const getItems = async () => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items";
   const response = await axios.get(url, getHeaders());
   return response.data;
@@ -51,19 +51,19 @@ export const getActiveItems = async () => {
   return response.data;
 };
 
-const getSoldItems = async () => {
+export const getSoldItems = async () => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?sold=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
-const getDraftItems = async () => {
+export const getDraftItems = async () => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?draft=true";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
-const getItem = async (itemId) => {
+export const getItem = async (itemId) => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items/" + itemId;
   const response = await axios.get(url, getHeaders());
   return response.data;
@@ -108,18 +108,18 @@ const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
   }
 };
 
-const getSellerEvents = async () => {
+export const getSellerEvents = async () => {
   const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebaySellerEvents";
   const response = await axios.get(url, getHeaders());
   return response.data;
 };
 
-const getEbayOrders = async () => {
+export const getEbayOrders = async () => {
   const response = await axios.get(apiUrl("ebayOrders"), getHeaders());
   return response.data;
 };
 
-const updateItem = async (id, request) => {
+export const updateItem = async (id, request) => {
   const url = apiUrl("items", id);
   try {
     const response = await axios.patch(url, request, getHeaders());
@@ -135,7 +135,7 @@ const updateItem = async (id, request) => {
   }
 };
 
-const updateEbayListing = async (id) => {
+export const updateEbayListing = async (id) => {
   const url = apiUrl("ebayListings", id);
   const request = {
     itemId: id,
@@ -166,7 +166,7 @@ const getAllEbayListings = async () => {
   return response.data;
 };
 
-const getEbayListing = async (ebayListingId) => {
+export const getEbayListing = async (ebayListingId) => {
   const url =
     process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings/" + ebayListingId;
   const response = await axios.get(url, getHeaders());

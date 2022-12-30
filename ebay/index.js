@@ -1,5 +1,3 @@
-import { config } from "dotenv";
-import "dotenv/config";
 import * as api from "./api.js";
 
 function sleep(ms) {
@@ -8,13 +6,13 @@ function sleep(ms) {
   });
 }
 
-const processNewSales = async () => {
+const processSales = async () => {
   console.log("Processing sales... ");
-  await login();
-  const orders = await getEbayOrders();
+  await api.login();
+  const orders = await api.getEbayOrders();
   for (const order of orders) {
     for (const ebayItem of order.items) {
-      const item = await getItemByEbayItemId(ebayItem.ebayItemId);
+      const item = await api.getItemByEbayItemId(ebayItem.ebayItemId);
       if (!item) {
         console.error(
           `Unable to find item with eBay Listing ID: ${ebayItem.ItemID} (${ebayItem.Title})`,
@@ -28,74 +26,11 @@ const processNewSales = async () => {
           soldAt: order.paidTime,
           soldPrice: item.price,
         };
-        await updateItem(item.id, request);
+        await api.updateItem(item.id, request);
       }
     }
   }
   console.log("Done processing sales.");
-};
-
-const processSales = async () => {
-  console.log("Processing sales... ");
-  await login();
-  const events = await getSellerEvents();
-  const ebayItems = events.ItemArray.Item;
-  for (const ebayItem of ebayItems) {
-    const item = await getItemByEbayItemId(ebayItem.ItemID);
-    if (!item) {
-      console.error(
-        `Unable to find item with eBay Listing ID: ${ebayItem.ItemID} (${ebayItem.Title})`,
-      );
-    } else {
-      if (item.quantitySold !== ebayItem.SellingStatus.QuantitySold) {
-        console.log(`Marking ${ebayItem.Title} as sold`);
-        await updateItemSold(
-          item.id,
-          ebayItem.SellingStatus.QuantitySold,
-          ebayItem.ListingDetails.EndTime,
-          parseFloat(ebayItem.SellingStatus.CurrentPrice.value).toFixed(2),
-        );
-      }
-    }
-  }
-  console.log("Done processing sales.");
-};
-
-const processPayouts = async () => {
-  await login();
-  const date = new Date();
-  const startDate = Date.parse(
-    new Date(date.getFullYear(), date.getMonth() - 2, 1),
-  );
-  const endDate = Date.parse(
-    new Date(date.getFullYear(), date.getMonth() - 1, 1),
-  );
-  const reportDate = new Date(date.getFullYear(), date.getMonth());
-
-  const soldItems = (await getSoldItems()).filter(
-    (item) =>
-      Date.parse(item.soldAt) >= startDate && Date.parse(item.soldAt) < endDate,
-  );
-
-  let totals = {};
-  soldItems.forEach((item) => {
-    if (!totals[item.ownerId]) {
-      totals[item.ownerId] = 0;
-    }
-    totals[item.ownerId] += parseFloat(item.currentPrice);
-  });
-
-  Object.keys(totals).forEach(async (ownerId) => {
-    console.log(ownerId);
-    const owner = await getOwner(ownerId);
-    console.log(owner);
-    const payout = {
-      ownerId: ownerId,
-      date: reportDate,
-      amount: totals[ownerId] * owner.rate,
-    };
-    console.log(payout);
-  });
 };
 
 const getMarkdownPercentage = (price, weeksActive) => {
@@ -117,10 +52,7 @@ const newMarkdownItems = async () => {
 
   for (let item of items.slice(-2)) {
     console.log(`Processing ${item.title}: ${item.id}`);
-    const pct = getMarkdownPercentage(
-      item.price,
-      item.weeksActive,
-    );
+    const pct = getMarkdownPercentage(item.price, item.weeksActive);
     if (item.markdownPct === pct) {
       continue;
     }
@@ -276,14 +208,14 @@ const setMinimumPrice = async () => {
 
 const listItem = async () => {
   console.log("Listing ready item from drafts");
-  await login();
+  await api.login();
 
-  let drafts = await getDraftItems();
+  let drafts = await api.getDraftItems();
   drafts.sort((a, b) => b.price - a.price);
 
   let startTime = new Date();
   startTime.setHours(startTime.getHours() - 24);
-  const items = await getItems();
+  const items = await api.getItems();
   let count = 0;
   for (const item of items) {
     if (item.listedAt && Date.parse(item.listedAt) > startTime) {
@@ -299,7 +231,7 @@ const listItem = async () => {
       if (item.ready) {
         try {
           console.log(`Listing ${item.id} - ${item.title} - ${item.price}`);
-          await createEbayListing(item.id);
+          await api.createEbayListing(item.id);
           console.log("Item listed successfully");
           return;
         } catch (e) {
@@ -308,7 +240,7 @@ const listItem = async () => {
             ready: false,
           };
           console.log(`Marking item ${item.id} as NOT ready`);
-          await updateItem(item.id, request);
+          await api.updateItem(item.id, request);
         }
       }
     }
@@ -348,20 +280,13 @@ const updateShippedData = async () => {
 
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  //await sleep(1000 * 60);
+  await sleep(1000 * 60);
 
   while (true) {
     try {
-      //await processPayouts();
-      //await titleCheck();
-      //await listingCheck();
-      //await setMinimumPrice();
-      //await updateShippedData();
-
-      //await processNewSales();
-      //await markdownItems();
-      //await listItem();
-      await newMarkdownItems();
+      await processSales();
+      await listItem();
+      //await newMarkdownItems();
     } catch (e) {
       console.error(e);
     }
