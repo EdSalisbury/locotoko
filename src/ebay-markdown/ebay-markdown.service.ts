@@ -114,4 +114,9 @@ export class EbayMarkdownService {
       return { errors: e.meta.res.data.errors };
     }
   }
+
+  async deleteMarkdown(id: string) {
+    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
+    return await this.ebay.sell.marketing.deleteItemPriceMarkdownPromotion(id);
+  }
 }

@@ -6,6 +6,7 @@ import {
   Body,
   UseGuards,
   Param,
+  Delete,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayMarkdownService } from "./ebay-markdown.service";
@@ -34,5 +35,10 @@ export class EbayMarkdownController {
   @Patch(":id")
   updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
     return this.ebayMarkdownService.updateMarkdown(id, dto);
+  }
+
+  @Delete(":id")
+  deleteMarkdown(@Param("id") id: string) {
+    return this.ebayMarkdownService.deleteMarkdown(id);
   }
 }
