@@ -26,10 +26,10 @@ export class EbayMarkdownController {
     return this.ebayMarkdownService.getMarkdowns();
   }
 
-  // @Post()
-  // createMarkdown(@Body() dto: CreateMarkdownDto) {
-  //   return this.ebayMarkdownService.createMarkdown(dto);
-  // }
+  @Post()
+  createMarkdown(@Body() dto: CreateMarkdownDto) {
+    return this.ebayMarkdownService.createMarkdown(dto);
+  }
 
   // @Patch(":id")
   // updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
