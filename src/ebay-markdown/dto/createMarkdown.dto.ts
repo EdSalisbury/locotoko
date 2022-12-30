@@ -12,5 +12,5 @@ import {
 export class CreateMarkdownDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  name: string;
 }

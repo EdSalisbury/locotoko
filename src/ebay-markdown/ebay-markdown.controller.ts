@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Patch, Body, UseGuards, Param } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  UseGuards,
+  Param,
+} from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayMarkdownService } from "./ebay-markdown.service";
 import { CreateMarkdownDto, EditMarkdownDto } from "./dto";
@@ -18,13 +26,13 @@ export class EbayMarkdownController {
     return this.ebayMarkdownService.getMarkdowns();
   }
 
-  @Post()
-  createMarkdown(@Body() dto: CreateMarkdownDto) {
-    return this.ebayMarkdownService.createMarkdown(dto);
-  }
+  // @Post()
+  // createMarkdown(@Body() dto: CreateMarkdownDto) {
+  //   return this.ebayMarkdownService.createMarkdown(dto);
+  // }
 
-  @Patch(":id")
-  updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
-    return this.ebayMarkdownService.updateMarkdown(id, dto);
-  }
+  // @Patch(":id")
+  // updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
+  //   return this.ebayMarkdownService.updateMarkdown(id, dto);
+  // }
 }

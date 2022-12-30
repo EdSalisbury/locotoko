@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        command: [ "/bin/bash", "-c", "--" ]
+        args: [ "tail -f /dev/null" ]
+        image: busybox
+        resources:
+          limits:
+            cpu: 100m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 1Gi
+        ports:
+        - containerPort: 5434
+        volumeMounts:
+          - name: env
+            mountPath: /etc/.env
+            readOnly: true
+      volumes:
+        - name: env
+          secret:
+            secretName: env

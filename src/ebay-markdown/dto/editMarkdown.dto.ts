@@ -7,10 +7,17 @@ import {
   IsOptional,
   IsString,
   IsBoolean,
+  Length,
 } from "class-validator";
 
 export class EditMarkdownDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  @Length(1, 90)
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 50)
+  description: string;
 }
