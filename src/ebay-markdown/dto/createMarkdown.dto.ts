@@ -19,4 +19,11 @@ export class CreateMarkdownDto {
   @IsNotEmpty()
   @Length(1, 50)
   description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  percentage: string;
+
+  @IsArray()
+  itemIds: Array<string>;
 }

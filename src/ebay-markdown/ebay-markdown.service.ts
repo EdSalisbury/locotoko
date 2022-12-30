@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, PayloadTooLargeException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CurrencyCode, MarketplaceId } from "ebay-api/lib/enums";
 
@@ -35,59 +35,80 @@ export class EbayMarkdownService {
     dateTmp.setDate(dateTmp.getDate() + 45);
     const endDate = dateTmp.toISOString();
 
-    try {
-      const payload = {
-        name: dto.name,
-        description: dto.description,
-        applyFreeShipping: true,
-        autoSelectFutureInventory: false,
-        startDate: startDate,
-        endDate: endDate,
-        blockPriceIncreaseInItemRevision: true,
-        marketplaceId: MarketplaceId.EBAY_US,
-        priority: "",
-        promotionImageUrl:
-          "https://i.ebayimg.com/********/********/********/s-l500.jpg",
-        promotionStatus: "SCHEDULED",
-        selectedInventoryDiscounts: [
-          {
-            discountBenefit: {
-              percentageOffItem: "5",
-              percentageOffOrder: "0",
-              amountOffItem: {
-                value: "0",
-                currency: CurrencyCode.USD,
-              },
-              amountOffOrder: {
-                value: "0",
-                currency: CurrencyCode.USD,
-              },
+    const payload = {
+      name: dto.name,
+      description: dto.description,
+      applyFreeShipping: true,
+      autoSelectFutureInventory: false,
+      startDate: startDate,
+      endDate: endDate,
+      blockPriceIncreaseInItemRevision: true,
+      marketplaceId: MarketplaceId.EBAY_US,
+      priority: "",
+      promotionImageUrl:
+        "https://i.ebayimg.com/images/g/H34AAOSwElJjOGkj/s-l140.webp",
+      promotionStatus: "SCHEDULED",
+      selectedInventoryDiscounts: [
+        {
+          discountBenefit: {
+            percentageOffItem: dto.percentage,
+            percentageOffOrder: "0",
+            amountOffItem: {
+              value: "0",
+              currency: CurrencyCode.USD,
             },
-            discountId: "",
-            ruleOrder: null,
-            inventoryCriterion: {
-              inventoryCriterionType: "INVENTORY_BY_VALUE",
-              listingIds: ["144592240180"],
-              inventoryItems: null,
-              // ruleCriteria: {
-              //   selectionRules: null,
-              //   excludeInventoryItems: null,
-              //   excludeListingIds: null,
-              //   markupListingIds: null,
-              //   markupInventoryItems: null,
-              // },
+            amountOffOrder: {
+              value: "0",
+              currency: CurrencyCode.USD,
             },
           },
-        ],
-      };
-      const response = await this.ebay.sell.marketing.post(
+          discountId: "",
+          ruleOrder: null,
+          inventoryCriterion: {
+            inventoryCriterionType: "INVENTORY_BY_VALUE",
+            listingIds: dto.itemIds,
+            inventoryItems: null,
+          },
+        },
+      ],
+    };
+
+    try {
+      return await this.ebay.sell.marketing.post(
         `/item_price_markdown`,
         payload,
       );
-      // await this.ebay.sell.marketing.createItemPriceMarkdownPromotion(
-      //   payload,
-      // );
-      return response;
+    } catch (e) {
+      console.log(e.meta);
+      return { errors: e.meta.res.data.errors };
+    }
+  }
+
+  async updateMarkdown(id: string, dto: EditMarkdownDto) {
+    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
+
+    let payload = await this.getMarkdown(id);
+
+    if (dto.name) {
+      payload.name = dto.name;
+    }
+    if (dto.description) {
+      payload.description = dto.description;
+    }
+    if (dto.percentage) {
+      payload.selectedInventoryDiscounts[0].discountBenefit.percentageOffItem =
+        dto.percentage;
+    }
+    if (dto.itemIds) {
+      payload.selectedInventoryDiscounts[0].inventoryCriterion.listingIds =
+        dto.itemIds;
+    }
+
+    try {
+      return await this.ebay.sell.marketing.put(
+        `/item_price_markdown/${id}`,
+        payload,
+      );
     } catch (e) {
       console.log(e.meta);
       return { errors: e.meta.res.data.errors };

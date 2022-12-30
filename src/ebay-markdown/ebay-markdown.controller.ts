@@ -31,8 +31,8 @@ export class EbayMarkdownController {
     return this.ebayMarkdownService.createMarkdown(dto);
   }
 
-  // @Patch(":id")
-  // updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
-  //   return this.ebayMarkdownService.updateMarkdown(id, dto);
-  // }
+  @Patch(":id")
+  updateMarkdown(@Param("id") id: string, @Body() dto: EditMarkdownDto) {
+    return this.ebayMarkdownService.updateMarkdown(id, dto);
+  }
 }

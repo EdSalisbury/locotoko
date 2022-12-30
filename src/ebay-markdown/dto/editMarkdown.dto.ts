@@ -12,12 +12,24 @@ import {
 
 export class EditMarkdownDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Length(1, 90)
   name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Length(1, 50)
   description: string;
+
+  @IsNumber()
+  @IsOptional()
+  percentage: number;
+
+  @IsString()
+  @IsOptional()
+  promotionStatus: string;
+
+  @IsArray()
+  @IsOptional()
+  itemIds: Array<string>;
 }
