@@ -1,133 +1,12 @@
-import { ConsoleLogger } from "@nestjs/common";
-import { default as axios } from "axios";
 import { config } from "dotenv";
 import "dotenv/config";
-import { nextTick } from "process";
-
-let TOKEN;
+import * as api from "./api.js";
 
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
-
-const getHeaders = () => {
-  return {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + TOKEN,
-    },
-  };
-};
-
-const apiUrl = (resource, id = "", action = "") => {
-  return (
-    process.env.LOCAL_API_BASE_URL +
-    `/api/v1/${resource}` +
-    (id ? `/${id}` : "") +
-    (action ? `/${action}` : "")
-  );
-};
-
-const login = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/auth/login";
-  const request = {
-    email: process.env.EBAY_EMAIL,
-    password: process.env.EBAY_PASSWORD,
-  };
-  const response = await axios.post(url, request, getHeaders());
-  TOKEN = response.data.access_token;
-};
-
-const createEbayListing = async (id) => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings";
-  const request = {
-    itemId: id,
-  };
-  const response = await axios.post(url, request, getHeaders());
-  return response.data;
-};
-
-const getItems = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getActiveItems = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?sold=false";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getSoldItems = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?sold=true";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getDraftItems = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items?draft=true";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getItem = async (itemId) => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items/" + itemId;
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getOwner = async (ownerId) => {
-  const response = await axios.get(apiUrl("owners", ownerId), getHeaders());
-  return response.data;
-};
-
-const getItemByEbayItemId = async (ebayItemId) => {
-  const items = await getItems();
-  const filtered = items.filter((item) => item.ebayListingId == ebayItemId);
-  return filtered[0];
-};
-
-const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
-  console.log(itemId, quantitySold, endTime, soldPrice);
-  try {
-    const item = await getItem(itemId);
-    const url = process.env.LOCAL_API_BASE_URL + "/api/v1/items/" + itemId;
-    const request = {
-      soldPrice: soldPrice,
-      quantitySold: item.quantitySold + quantitySold,
-      soldAt: endTime,
-    };
-    const response = await axios.patch(url, request, getHeaders());
-    if (response.status === 200) {
-      console.log("Marked item " + item.title + " as sold successfully.");
-    } else {
-      console.error(
-        "Unable to mark item " + item.title + " as sold:\n" + response.data,
-      );
-    }
-  } catch (e) {
-    console.error(
-      "Unable to update item " +
-        itemId +
-        ":\n" +
-        JSON.stringify(e.response.data),
-    );
-  }
-};
-
-const getSellerEvents = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebaySellerEvents";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getEbayOrders = async () => {
-  const response = await axios.get(apiUrl("ebayOrders"), getHeaders());
-  return response.data;
-};
 
 const processNewSales = async () => {
   console.log("Processing sales... ");
@@ -155,6 +34,7 @@ const processNewSales = async () => {
   }
   console.log("Done processing sales.");
 };
+
 const processSales = async () => {
   console.log("Processing sales... ");
   await login();
@@ -218,74 +98,54 @@ const processPayouts = async () => {
   });
 };
 
-const updateItem = async (id, request) => {
-  const url = apiUrl("items", id);
-  try {
-    const response = await axios.patch(url, request, getHeaders());
-    console.log(`Updated item ${id} successfully.`);
-    return response;
-  } catch (e) {
-    console.error(
-      `Unable to update item ${id} with payload:\n${JSON.stringify(
-        request,
-      )}:\n${JSON.stringify(e.response.data)}\n\n`,
-    );
-    return e.response;
-  }
-};
-
-const updateEbayListing = async (id) => {
-  const url = apiUrl("ebayListings", id);
-  const request = {
-    itemId: id,
-  };
-
-  try {
-    const response = await axios.patch(url, request, getHeaders());
-    console.log(`Updated eBay item for ${id} successfully.`);
-    return response;
-  } catch (e) {
-    console.error(
-      `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
-    );
-    return e.response;
-  }
-};
-
-const getMarkdownPercentage = async (price, shippingPrice, weeksActive) => {
+const getMarkdownPercentage = (price, weeksActive) => {
   let pct = 0;
   let markdownPrice = 0;
-  while (markdownPrice < config.MIN_PRICE) {
-    pct = (weeksActive - config.WEEKS_BEFORE_MARKDOWN) * 5;
-    markdownPrice = ((100 - pct) / 100) * (price + shippingPrice);
+
+  pct = (weeksActive - process.env.WEEKS_BEFORE_MARKDOWN) * 5;
+  while (markdownPrice < process.env.MIN_PRICE && pct < 100) {
+    pct -= 5;
+    markdownPrice = ((100 - pct) / 100) * price;
   }
   return pct;
 };
 
 const newMarkdownItems = async () => {
   console.log("Marking down items... ");
-  await login();
-  const items = await getActiveItems();
-  for (let item of items) {
+  await api.login();
+  const items = await api.getActiveItems();
+
+  for (let item of items.slice(-2)) {
+    console.log(`Processing ${item.title}: ${item.id}`);
     const pct = getMarkdownPercentage(
       item.price,
-      item.shippingPrice,
       item.weeksActive,
     );
     if (item.markdownPct === pct) {
       continue;
     }
+    console.log(`Item's new markdown percentage: ${pct}`);
+    console.log(`Item's current markdown percentage: ${item.markdownPct}`);
     if (item.markdownPct) {
-      // Remove from current markdown
+      console.log("Removing from current markdown");
+      // Check to see if it's the last item in the markdown
+
+      // If not, remove from current markdown
     }
     // Get appropriate markdown
+    console.log("Get appropriate markdown");
+
     // If it doesn't exist, add it
+    console.log("Add markdown if needed, with itemId");
     // Add to appropriate markdown
+
+    console.log("Add to markdown if found");
+
     // If successful:
-    const request = {
-      markdownPct: pct,
-    };
-    await updateItem(item.id, request);
+    // const request = {
+    //   markdownPct: pct,
+    // };
+    // await updateItem(item.id, request);
   }
 };
 
@@ -323,19 +183,6 @@ const markdownItems = async () => {
     }
   }
   console.log("Done with item markdowns");
-};
-
-const getAllEbayListings = async () => {
-  const url = process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings";
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
-const getEbayListing = async (ebayListingId) => {
-  const url =
-    process.env.LOCAL_API_BASE_URL + "/api/v1/ebayListings/" + ebayListingId;
-  const response = await axios.get(url, getHeaders());
-  return response.data;
 };
 
 const listingCheck = async () => {
@@ -469,13 +316,6 @@ const listItem = async () => {
   console.log("No items to list!");
 };
 
-const getEbayItemTransactions = async (itemId) => {
-  const url =
-    process.env.LOCAL_API_BASE_URL + "/api/v1/ebayItemTransactions/" + itemId;
-  const response = await axios.get(url, getHeaders());
-  return response.data;
-};
-
 const updateShippedData = async () => {
   console.log("Getting shipped data for items");
   await login();
@@ -508,7 +348,7 @@ const updateShippedData = async () => {
 
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  sleep(1000 * 60);
+  //await sleep(1000 * 60);
 
   while (true) {
     try {
@@ -518,9 +358,10 @@ const main = async () => {
       //await setMinimumPrice();
       //await updateShippedData();
 
-      await processNewSales();
-      await markdownItems();
-      await listItem();
+      //await processNewSales();
+      //await markdownItems();
+      //await listItem();
+      await newMarkdownItems();
     } catch (e) {
       console.error(e);
     }
