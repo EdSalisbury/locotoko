@@ -1,4 +1,4 @@
-import { Injectable, PayloadTooLargeException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CurrencyCode, MarketplaceId } from "ebay-api/lib/enums";
 
@@ -28,16 +28,18 @@ export class EbayMarkdownService {
   async createMarkdown(dto: CreateMarkdownDto) {
     this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
     let dateTmp = new Date();
-    dateTmp.setDate(dateTmp.getDate() + 1);
+    dateTmp = new Date(dateTmp.getTime() + 60000);
     const startDate = dateTmp.toISOString();
     dateTmp = new Date();
 
     dateTmp.setDate(dateTmp.getDate() + 45);
     const endDate = dateTmp.toISOString();
 
+    const name = `${dto.percentage}% off`;
+    const description = `Take ${dto.percentage}% off!`;
     const payload = {
-      name: dto.name,
-      description: dto.description,
+      name: name,
+      description: description,
       applyFreeShipping: true,
       autoSelectFutureInventory: false,
       startDate: startDate,
@@ -89,12 +91,6 @@ export class EbayMarkdownService {
 
     let payload = await this.getMarkdown(id);
 
-    if (dto.name) {
-      payload.name = dto.name;
-    }
-    if (dto.description) {
-      payload.description = dto.description;
-    }
     if (dto.percentage) {
       payload.selectedInventoryDiscounts[0].discountBenefit.percentageOffItem =
         dto.percentage;
