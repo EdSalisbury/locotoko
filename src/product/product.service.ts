@@ -32,10 +32,10 @@ export class ProductService {
       },
     };
 
-    const token = await this.ebay.OAuth2.getApplicationAccessToken();
-    this.ebay.OAuth2.setCredentials(token);
+    //const token = await this.ebay.OAuth2.getApplicationAccessToken();
+    //this.ebay.OAuth2.setCredentials(token);
     const product = await this.ebay.finding.findItemsByProduct(request);
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    // this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     const decodedProduct = decodeSpecialCharsInObject(product);
     return decodedProduct.searchResult.item;
@@ -49,10 +49,10 @@ export class ProductService {
       },
     };
 
-    const token = await this.ebay.OAuth2.getApplicationAccessToken();
-    this.ebay.OAuth2.setCredentials(token);
+    //const token = await this.ebay.OAuth2.getApplicationAccessToken();
+    //this.ebay.OAuth2.setCredentials(token);
     const product = await this.ebay.shopping.FindProducts(request);
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     return decodeSpecialCharsInObject(product);
   }

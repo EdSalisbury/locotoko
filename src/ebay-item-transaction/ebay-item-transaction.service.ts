@@ -11,7 +11,7 @@ export class EbayItemTransactionService {
       return "";
     }
 
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
     try {
       const response = await this.ebay.trading.GetItemTransactions({
         ItemID: itemId,

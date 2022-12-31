@@ -34,7 +34,7 @@ export class EbayListingService {
       throw new NotFoundException();
     }
 
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     try {
       let imageUrls = [];
@@ -169,7 +169,7 @@ export class EbayListingService {
       throw new NotFoundException();
     }
 
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     try {
       let imageUrls = [];

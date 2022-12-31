@@ -11,7 +11,7 @@ export class EbayConditionService {
       return "";
     }
 
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     const features = await this.ebay.trading.GetCategoryFeatures({
       DetailLevel: "ReturnAll",

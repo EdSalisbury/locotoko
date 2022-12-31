@@ -11,4 +11,6 @@ export class EbayController {
   auth() {
     return this.ebayService.userAuth();
   }
+
+  
 }

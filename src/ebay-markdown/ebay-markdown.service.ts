@@ -10,8 +10,6 @@ export class EbayMarkdownService {
   constructor(private ebay: EbayService, private config: ConfigService) {}
 
   async getMarkdowns() {
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
-
     return await this.ebay.sell.marketing.getPromotions("EBAY_US", {
       promotionType: "MARKDOWN_SALE",
       limit: 200,
@@ -21,12 +19,10 @@ export class EbayMarkdownService {
   }
 
   async getMarkdown(id: string) {
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
     return await this.ebay.sell.marketing.getItemPriceMarkdownPromotion(id);
   }
 
   async createMarkdown(dto: CreateMarkdownDto) {
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
     let dateTmp = new Date();
     dateTmp = new Date(dateTmp.getTime() + 60000);
     const startDate = dateTmp.toISOString();
@@ -87,8 +83,6 @@ export class EbayMarkdownService {
   }
 
   async updateMarkdown(id: string, dto: EditMarkdownDto) {
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
-
     let payload = await this.getMarkdown(id);
 
     if (dto.percentage) {
@@ -112,7 +106,6 @@ export class EbayMarkdownService {
   }
 
   async deleteMarkdown(id: string) {
-    this.ebay.OAuth2.setCredentials(this.config.get("EBAY_USER_TOKEN"));
     return await this.ebay.sell.marketing.deleteItemPriceMarkdownPromotion(id);
   }
 }
