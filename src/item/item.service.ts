@@ -31,6 +31,7 @@ export class ItemService {
     listedAt: true,
     shippedAt: true,
     soldPrice: true,
+    markdownPct: true,
   };
 
   categories = [];

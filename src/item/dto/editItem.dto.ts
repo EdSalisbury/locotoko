@@ -134,4 +134,8 @@ export class EditItemDto {
   @IsDateString()
   @IsOptional()
   listedAt: string;
+
+  @IsNumber()
+  @IsOptional()
+  markdownPct: number;
 }

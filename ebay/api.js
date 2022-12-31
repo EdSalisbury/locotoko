@@ -198,7 +198,7 @@ export const createEbayMarkdown = async (payload) => {
 };
 
 export const updateEbayMarkdown = async (id, payload) => {
-  const response = await axios.post(
+  const response = await axios.patch(
     apiUrl("ebayMarkdowns", id),
     payload,
     getHeaders(),

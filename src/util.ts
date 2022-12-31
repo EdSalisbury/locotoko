@@ -35,6 +35,9 @@ const encodeSpecialCharsInObject = (obj: Object) => {
 };
 
 const getWeeksDiff = (startDate: Date, endDate: Date) => {
+  if (!startDate) {
+    return 0;
+  }
   const msInWeek = 1000 * 60 * 60 * 24 * 7;
   return Math.floor(
     Math.abs(endDate.valueOf() - startDate.valueOf()) / msInWeek,

@@ -74,7 +74,7 @@ const newMarkdownItems = async () => {
 
   const items = await api.getActiveItems();
 
-  for (let item of items.slice(-2)) {
+  for (let item of items.slice(-10)) {
     console.log(`Processing ${item.title}: ${item.id}`);
     const pct = getMarkdownPercentage(item.price, item.weeksActive);
     if (item.markdownPct === pct) {
@@ -154,8 +154,7 @@ const newMarkdownItems = async () => {
       const request = {
         markdownPct: pct,
       };
-      await updateItem(item.id, request);
-      console.log("Updated item with markdown data");
+      await api.updateItem(item.id, request);
     }
   }
 };
