@@ -368,6 +368,39 @@ const updateShippedData = async () => {
   console.log("Done getting shipped info");
 };
 
+const updateEndedListings = async () => {
+  await api.login();
+  const items = await api.getItems();
+  for (const item of items.slice(-50)) {
+    console.log(item.title);
+    if (!item.ebayListingId) {
+      console.log("Item not listed yet");
+      continue;
+    }
+    if (item.endedAt) {
+      console.log("Item already ended");
+      continue;
+    }
+    const ebayItem = await api.getEbayListing(item.ebayListingId);
+    const endTime = Date.parse(ebayItem.Item.ListingDetails.EndTime);
+    const startTime = Date.parse(ebayItem.Item.ListingDetails.StartTime);
+    if (!item.listedAt) {
+      console.log(
+        `ListedAt not set, setting to: ${new Date(startTime).toISOString()}`,
+      );
+      await api.updateItem(item.id, {
+        listedAt: new Date(startTime).toISOString(),
+      });
+    }
+    if (endTime < Date.now()) {
+      console.log("Item has ended");
+      await api.updateItem(item.id, {
+        endedAt: new Date(endTime).toISOString(),
+      });
+    }
+  }
+};
+
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
   await sleep(1000 * 60);
@@ -377,6 +410,7 @@ const main = async () => {
       await processSales();
       await listItem();
       //await newMarkdownItems();
+      //await updateEndedListings();
     } catch (e) {
       console.error(e);
     }

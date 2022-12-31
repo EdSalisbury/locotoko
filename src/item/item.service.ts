@@ -29,6 +29,7 @@ export class ItemService {
     currentPrice: true,
     ready: true,
     listedAt: true,
+    endedAt: true,
     shippedAt: true,
     soldPrice: true,
     markdownPct: true,
@@ -90,7 +91,7 @@ export class ItemService {
     await this.getCategories();
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
-      where: { soldAt: null, ebayListingId: { not: null } },
+      where: { soldAt: null, endedAt: null, ebayListingId: { not: null } },
     });
 
     return items

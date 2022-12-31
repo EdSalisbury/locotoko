@@ -67,7 +67,9 @@ export default {
           key: "ebayCategoryName",
           label: "eBay Category",
         },
+        { key: "listedAt", label: "Listed At" },
         { key: "soldAt", label: "Sold At" },
+        { key: "endedAt", label: "Ended At" },
         { key: "shippedAt", label: "Shipped At" },
         {
           key: "listingUserId",

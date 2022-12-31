@@ -135,6 +135,10 @@ export class EditItemDto {
   @IsOptional()
   listedAt: string;
 
+  @IsDateString()
+  @IsOptional()
+  endedAt: string;
+
   @IsNumber()
   @IsOptional()
   markdownPct: number;
