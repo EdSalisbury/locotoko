@@ -13,16 +13,7 @@ export class EbayService extends ebayApi {
       ruName: config.get("EBAY_RU_NAME"),
       //authToken: config.get("EBAY_AUTH_TOKEN"),
     });
-    this.OAuth2.setCredentials({
-      access_token: config.get("EBAY_USER_TOKEN"),
-      expires_in: 7200,
-      refresh_token: config.get("EBAY_REFRESH_TOKEN"),
-      refresh_token_expires_in: 47304000,
-      token_type: "User Access Token",
-    });
-  }
 
-  async userAuth() {
     this.OAuth2.setScope([
       "https://api.ebay.com/oauth/api_scope",
       "https://api.ebay.com/oauth/api_scope/sell.marketing.readonly",
@@ -41,7 +32,16 @@ export class EbayService extends ebayApi {
       "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly",
     ]);
 
-    // 2. Generate and open Url and Grant Access
+    this.OAuth2.setCredentials({
+      access_token: config.get("EBAY_USER_TOKEN"),
+      expires_in: 7200,
+      refresh_token: config.get("EBAY_REFRESH_TOKEN"),
+      refresh_token_expires_in: 47304000,
+      token_type: "User Access Token",
+    });
+  }
+
+  async userAuth() {
     const url = this.OAuth2.generateAuthUrl();
     return url;
   }
