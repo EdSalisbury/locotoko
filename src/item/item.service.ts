@@ -95,7 +95,7 @@ export class ItemService {
     return items
       .map((item) => ({
         ...item,
-        weeksActive: getWeeksDiff(item.createdAt, new Date()),
+        weeksActive: getWeeksDiff(item.listedAt, new Date()),
       }))
       .map(this.categoryMap)
       .map(this.locationMap);

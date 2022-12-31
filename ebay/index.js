@@ -38,6 +38,9 @@ const getMarkdownPercentage = (price, weeksActive) => {
   let markdownPrice = 0;
 
   pct = (weeksActive - process.env.WEEKS_BEFORE_MARKDOWN) * 5;
+  if (pct <= 0) {
+    return 0;
+  }
   while (markdownPrice < process.env.MIN_PRICE && pct < 100) {
     pct -= 5;
     markdownPrice = ((100 - pct) / 100) * price;
@@ -48,36 +51,112 @@ const getMarkdownPercentage = (price, weeksActive) => {
 const newMarkdownItems = async () => {
   console.log("Marking down items... ");
   await api.login();
+
+  // Get all current markdowns
+  let markdowns = [];
+  const response = await api.getEbayMarkdowns();
+  for (const promotion of response.promotions) {
+    if (
+      promotion.promotionStatus === "RUNNING" &&
+      promotion.name.startsWith("md")
+    ) {
+      const details = await api.getEbayMarkdown(promotion.promotionId);
+      const pct = promotion.name.split("md_")[1];
+
+      markdowns.push({
+        pct: pct,
+        id: promotion.promotionId,
+        listingIds:
+          details.selectedInventoryDiscounts[0].inventoryCriterion.listingIds,
+      });
+    }
+  }
+
   const items = await api.getActiveItems();
 
   for (let item of items.slice(-2)) {
     console.log(`Processing ${item.title}: ${item.id}`);
     const pct = getMarkdownPercentage(item.price, item.weeksActive);
     if (item.markdownPct === pct) {
+      console.log("Item is currently at the correct markdown level");
+      continue;
+    }
+    if (pct === 0) {
+      console.log("0% markdown, skipping");
       continue;
     }
     console.log(`Item's new markdown percentage: ${pct}`);
     console.log(`Item's current markdown percentage: ${item.markdownPct}`);
     if (item.markdownPct) {
       console.log("Removing from current markdown");
-      // Check to see if it's the last item in the markdown
-
-      // If not, remove from current markdown
+      for (const md of markdowns) {
+        if (md.pct === item.markdownPct) {
+          md.listingIds = md.listingIds.filter(
+            (id) => id !== item.ebayListingId,
+          );
+          if (md.listingIds.length === 0) {
+            console.log("Last item -- removing markdown from ebay");
+            await api.deleteEbayMarkdown(md.id);
+            markdowns = markdowns.filter((item) => item.pct !== md.pct);
+          } else {
+            console.log("Updating ebay markdown with new listingIds");
+            await api.updateEbayMarkdown(md.id, { listingIds: md.listingIds });
+          }
+          break;
+        }
+      }
     }
-    // Get appropriate markdown
-    console.log("Get appropriate markdown");
+    let success = false;
+    for (const md of markdowns) {
+      if (md.pct === pct) {
+        console.log("Adding to markdown");
+        md.listingIds.push(item.ebayListingId);
+        await api.updateEbayMarkdown(md.id, { listingIds: md.listingIds });
+        success = true;
+        break;
+      }
+    }
 
-    // If it doesn't exist, add it
-    console.log("Add markdown if needed, with itemId");
-    // Add to appropriate markdown
+    if (!success) {
+      console.log("Creating markdown");
+      try {
+        await api.createEbayMarkdown({
+          percentage: pct.toString(),
+          itemIds: [item.ebayListingId],
+        });
+      } catch (e) {
+        console.log(e.response.data);
+      }
+      console.log("Waiting one minute for the markdown to become active");
+      await sleep(60000);
+      const response = await api.getEbayMarkdowns();
+      for (const promotion of response.promotions) {
+        if (
+          promotion.promotionStatus === "RUNNING" &&
+          promotion.name === `md_${pct}`
+        ) {
+          const details = await api.getEbayMarkdown(promotion.promotionId);
+          markdowns.push({
+            pct: pct,
+            id: promotion.promotionId,
+            listingIds:
+              details.selectedInventoryDiscounts[0].inventoryCriterion
+                .listingIds,
+          });
+          console.log("Got new markdown data");
+          success = true;
+          break;
+        }
+      }
+    }
 
-    console.log("Add to markdown if found");
-
-    // If successful:
-    // const request = {
-    //   markdownPct: pct,
-    // };
-    // await updateItem(item.id, request);
+    if (success) {
+      const request = {
+        markdownPct: pct,
+      };
+      await updateItem(item.id, request);
+      console.log("Updated item with markdown data");
+    }
   }
 };
 

@@ -80,7 +80,12 @@ export const getItemByEbayItemId = async (ebayItemId) => {
   return filtered[0];
 };
 
-export const updateItemSold = async (itemId, quantitySold, endTime, soldPrice) => {
+export const updateItemSold = async (
+  itemId,
+  quantitySold,
+  endTime,
+  soldPrice,
+) => {
   console.log(itemId, quantitySold, endTime, soldPrice);
   try {
     const item = await getItem(itemId);

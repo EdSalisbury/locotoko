@@ -14,7 +14,6 @@ export class EbayMarkdownService {
       promotionType: "MARKDOWN_SALE",
       limit: 200,
       offset: 0,
-      promotionStatus: "SCHEDULED",
     });
   }
 
@@ -24,14 +23,14 @@ export class EbayMarkdownService {
 
   async createMarkdown(dto: CreateMarkdownDto) {
     let dateTmp = new Date();
-    dateTmp = new Date(dateTmp.getTime() + 60000);
+    dateTmp = new Date(dateTmp.getTime());
     const startDate = dateTmp.toISOString();
     dateTmp = new Date();
 
     dateTmp.setDate(dateTmp.getDate() + 45);
     const endDate = dateTmp.toISOString();
 
-    const name = `${dto.percentage}% off`;
+    const name = `md_${dto.percentage}`;
     const description = `Take ${dto.percentage}% off!`;
     const payload = {
       name: name,

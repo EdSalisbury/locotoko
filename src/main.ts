@@ -16,9 +16,13 @@ async function bootstrap() {
     const certFile = fs.readFileSync(
       "/etc/locotoko/store.bluedragontrading.ltd.crt",
     );
+    const caFile = fs.readFileSync(
+      "/etc/locotoko/store.bluedragontrading.ltd.ca",
+    );
     const httpsOptions = {
       key: keyFile,
       cert: certFile,
+      ca: caFile,
     };
     const server = express();
 
