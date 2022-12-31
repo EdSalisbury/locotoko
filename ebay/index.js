@@ -24,6 +24,7 @@ const processSales = async () => {
         const request = {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
+          endedAt: order.paidTime,
           soldPrice: item.price,
         };
         await api.updateItem(item.id, request);
@@ -371,7 +372,7 @@ const updateShippedData = async () => {
 const updateEndedListings = async () => {
   await api.login();
   const items = await api.getItems();
-  for (const item of items.slice(-50)) {
+  for (const item of items) {
     console.log(item.title);
     if (!item.ebayListingId) {
       console.log("Item not listed yet");
@@ -381,36 +382,49 @@ const updateEndedListings = async () => {
       console.log("Item already ended");
       continue;
     }
-    const ebayItem = await api.getEbayListing(item.ebayListingId);
-    const endTime = Date.parse(ebayItem.Item.ListingDetails.EndTime);
-    const startTime = Date.parse(ebayItem.Item.ListingDetails.StartTime);
-    if (!item.listedAt) {
-      console.log(
-        `ListedAt not set, setting to: ${new Date(startTime).toISOString()}`,
-      );
-      await api.updateItem(item.id, {
-        listedAt: new Date(startTime).toISOString(),
-      });
-    }
-    if (endTime < Date.now()) {
-      console.log("Item has ended");
-      await api.updateItem(item.id, {
-        endedAt: new Date(endTime).toISOString(),
-      });
+    try {
+      const ebayItem = await api.getEbayListing(item.ebayListingId);
+      const endTime = Date.parse(ebayItem.Item.ListingDetails.EndTime);
+      const startTime = Date.parse(ebayItem.Item.ListingDetails.StartTime);
+      if (!item.listedAt) {
+        console.log(
+          `ListedAt not set, setting to: ${new Date(startTime).toISOString()}`,
+        );
+        await api.updateItem(item.id, {
+          listedAt: new Date(startTime).toISOString(),
+        });
+      }
+      if (endTime < Date.now()) {
+        console.log("Item has ended");
+        await api.updateItem(item.id, {
+          endedAt: new Date(endTime).toISOString(),
+        });
+      }
+    } catch (e) {
+      if (!item.listedAt) {
+        await api.updateItem(item.id, {
+          listedAt: item.createdAt,
+        });
+      }
+      if (!item.endedAt) {
+        await api.updateItem(item.id, {
+          endedAt: item.soldAt,
+        });
+      }
     }
   }
 };
 
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  await sleep(1000 * 60);
+  //await sleep(1000 * 60);
 
   while (true) {
     try {
-      await processSales();
-      await listItem();
+      //await processSales();
+      //await listItem();
       //await newMarkdownItems();
-      //await updateEndedListings();
+      await updateEndedListings();
     } catch (e) {
       console.error(e);
     }
