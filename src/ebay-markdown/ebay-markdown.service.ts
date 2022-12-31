@@ -23,14 +23,15 @@ export class EbayMarkdownService {
 
   async createMarkdown(dto: CreateMarkdownDto) {
     let dateTmp = new Date();
-    dateTmp = new Date(dateTmp.getTime() + 5000);
+    //dateTmp = new Date(dateTmp.getTime() + 5000);
+    dateTmp = new Date(dateTmp.getTime() + 1000 * 60 * 60 * 24 * 5);
     const startDate = dateTmp.toISOString();
     dateTmp = new Date();
 
     dateTmp.setDate(dateTmp.getDate() + 45);
     const endDate = dateTmp.toISOString();
 
-    const name = `md_${dto.percentage}`;
+    const name = `md-${dto.percentage}`;
     const description = `Take ${dto.percentage}% off!`;
     const payload = {
       name: name,
@@ -105,6 +106,21 @@ export class EbayMarkdownService {
   }
 
   async deleteMarkdown(id: string) {
+    let payload = await this.getMarkdown(id);
+    if (payload.promotionStatus === "RUNNING") {
+      let dateTmp = new Date();
+      dateTmp = new Date(dateTmp.getTime() + 5000);
+      payload.endDate = dateTmp.toISOString();
+      try {
+        return await this.ebay.sell.marketing.put(
+          `/item_price_markdown/${id}`,
+          payload,
+        );
+      } catch (e) {
+        console.log(e.meta);
+        return { errors: e.meta.res.data.errors };
+      }
+    }
     return await this.ebay.sell.marketing.deleteItemPriceMarkdownPromotion(id);
   }
 }
