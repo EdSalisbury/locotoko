@@ -14,4 +14,16 @@ export class EbayService extends ebayApi {
       authToken: config.get("EBAY_AUTH_TOKEN"),
     });
   }
+
+  async userAuth() {
+    this.OAuth2.setScope([
+      'https://api.ebay.com/oauth/api_scope',
+      'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',
+      'https://api.ebay.com/oauth/api_scope/sell.marketing'
+    ]);
+    
+    // 2. Generate and open Url and Grant Access
+    const url = this.OAuth2.generateAuthUrl();
+    return url;
+  }
 }
