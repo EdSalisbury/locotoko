@@ -14,6 +14,6 @@ export class EbayOrderController {
 
   @Get("")
   getEbayOrders(@Query("numberOfDays") numberOfDays: string) {
-    return this.ebayOrderService.getEbayOrders(parseInt(numberOfDays));
+    return this.ebayOrderService.getEbayOrders(parseInt(numberOfDays) | 4);
   }
 }
