@@ -83,7 +83,12 @@
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
             <b-col xs="6" class="m-0 pl-0 pr-2">
-              <ShippingInput :weight="form.weight" :size="form.size" />
+              <ShippingInput
+                :weight="form.weight"
+                :size="form.size"
+                :shippingPrice="form.shippingPrice"
+                :shippingType="form.shippingType"
+              />
             </b-col>
             <b-col xs="6" class="m-0 p-0">
               <b-container fluid class="m-0 p-0">
@@ -104,6 +109,17 @@
                 </b-row>
               </b-container>
             </b-col>
+          </b-row>
+          <b-row>
+            <b-col
+              ><SelectInput
+                label="Shipping Type"
+                v-model="form.shippingType"
+                :options="this.shippingTypeOptions"
+                @input="this.changeShippingType"
+              />
+            </b-col>
+            <b-col><TextInput label="Shipping Price" v-model="form.shippingPrice" /></b-col>
           </b-row>
         </b-container>
 
@@ -161,6 +177,7 @@ export default {
       template: undefined,
       templates: [],
       templateOptions: [],
+      shippingTypeOptions: [],
       conditions: [],
       acquisitions: [],
       form: {
@@ -171,6 +188,8 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
+        shippingCost: 0.0,
+        shippingType: 0,
         soldAt: "",
         ownerId: "",
         oldTemplateId: "",
@@ -198,6 +217,7 @@ export default {
 
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
+    this.shippingTypeOptions = util.getShippingTypeOptions();
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
     this.acquisitions = await util.getAcquisitionOptions(token);
@@ -221,6 +241,13 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+    },
+    changeShippingType(event) {
+      if (parseInt(event) === 99) {
+        this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
+      } else {
+        this.form.shippingPrice = event;
+      }
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
@@ -329,6 +356,8 @@ export default {
 
       this.payload.price = Number(this.payload.price).toFixed(2);
       this.payload.currentPrice = Number(this.payload.currentPrice).toFixed(2);
+      this.payload.shippingType = parseInt(this.payload.shippingType);
+      this.payload.shippingPrice = Number(this.payload.shippingPrice).toFixed(2);
 
       const token = this.$cookie.get("token");
 
@@ -336,7 +365,16 @@ export default {
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
 
-      await api.updateItem(this.token, itemId, this.payload);
+      try {
+        await api.updateItem(this.token, itemId, this.payload);
+        this.$toast.success("Edit Item Successful");
+        this.$router.push({ path: "/items" });
+      } catch (err) {
+        this.$toast.error("Edit Item Unsuccessful!</br>Reasons:</br>" + err.response, {
+          duration: 0,
+        });
+        console.error(err);
+      }
 
       if (this.form.ebayListingId !== null) {
         try {

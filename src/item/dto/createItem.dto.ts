@@ -42,6 +42,14 @@ export class CreateItemDto {
 
   @IsCurrency()
   @IsOptional()
+  shippingPrice: number;
+
+  @IsNumber()
+  @IsOptional()
+  shippingType: number;
+
+  @IsCurrency()
+  @IsOptional()
   soldPrice: number;
 
   @IsDateString()

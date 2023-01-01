@@ -432,17 +432,27 @@ const updateSoldAt = async () => {
   }
 };
 
+const removeStaleItems = async () => {
+  await api.login();
+  const items = await api.getActiveItems();
+  for (const item of items) {
+    if (item.currentPrice < 6) {
+      console.log(
+        `Remove ${item.title} @ $${item.currentPrice} - weeks active: ${item.weeksActive}`,
+      );
+    }
+  }
+};
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  //await sleep(1000 * 60);
+  await sleep(1000 * 60);
 
   while (true) {
     try {
-      await updateSoldAt();
-      //await processSales();
-      //await listItem();
+      //await removeStaleItems();
+      await processSales();
+      await listItem();
       //await newMarkdownItems();
-      //await updateEndedListings();
     } catch (e) {
       console.error(e);
     }

@@ -65,6 +65,8 @@ model Item {
   listedAt DateTime?
   endedAt DateTime?
   markdownPct Int?
+  shippingPrice Decimal? @db.Money @default(0.00)
+  shippingType Int?
   
   @@map("items")
 }

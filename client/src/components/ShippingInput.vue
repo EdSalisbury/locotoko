@@ -18,6 +18,7 @@ export default {
     WeightInput,
     SizeInput,
   },
+
   props: {
     weight: {
       required: true,

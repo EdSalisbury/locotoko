@@ -82,6 +82,17 @@
               </b-container>
             </b-col>
           </b-row>
+          <b-row>
+            <b-col
+              ><SelectInput
+                label="Shipping Type"
+                v-model="form.shippingType"
+                :options="this.shippingTypeOptions"
+                @input="this.changeShippingType"
+              />
+            </b-col>
+            <b-col><TextInput label="Shipping Price" v-model="form.shippingPrice" /></b-col>
+          </b-row>
         </b-container>
 
         <b-row class="m-0 p-0">
@@ -134,6 +145,7 @@ export default {
       templates: [],
       template: undefined,
       templateOptions: [],
+      shippingTypeOptions: [],
       conditions: [],
       acquisitions: [],
       form: {
@@ -151,6 +163,8 @@ export default {
         ownerId: "",
         templateId: "",
         acquisitionId: "",
+        shippingPrice: 0,
+        shippingType: 0,
         weight: {
           pounds: 0,
           ounces: 0,
@@ -170,6 +184,7 @@ export default {
     this.token = this.$cookie.get("token");
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
+    this.shippingTypeOptions = util.getShippingTypeOptions();
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
     this.acquisitions = await util.getAcquisitionOptions(token);
@@ -177,6 +192,13 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+    },
+    changeShippingType(event) {
+      if (parseInt(event) === 99) {
+        this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
+      } else {
+        this.form.shippingPrice = event;
+      }
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
@@ -275,6 +297,9 @@ export default {
 
       this.payload.price = parseFloat(this.payload.price).toFixed(2);
 
+      this.payload.shippingType = parseInt(this.payload.shippingType);
+      this.payload.shippingPrice = Number(this.payload.shippingPrice).toFixed(2);
+
       if (!this.payload.currentPrice) {
         this.payload.currentPrice = this.payload.price;
       }
@@ -289,7 +314,9 @@ export default {
         this.$toast.success("Add Item Successful");
         this.$router.push({ path: "/items" });
       } catch (err) {
-        this.$toast.error("Add Item Unsuccessful!<br />Reasons:<br />" + err.response.data.ShortMessage, { duration: 0 });
+        this.$toast.error("Add Item Unsuccessful!<br />Reasons:<br />" + err.response.data.ShortMessage, {
+          duration: 0,
+        });
         console.error(err);
       }
     },

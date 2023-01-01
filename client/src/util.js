@@ -49,6 +49,39 @@ const getEbayConditionOptions = async (token, categoryId) => {
   return newConditions;
 };
 
+const getShippingTypeOptions = () => {
+  return [
+    {
+      value: "0",
+      text: "None",
+    },
+    {
+      value: "1",
+      text: "Trading Cards under $20",
+    },
+    {
+      value: "5",
+      text: "First Class",
+    },
+    {
+      value: "8",
+      text: "Priority Flat Rate Small",
+    },
+    {
+      value: "14",
+      text: "Priority Flat Rate Medium",
+    },
+    {
+      value: "19",
+      text: "Priority Flat Rate Large",
+    },
+    {
+      value: "99",
+      text: "Calculated",
+    },
+  ];
+};
+
 const getCategoryName = async (token, ebayCategoryId) => {
   if (CATEGORIES.length === 0) {
     CATEGORIES = await api.getEbayCategories(token);
@@ -128,4 +161,5 @@ export default {
   dataURLtoFile,
   encodeSpecialChars,
   decodeSpecialChars,
+  getShippingTypeOptions,
 };
