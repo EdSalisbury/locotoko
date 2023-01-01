@@ -46,15 +46,7 @@ export class EbayListingService {
         }
       }
 
-      let shippingPolicy = this.config.get(
-        "EBAY_SHIPPING_FIRSTCLASS_POLICY_ID",
-      );
-      if (item.shipWeightPounds > 0) {
-        shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
-      }
-      if (item.shipWeightPounds > 10) {
-        shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
-      }
+      let shippingPolicy = this.config.get("EBAY_SHIPPING_POLICY_ID");
 
       let request = {
         Item: {
@@ -72,7 +64,9 @@ export class EbayListingService {
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity,
           StartPrice: {
-            "#value": parseFloat(item.price.toString()) + parseFloat(item.shippingPrice.toString()),
+            "#value":
+              parseFloat(item.price.toString()) +
+              parseFloat(item.shippingPrice.toString()),
             "@_currencyID": "USD",
           },
           PictureDetails: {
@@ -175,15 +169,7 @@ export class EbayListingService {
         imageUrls.push(url);
       }
 
-      let shippingPolicy = this.config.get(
-        "EBAY_SHIPPING_FIRSTCLASS_POLICY_ID",
-      );
-      if (item.shipWeightPounds > 0) {
-        shippingPolicy = this.config.get("EBAY_SHIPPING_PRIORITY_POLICY_ID");
-      }
-      if (item.shipWeightPounds > 10) {
-        shippingPolicy = this.config.get("EBAY_SHIPPING_PARCEL_POLICY_ID");
-      }
+      let shippingPolicy = this.config.get("EBAY_SHIPPING_POLICY_ID");
 
       let request = {
         Item: {
@@ -202,7 +188,9 @@ export class EbayListingService {
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity - item.quantitySold,
           StartPrice: {
-            "#value": parseFloat(item.price.toString()) + parseFloat(item.shippingPrice.toString()),
+            "#value":
+              parseFloat(item.price.toString()) +
+              parseFloat(item.shippingPrice.toString()),
             "@_currencyID": "USD",
           },
           PictureDetails: {

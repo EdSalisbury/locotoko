@@ -25,7 +25,7 @@ const processSales = async () => {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
           endedAt: order.paidTime,
-          soldPrice: item.price,
+          soldPrice: item.price.toFixed(2),
         };
         await api.updateItem(item.id, request);
       }
