@@ -6,6 +6,7 @@
       :required="required"
       :maxLength="maxLength"
       :minLength="minLength"
+      :disabled="disabled"
       :state="checkState ? state : null"
       :type="password ? 'password' : 'text'"
     />
@@ -18,6 +19,10 @@ export default {
     label: String,
     value: [Number, String],
     checkState: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

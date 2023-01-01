@@ -91,7 +91,7 @@
                 @input="this.changeShippingType"
               />
             </b-col>
-            <b-col><TextInput label="Shipping Price" v-model="form.shippingPrice" /></b-col>
+            <b-col><TextInput label="Shipping Price" v-model="form.shippingPrice" :disabled="true" /></b-col>
           </b-row>
         </b-container>
 
