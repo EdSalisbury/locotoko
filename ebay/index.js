@@ -415,14 +415,32 @@ const updateEndedListings = async () => {
   }
 };
 
+const updateSoldAt = async () => {
+  await api.login();
+  const items = await api.getItems();
+  for (const item of items) {
+    if (item.endedAt && !item.soldAt) {
+      console.log(item.title);
+      const ebayItem = await api.getEbayListing(item.ebayListingId);
+      if (ebayItem.Item.SellingStatus.QuantitySold) {
+        await api.updateItem(item.id, {
+          soldAt: item.endedAt,
+          quantitySold: ebayItem.Item.SellingStatus.QuantitySold,
+        });
+      }
+    }
+  }
+};
+
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  await sleep(1000 * 60);
+  //await sleep(1000 * 60);
 
   while (true) {
     try {
-      await processSales();
-      await listItem();
+      await updateSoldAt();
+      //await processSales();
+      //await listItem();
       //await newMarkdownItems();
       //await updateEndedListings();
     } catch (e) {
