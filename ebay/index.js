@@ -39,15 +39,19 @@ const getMarkdownPercentage = (price, weeksActive) => {
   let markdownPrice = 0;
 
   pct = (weeksActive - process.env.WEEKS_BEFORE_MARKDOWN) * 5;
+
   if (pct <= 0) {
     return 0;
   }
-  while (markdownPrice < process.env.MIN_PRICE && pct < 100) {
+  while (markdownPrice < process.env.MIN_PRICE) {
     pct -= 5;
     markdownPrice = ((100 - pct) / 100) * price;
     if (pct <= 0) {
       return 0;
     }
+  }
+  if (pct > 80) {
+    return 80;
   }
   return pct;
 };
@@ -97,11 +101,6 @@ const newMarkdownItems = async () => {
       continue;
     }
 
-    console.log("Still hasn't found it...");
-    console.log(`pct = ${pct}`);
-    console.log(markdowns);
-    return;
-
     //console.log(`Item's current markdown percentage: ${item.markdownPct}`);
     // if (item.markdownPct) {
     // for (const md of markdowns) {
@@ -126,6 +125,7 @@ const newMarkdownItems = async () => {
     for (const md of markdowns) {
       if (md.pct === pct) {
         console.log(`Adding to markdown md-${md.pct}`);
+        console.log("\n\n\n");
         md.listingIds.push(item.ebayListingId);
         await api.updateEbayMarkdown(md.id, { itemIds: md.listingIds });
         success = true;
@@ -135,6 +135,7 @@ const newMarkdownItems = async () => {
 
     if (!success) {
       console.log(`Creating markdown md-${pct}`);
+      console.log("\n\n\n");
       try {
         await api.createEbayMarkdown({
           percentage: pct.toString(),
@@ -170,6 +171,7 @@ const newMarkdownItems = async () => {
       await api.updateItem(item.id, request);
     }
   }
+  console.log("Done marking down items");
 };
 
 const markdownItems = async () => {
@@ -423,8 +425,8 @@ const main = async () => {
     try {
       //await processSales();
       //await listItem();
-      //await newMarkdownItems();
-      await updateEndedListings();
+      await newMarkdownItems();
+      //await updateEndedListings();
     } catch (e) {
       console.error(e);
     }
