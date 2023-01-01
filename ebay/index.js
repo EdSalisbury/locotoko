@@ -124,8 +124,7 @@ const newMarkdownItems = async () => {
     let success = false;
     for (const md of markdowns) {
       if (md.pct === pct) {
-        console.log(`Adding to markdown md-${md.pct}`);
-        console.log("\n\n\n");
+        console.log(`Adding to markdown md-${md.pct}\n`);
         md.listingIds.push(item.ebayListingId);
         await api.updateEbayMarkdown(md.id, { itemIds: md.listingIds });
         success = true;
@@ -134,8 +133,7 @@ const newMarkdownItems = async () => {
     }
 
     if (!success) {
-      console.log(`Creating markdown md-${pct}`);
-      console.log("\n\n\n");
+      console.log(`Creating markdown md-${pct}\n`);
       try {
         await api.createEbayMarkdown({
           percentage: pct.toString(),
@@ -419,13 +417,13 @@ const updateEndedListings = async () => {
 
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  //await sleep(1000 * 60);
+  await sleep(1000 * 60);
 
   while (true) {
     try {
-      //await processSales();
-      //await listItem();
-      await newMarkdownItems();
+      await processSales();
+      await listItem();
+      //await newMarkdownItems();
       //await updateEndedListings();
     } catch (e) {
       console.error(e);

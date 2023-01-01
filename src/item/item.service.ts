@@ -54,6 +54,9 @@ export class ItemService {
     if (item.soldAt) {
       return "sold";
     }
+    if (item.endedAt) {
+      return "ended";
+    }
     if (item.ebayListingId) {
       return "active";
     }

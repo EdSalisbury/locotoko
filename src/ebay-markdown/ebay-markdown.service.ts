@@ -40,7 +40,7 @@ export class EbayMarkdownService {
       autoSelectFutureInventory: false,
       startDate: startDate,
       endDate: endDate,
-      blockPriceIncreaseInItemRevision: true,
+      blockPriceIncreaseInItemRevision: false,
       marketplaceId: MarketplaceId.EBAY_US,
       priority: "",
       promotionImageUrl:

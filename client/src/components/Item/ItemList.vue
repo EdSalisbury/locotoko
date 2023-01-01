@@ -11,6 +11,7 @@
           <b-button variant="primary" @click="showDrafts">Show Drafts</b-button>
           <b-button variant="primary" @click="showActive">Show Active</b-button>
           <b-button variant="primary" @click="showSold">Show Sold</b-button>
+          <b-button variant="primary" @click="showEnded">Show Ended</b-button>
         </b-button-group>
       </b-button-toolbar>
       <vue-bootstrap-table
@@ -145,6 +146,7 @@ export default {
       this.activeItems = this.items.filter((item) => item.status === "active");
       this.draftItems = this.items.filter((item) => item.status === "draft");
       this.soldItems = this.items.filter((item) => item.status === "sold");
+      this.endedItems = this.items.filter((item) => item.status === "ended");
     },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);
@@ -225,6 +227,9 @@ export default {
     },
     showSold() {
       this.items = this.soldItems.slice();
+    },
+    showEnded() {
+      this.items = this.endedItems.slice();
     },
     async deleteItem(id) {
       const response = await api.deleteItem(this.token, id);

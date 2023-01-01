@@ -57,12 +57,14 @@ export class EbayOrderService {
     return method;
   };
 
-  async getEbayOrders() {
+  async getEbayOrders(numberOfDays = 4) {
     let pageNumber = 1;
     let maxPages = 1;
-
+    if (numberOfDays > 30) {
+      numberOfDays = 30;
+    }
     let request = {
-      NumberOfDays: 4,
+      NumberOfDays: numberOfDays,
       OrderRole: "Seller",
       Pagination: {
         PageNumber: pageNumber,

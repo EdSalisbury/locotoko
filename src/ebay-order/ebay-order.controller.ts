@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards, Query } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { EbayOrderService } from "./ebay-order.service";
 
@@ -13,7 +13,7 @@ export class EbayOrderController {
   }
 
   @Get("")
-  getEbayOrders() {
-    return this.ebayOrderService.getEbayOrders();
+  getEbayOrders(@Query("numberOfDays") numberOfDays: string) {
+    return this.ebayOrderService.getEbayOrders(parseInt(numberOfDays));
   }
 }
