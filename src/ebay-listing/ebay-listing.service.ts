@@ -72,7 +72,7 @@ export class EbayListingService {
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity,
           StartPrice: {
-            "#value": item.price.toString(),
+            "#value": parseFloat(item.price.toString()) + parseFloat(item.shippingPrice.toString()),
             "@_currencyID": "USD",
           },
           PictureDetails: {
@@ -202,7 +202,7 @@ export class EbayListingService {
           PostalCode: this.config.get("POSTAL_CODE"),
           Quantity: item.quantity - item.quantitySold,
           StartPrice: {
-            "#value": item.price.toString(),
+            "#value": parseFloat(item.price.toString()) + parseFloat(item.shippingPrice.toString()),
             "@_currencyID": "USD",
           },
           PictureDetails: {
