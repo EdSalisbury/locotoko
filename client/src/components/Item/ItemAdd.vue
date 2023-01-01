@@ -154,7 +154,6 @@ export default {
         price: 0.0,
         description: "",
         ebayListingId: "",
-        currentPrice: 0.0,
         quantitySold: 0,
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
@@ -299,10 +298,6 @@ export default {
 
       this.payload.shippingType = parseInt(this.payload.shippingType);
       this.payload.shippingPrice = Number(this.payload.shippingPrice).toFixed(2);
-
-      if (!this.payload.currentPrice) {
-        this.payload.currentPrice = this.payload.price;
-      }
 
       if (!this.payload.ownerId) {
         this.payload.ownerId = "0";

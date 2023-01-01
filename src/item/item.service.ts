@@ -26,7 +26,6 @@ export class ItemService {
     updatedAt: true,
     createdAt: true,
     price: true,
-    currentPrice: true,
     ready: true,
     listedAt: true,
     endedAt: true,

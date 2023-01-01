@@ -172,42 +172,6 @@ const newMarkdownItems = async () => {
   console.log("Done marking down items");
 };
 
-const markdownItems = async () => {
-  console.log("Marking down items... ");
-  await login();
-  const markdownRate = process.env.MARKDOWN_RATE;
-  if (!markdownRate) {
-    console.error("No Markdown rate specified.");
-    return;
-  }
-  const items = await getActiveItems();
-  for (let item of items) {
-    let newCurrentPrice = item.price * (1 - markdownRate * item.weeksActive);
-    let currentPrice = parseFloat(Number(item.currentPrice).toFixed(2));
-    let origalPrice = parseFloat(Number(item.price).toFixed(2));
-
-    if (newCurrentPrice < 5.99) {
-      newCurrentPrice = 5.99;
-    }
-
-    newCurrentPrice = newCurrentPrice.toFixed(2);
-
-    if (currentPrice != newCurrentPrice) {
-      console.log(
-        `Updating ${item.id} (${item.title}) price to ${newCurrentPrice} (Originally ${origalPrice})`,
-      );
-      const itemResponse = await updateItem(item.id, {
-        currentPrice: newCurrentPrice,
-      });
-      if (itemResponse.status !== 200) {
-        continue;
-      }
-      await updateEbayListing(item.id);
-    }
-  }
-  console.log("Done with item markdowns");
-};
-
 const listingCheck = async () => {
   console.log("Checking ebay listings...");
   await login();
@@ -274,27 +238,6 @@ const soldCheck = async () => {
       });
     }
   }
-};
-
-const setMinimumPrice = async () => {
-  console.log("Updating minimum prices.");
-  await login();
-
-  const items = await getItems();
-  for (const item of items) {
-    if (item.price < 5.99) {
-      console.log(`${item.id} - ${item.title} - ${item.price}`);
-      const itemResponse = await updateItem(item.id, {
-        price: 5.99,
-        currentPrice: 5.99,
-      });
-      if (itemResponse.status !== 200) {
-        continue;
-      }
-      await updateEbayListing(item.id);
-    }
-  }
-  console.log("Done updating minimum prices.");
 };
 
 const listItem = async () => {

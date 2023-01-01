@@ -57,10 +57,7 @@
         <b-container fluid class="p-0" style="margin-top: 10px">
           <b-row class="m-0 p-0">
             <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Original Price" v-model="form.price" />
-            </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-0">
-              <TextInput label="Current Price" v-model="form.currentPrice" />
+              <TextInput label="Price" v-model="form.price" />
             </b-col>
           </b-row>
         </b-container>
@@ -355,7 +352,6 @@ export default {
       this.payload.shipSizeDepthInches = parseInt(this.payload.size.length);
 
       this.payload.price = Number(this.payload.price).toFixed(2);
-      this.payload.currentPrice = Number(this.payload.currentPrice).toFixed(2);
       this.payload.shippingType = parseInt(this.payload.shippingType);
       this.payload.shippingPrice = Number(this.payload.shippingPrice).toFixed(2);
 
