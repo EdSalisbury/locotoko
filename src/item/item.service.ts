@@ -25,6 +25,7 @@ export class ItemService {
     soldAt: true,
     updatedAt: true,
     createdAt: true,
+    shipWeightPounds: true,
     price: true,
     ready: true,
     listedAt: true,

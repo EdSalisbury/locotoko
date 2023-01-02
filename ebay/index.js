@@ -376,22 +376,50 @@ const updateSoldAt = async () => {
 };
 
 const removeStaleItems = async () => {
+  console.log("Ending items that have been on sale for at least 24 weeks...");
   await api.login();
   const items = await api.getActiveItems();
   for (const item of items) {
-    if (item.currentPrice < 6) {
+    if (item.weeksActive > 23 && !item.ebayCategoryName.startsWith("Comics")) {
       console.log(
-        `Remove ${item.title} @ $${item.currentPrice} - weeks active: ${item.weeksActive}`,
+        `Remove ${item.title} @ $${item.currentPrice} - weeksActive = ${item.weeksActive}`,
       );
+
+      try {
+        await api.updateEbayListing(item.id, true);
+        await api.updateItem(item.id, {
+          endedAt: new Date(Date.now()).toISOString(),
+        });
+      } catch {
+        console.log("Unable to end item");
+      }
     }
   }
+  console.log("Done ending items");
 };
+
+const updatePricing = async () => {
+  console.log("Updating pricing data for items...");
+  await api.login();
+  const items = await api.getActiveItems();
+  for (const item of items.slice(-10)) {
+    console.log(
+      `${item.title} - $${item.shippingPrice} (${item.shippingType})`,
+    );
+    if (!item.shippingPrice || !item.shippingType) {
+      console.log(`${item.shipWeightPounds}`);
+    }
+  }
+  console.log("Done updating prices");
+};
+
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
   await sleep(1000 * 60);
 
   while (true) {
     try {
+      //await updatePricing();
       //await removeStaleItems();
       await processSales();
       await listItem();

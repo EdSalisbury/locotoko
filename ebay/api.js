@@ -140,19 +140,26 @@ export const updateItem = async (id, request) => {
   }
 };
 
-export const updateEbayListing = async (id) => {
-  const url = apiUrl("ebayListings", id);
+export const updateEbayListing = async (id, end = false) => {
+  let url = apiUrl("ebayListings", id);
+  if (end) {
+    url += "?end=true";
+  }
   const request = {
     itemId: id,
   };
 
   try {
     const response = await axios.patch(url, request, getHeaders());
-    console.log(`Updated eBay item for ${id} successfully.`);
+    console.log(
+      `${end ? "Ended" : "Updated"} eBay item for ${id} successfully.`,
+    );
     return response;
   } catch (e) {
     console.error(
-      `Unable to update item ${id}:\n${JSON.stringify(e.response.data)}`,
+      `Unable to ${end ? "end" : "update"} item ${id}:\n${JSON.stringify(
+        e.response.data,
+      )}`,
     );
     return e.response;
   }

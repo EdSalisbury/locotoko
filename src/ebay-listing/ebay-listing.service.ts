@@ -146,7 +146,7 @@ export class EbayListingService {
     }
   }
 
-  async updateEbayListing(dto: UpdateEbayListingDto) {
+  async updateEbayListing(end: Boolean, dto: UpdateEbayListingDto) {
     // Get the item
     const item = await this.prisma.item.findUnique({
       where: {
@@ -159,7 +159,12 @@ export class EbayListingService {
       throw new NotFoundException();
     }
 
-    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
+    if (end) {
+      return await this.ebay.trading.EndFixedPriceItem({
+        itemID: item.ebayListingId,
+        endingReason: "NotAvailable",
+      });
+    }
 
     try {
       let imageUrls = [];

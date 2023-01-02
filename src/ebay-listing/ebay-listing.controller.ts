@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   UseGuards,
+  Query,
   Param,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
@@ -33,7 +34,13 @@ export class EbayListingController {
   }
 
   @Patch(":id")
-  updateEbayListing(@Body() dto: UpdateEbayListingDto) {
-    return this.ebayListingService.updateEbayListing(dto);
+  updateEbayListing(
+    @Query("end") end: string = "false",
+    @Body() dto: UpdateEbayListingDto,
+  ) {
+    return this.ebayListingService.updateEbayListing(
+      end.toLowerCase() == "true",
+      dto,
+    );
   }
 }
