@@ -193,10 +193,18 @@ export default {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
     },
     changeShippingType(event) {
-      if (parseInt(event) === 99) {
+      if (parseInt(event) === 1) {
+        this.form.shippingPrice = 1;
+      } else if (parseInt(event) == 2) {
+        this.form.shippingPrice = 5;
+      } else if (parseInt(event) == 3) {
+        this.form.shippingPrice = 8;
+      } else if (parseInt(event) == 4) {
+        this.form.shippingPrice = 14;
+      } else if (parseInt(event) == 5) {
+        this.form.shippingPrice = 19;
+      } else if (parseInt(event) === 99) {
         this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
-      } else {
-        this.form.shippingPrice = event;
       }
     },
     deleteImage(index) {

@@ -60,19 +60,19 @@ const getShippingTypeOptions = () => {
       text: "Trading Cards under $20",
     },
     {
-      value: "5",
+      value: "2",
       text: "First Class",
     },
     {
-      value: "8",
+      value: "3",
       text: "Priority Flat Rate Small",
     },
     {
-      value: "14",
+      value: "4",
       text: "Priority Flat Rate Medium",
     },
     {
-      value: "19",
+      value: "5",
       text: "Priority Flat Rate Large",
     },
     {

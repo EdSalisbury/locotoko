@@ -402,27 +402,82 @@ const updatePricing = async () => {
   console.log("Updating pricing data for items...");
   await api.login();
   const items = await api.getActiveItems();
-  for (const item of items.slice(-10)) {
-    console.log(
-      `${item.title} - $${item.shippingPrice} (${item.shippingType})`,
-    );
+  for (const item of items) {
     if (!item.shippingPrice || !item.shippingType) {
-      console.log(`${item.shipWeightPounds}`);
+      let shippingType = 0;
+      let shippingPrice = 0;
+
+      if (item.ebayCategoryName.startsWith("CCG") && item.currentPrice < 20) {
+        shippingType = 1;
+        shippingPrice = 1;
+      } else if (item.shipWeightPounds === 0) {
+        shippingType = 2;
+        shippingPrice = 5;
+      } else {
+        shippingType = 99;
+        shippingPrice = 11 + item.shipWeightPounds;
+      }
+      console.log(
+        `${item.title} - weight: ${item.shipWeightPounds} category: ${item.ebayCategoryName} price: ${item.currentPrice} shippingType: ${shippingType} shippingPrice: ${shippingPrice}`,
+      );
+      await api.updateItem(item.id, {
+        shippingType: shippingType,
+        shippingPrice: shippingPrice.toFixed(2),
+      });
     }
   }
   console.log("Done updating prices");
 };
 
+const updateCurrentPricing = async () => {
+  console.log("Updating pricing data for items...");
+  await api.login();
+  const markdownRate = process.env.MARKDOWN_RATE;
+  const items = await api.getActiveItems();
+  for (const item of items) {
+    let price = item.price * (1 + markdownRate * item.weeksActive);
+    if (price !== item.price) {
+      console.log(`${item.title} - price: ${item.price}, new price: ${price}`);
+      await api.updateItem(item.id, {
+        price: parseFloat(price).toFixed(2),
+      });
+    }
+  }
+  console.log("Done updating prices");
+};
+
+const updateEbayListings = async () => {
+  console.log("Updating ebay listings...");
+  await api.login();
+  const ebayItems = await api.getAllEbayListings();
+  const items = await api.getActiveItems();
+  for (const item of items) {
+    const ebayItem = ebayItems.filter(
+      (ebayItem) => ebayItem.ItemID.toString() === item.ebayListingId,
+    )[0];
+    if (
+      ebayItem &&
+      parseFloat(ebayItem.BuyItNowPrice.value).toFixed(2) !==
+        (parseFloat(item.price) + parseFloat(item.shippingPrice)).toFixed(2)
+    ) {
+      console.log(`${item.title}, ${item.price}, ${item.shippingPrice}`);
+      await api.updateEbayListing(item.id);
+    }
+  }
+  console.log("Done with updating listings");
+};
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  await sleep(1000 * 60);
+  //await sleep(1000 * 60);
 
   while (true) {
     try {
+      await updateEbayListings();
       //await updatePricing();
+      //await updateCurrentPricing();
       //await removeStaleItems();
-      await processSales();
-      await listItem();
+      //await processSales();
+      //await listItem();
       //await newMarkdownItems();
     } catch (e) {
       console.error(e);
