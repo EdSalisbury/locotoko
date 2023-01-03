@@ -38,10 +38,6 @@ export class CreateItemDto {
 
   @IsCurrency()
   @IsOptional()
-  currentPrice: number;
-
-  @IsCurrency()
-  @IsOptional()
   shippingPrice: number;
 
   @IsNumber()

@@ -41,10 +41,6 @@ export class EditItemDto {
 
   @IsCurrency()
   @IsOptional()
-  currentPrice: number;
-
-  @IsCurrency()
-  @IsOptional()
   shippingPrice: number;
 
   @IsNumber()
