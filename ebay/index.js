@@ -237,17 +237,16 @@ const removeStaleItems = async () => {
   console.log("Done ending items");
 };
 
-
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
-  //await sleep(1000 * 60);
+  await sleep(1000 * 60);
 
   while (true) {
     try {
-      //await processSales();
-      //await listItem();
+      await processSales();
+      await listItem();
       await markdownItems();
-      //await removeStaleItems();
+      await removeStaleItems();
     } catch (e) {
       console.error(e);
     }

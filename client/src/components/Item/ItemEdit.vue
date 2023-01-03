@@ -80,12 +80,7 @@
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
             <b-col xs="6" class="m-0 pl-0 pr-2">
-              <ShippingInput
-                :weight="form.weight"
-                :size="form.size"
-                :shippingPrice="form.shippingPrice"
-                :shippingType="form.shippingType"
-              />
+              <ShippingInput :weight="form.weight" :size="form.size" />
             </b-col>
             <b-col xs="6" class="m-0 p-0">
               <b-container fluid class="m-0 p-0">
