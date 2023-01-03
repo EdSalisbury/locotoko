@@ -23,7 +23,6 @@ const apiHeaders = (token) => {
 const itemMap = (item) => ({
   ...item,
   price: parseFloat(item.price),
-  currentPrice: parseFloat(item.currentPrice),
   soldPrice: parseFloat(item.soldPrice),
 });
 

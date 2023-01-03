@@ -36,7 +36,6 @@
                 class="pb-2"
                 ref="itemTable"
               >
-                <template v-slot:currentPrice="data"> ${{ Number(data.value.currentPrice).toFixed(2) }} </template>
                 <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
 
                 <template v-slot:ebayListingId="data">
