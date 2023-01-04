@@ -25,7 +25,7 @@ const processSales = async () => {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
           endedAt: order.paidTime,
-          soldPrice: parseFloat(item.currentPrice).toFixed(2),
+          soldPrice: parseFloat(item.price).toFixed(2),
         };
         await api.updateItem(item.id, request);
       }
@@ -221,8 +221,29 @@ const removeStaleItems = async () => {
   for (const item of items) {
     if (item.weeksActive > 23 && !item.ebayCategoryName.startsWith("Comics")) {
       console.log(
-        `Remove ${item.title} @ $${item.currentPrice} - weeksActive = ${item.weeksActive}`,
+        `Remove ${item.title} @ $${item.price} - weeksActive = ${item.weeksActive}`,
       );
+
+      try {
+        await api.updateEbayListing(item.id, true);
+        await api.updateItem(item.id, {
+          endedAt: new Date(Date.now()).toISOString(),
+        });
+      } catch {
+        console.log("Unable to end item");
+      }
+    }
+  }
+  console.log("Done ending items");
+};
+
+const removeCheapItems = async () => {
+  console.log("Ending items under $10");
+  await api.login();
+  const items = await api.getEndedItems();
+  for (const item of items) {
+    if (item.price < 10) {
+      console.log(`Remove ${item.title} @ $${item.price}`);
 
       try {
         await api.updateEbayListing(item.id, true);
@@ -245,8 +266,9 @@ const main = async () => {
     try {
       await processSales();
       await listItem();
-      await markdownItems();
-      await removeStaleItems();
+      //await markdownItems();
+      //await removeStaleItems();
+      //await actuallyEndItems();
     } catch (e) {
       console.error(e);
     }

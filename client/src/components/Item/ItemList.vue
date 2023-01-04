@@ -27,7 +27,6 @@
         class="pb-2"
         ref="itemTable"
       >
-
         <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
 
         <template v-slot:ebayListingId="data">
@@ -108,8 +107,11 @@ export default {
         { name: "location", title: "Location", editable: true },
         { name: "quantity", title: "Qty" },
         { name: "quantitySold", title: "Sold" },
+        { name: "markdownPct", title: "% off" },
+        { name: "shippingType", title: "ShipType" },
+        { name: "shippingPrice", title: "ShipPrice" },
         { name: "price", title: "Price" },
-        
+
         { name: "status", title: "Status", visible: false },
         {
           name: "ebayListingId",
@@ -157,7 +159,7 @@ export default {
       item.soldPrice = "0.00";
       item.shippedAt = null;
       item.quantitySold = 0;
-      
+
       item.createdAt = null;
       item.updatedAt = null;
       item.quantity = 1;
