@@ -119,13 +119,13 @@ export class EbayListingService {
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
 
-      // Create ebay listing
-      await this.prisma.ebayListing.create({
-        data: {
-          id: ebayListingId.toString(),
-          itemId: item.id,
-        },
-      });
+      // // Create ebay listing
+      // await this.prisma.ebayListing.create({
+      //   data: {
+      //     id: ebayListingId.toString(),
+      //     itemId: item.id,
+      //   },
+      // });
 
       // Update item with eBay listing ID
       item.ebayListingId = ebayListingId.toString();

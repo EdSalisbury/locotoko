@@ -17,6 +17,7 @@ const getHeaders = () => {
       "Content-Type": "application/json",
       Authorization: "Bearer " + TOKEN,
     },
+    timeout: 1000 * 60,
   };
 };
 

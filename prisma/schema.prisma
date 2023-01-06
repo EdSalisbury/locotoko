@@ -29,8 +29,7 @@ model Item {
   description String?
   ebayCategory EbayCategory @relation("itemEbayCategory", fields: [ebayCategoryId], references: [id])
   ebayCategoryId Int
-  ebayListingId String?
-  ebayListing EbayListing? @relation("itemEbayListing", fields: [ebayListingId], references: [id])
+  ebayListingId String @default("")
   price Decimal @db.Money
   currentPrice Decimal? @db.Money @default(0.00)
   soldAt DateTime?
@@ -64,7 +63,7 @@ model Item {
   ready Boolean @default(false)
   listedAt DateTime?
   endedAt DateTime?
-  markdownPct Int?
+  markdownPct Int? @default(0)
   shippingPrice Decimal? @db.Money @default(0.00)
   shippingType Int?
   
@@ -123,14 +122,6 @@ model Acquisition {
   date DateTime
 
   @@map("acquisitions")
-}
-
-model EbayListing {
-  id String @id
-  itemId String
-  item Item? @relation("itemEbayListing")
-
-  @@map("ebayListings")
 }
 
 model Payout {

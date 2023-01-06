@@ -9,6 +9,7 @@ import { ConfigService } from "@nestjs/config";
 import { CreateItemDto, EditItemDto } from "./dto";
 import { decodeSpecialChars, getWeeksDiff } from "../util";
 import { EbayCategoryService } from "../ebay-category/ebay-category.service";
+import { doesNotReject } from "assert";
 
 @Injectable()
 export class ItemService {
@@ -59,7 +60,7 @@ export class ItemService {
     if (item.endedAt) {
       return "ended";
     }
-    if (item.ebayListingId) {
+    if (item.ebayListingId !== "") {
       return "active";
     }
     return "draft";
@@ -94,10 +95,13 @@ export class ItemService {
 
   async getActiveItems() {
     await this.getCategories();
-    const items = await this.prisma.item.findMany({
+    let items = await this.prisma.item.findMany({
       select: this.itemSelection,
-      where: { soldAt: null, endedAt: null, ebayListingId: { not: null } },
     });
+
+    items = items.filter(
+      (item) => item.ebayListingId !== "" && !item.soldAt && !item.endedAt,
+    );
 
     return items
       .map((item) => ({
@@ -112,7 +116,7 @@ export class ItemService {
     await this.getCategories();
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
-      where: { ebayListingId: null },
+      where: { ebayListingId: "" },
     });
 
     return items.map(this.categoryMap).map(this.locationMap);
@@ -127,7 +131,7 @@ export class ItemService {
     return items
       .map((item) => ({
         ...item,
-        weeksActive: getWeeksDiff(item.createdAt, new Date()),
+        weeksActive: getWeeksDiff(item.listedAt, new Date()),
       }))
       .map(this.categoryMap)
       .map(this.locationMap)
@@ -220,6 +224,9 @@ export class ItemService {
     if (!item) {
       throw new NotFoundException();
     }
+
+    // Fix blank image issue
+    //dto.images = dto.images.filter((image) => image !== "");
 
     return this.prisma.item.update({
       where: {

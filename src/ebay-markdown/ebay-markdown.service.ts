@@ -85,15 +85,14 @@ export class EbayMarkdownService {
   async updateMarkdown(id: string, dto: EditMarkdownDto) {
     let payload = await this.getMarkdown(id);
 
-    if (dto.percentage) {
-      payload.selectedInventoryDiscounts[0].discountBenefit.percentageOffItem =
-        dto.percentage;
-    }
     if (dto.itemIds) {
       payload.selectedInventoryDiscounts[0].inventoryCriterion.listingIds =
         dto.itemIds;
     }
 
+    payload.promotionStatus = "SCHEDULED";
+
+    console.log(JSON.stringify(payload, null, 4));
     try {
       return await this.ebay.sell.marketing.put(
         `/item_price_markdown/${id}`,

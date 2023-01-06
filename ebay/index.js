@@ -34,22 +34,35 @@ const processSales = async () => {
   console.log("Done processing sales.");
 };
 
-const getMarkdownPercentage = (price, weeksActive) => {
+const getMarkdownPercentage = (price, shippingPrice, weeksActive) => {
   let pct = 0;
-  let markdownPrice = 0;
 
-  pct = (weeksActive - process.env.WEEKS_BEFORE_MARKDOWN) * 5;
+  pct =
+    (weeksActive - process.env.WEEKS_BEFORE_MARKDOWN) *
+    process.env.MARKDOWN_PERCENT_PER_WEEK;
 
   if (pct <= 0) {
     return 0;
   }
-  while (markdownPrice < process.env.MIN_PRICE) {
-    pct -= 5;
-    markdownPrice = ((100 - pct) / 100) * price;
-    if (pct <= 0) {
-      return 0;
+
+  let done = false;
+  while (!done) {
+    const markdownPrice =
+      parseFloat((100 - pct) / 100) * (price + shippingPrice);
+    if (
+      markdownPrice >
+      parseFloat(process.env.MIN_PRICE) + parseFloat(shippingPrice)
+    ) {
+      done = true;
+    } else {
+      pct -= 5;
     }
   }
+
+  if (pct <= 0) {
+    return 0;
+  }
+
   if (pct > 80) {
     return 80;
   }
@@ -80,95 +93,83 @@ const markdownItems = async () => {
   const items = await api.getActiveItems();
 
   for (let item of items) {
-    console.log(`Processing ${item.title}: ${item.ebayListingId}`);
-    const pct = getMarkdownPercentage(item.price, item.weeksActive);
+    console.log(
+      `Processing ${item.title}: ${item.ebayListingId} weeksActive = ${item.weeksActive}, price = ${item.price}, shipping price = ${item.shippingPrice} (${item.markdownPct}%)`,
+    );
+    const pct = getMarkdownPercentage(
+      parseFloat(item.price),
+      parseFloat(item.shippingPrice),
+      parseInt(item.weeksActive),
+    );
+
+    const mult = (100 - pct) / 100;
+    const total = parseFloat(item.price) + parseFloat(item.shippingPrice);
+    const mdTotal = total * mult;
+
+    console.log(
+      `Markdown percentage = ${pct}, Total price = ${total}, Total price after markdown: ${mdTotal}`,
+    );
+
+    // 0% Case
     if (pct === 0) {
-      console.log("0% markdown, skipping");
+      if (item.markdownPct === 0) {
+        console.log("0% markdown - nothing to update");
+      } else if (!item.markdownPct) {
+        console.log("0% markdown, setting to 0");
+        await api.updateItem(item.id, { markdownPct: 0 });
+      }
       continue;
     }
 
-    let done = false;
-
+    // Look for existing markdown
+    let markdownId = "";
+    let markdownPct = "";
     for (const md of markdowns) {
       if (md.listingIds.includes(item.ebayListingId)) {
-        console.log(`Found item in md-${pct}`);
-        done = true;
+        console.log(`Found item in md-${md.pct}`);
+        markdownId = md.id;
+        markdownPct = md.pct;
         break;
       }
     }
 
-    if (done) {
+    // Check to see if the markdown is in the right place
+    if (
+      pct === markdownPct &&
+      pct === item.markdownPct &&
+      markdownPct === item.markdownPct
+    ) {
+      console.log("Item is at correct markdown");
       continue;
     }
 
-    //console.log(`Item's current markdown percentage: ${item.markdownPct}`);
-    // if (item.markdownPct) {
-    // for (const md of markdowns) {
-    //   if (md.pct === item.markdownPct) {
-    //     md.listingIds = md.listingIds.filter(
-    //       (id) => id !== item.ebayListingId,
-    //     );
-    //     if (md.listingIds.length === 0) {
-    //       console.log("Last item -- removing markdown from ebay");
-    //       await api.deleteEbayMarkdown(md.id);
-    //       markdowns = markdowns.filter((item) => item.pct !== md.pct);
-    //     } else {
-    //       console.log("Updating ebay markdown with new listingIds");
-    //       await api.updateEbayMarkdown(md.id, { listingIds: md.listingIds });
-    //     }
-    //     break;
-    //   }
-    // }
-    //}
-
-    let success = false;
-    for (const md of markdowns) {
-      if (md.pct === pct) {
-        console.log(`Adding to markdown md-${md.pct}\n`);
+    // Remove/add/create markdowns
+    if (markdownPct !== pct) {
+      if (markdownId) {
+        const md = markdowns.filter((md) => md.id === markdownId)[0];
+        console.log(`Removing from md-${markdownPct}`);
+        md.listingIds = md.listingIds.filter((id) => id !== item.ebayListingId);
+        const response = await api.updateEbayMarkdown(markdownId, {
+          itemIds: md.listingIds,
+        });
+      }
+      const md = markdowns.filter((md) => md.pct === pct)[0];
+      if (md) {
+        console.log(`Adding to md-${pct}`);
         md.listingIds.push(item.ebayListingId);
         await api.updateEbayMarkdown(md.id, { itemIds: md.listingIds });
-        success = true;
-        break;
-      }
-    }
-
-    if (!success) {
-      console.log(`Creating markdown md-${pct}\n`);
-      try {
+        const md2 = markdowns.filter((md) => md.pct === pct)[0];
+      } else {
+        console.log(`Creating md-${pct}`);
         await api.createEbayMarkdown({
           percentage: pct.toString(),
           itemIds: [item.ebayListingId],
         });
-      } catch (e) {
-        console.log(e.response.data);
       }
-      // console.log("Waiting one minute for the markdown to become active");
-      // await sleep(60000);
-      const response = await api.getEbayMarkdowns();
-      for (const promotion of response.promotions) {
-        if (promotion.name === `md-${pct}`) {
-          const details = await api.getEbayMarkdown(promotion.promotionId);
-          markdowns.push({
-            pct: parseInt(pct),
-            id: promotion.promotionId,
-            listingIds:
-              details.selectedInventoryDiscounts[0].inventoryCriterion
-                .listingIds,
-          });
-          console.log("Got new markdown data");
-          success = true;
-          break;
-        }
-      }
-    }
-
-    if (success) {
-      const request = {
-        markdownPct: pct,
-      };
-      await api.updateItem(item.id, request);
+      await api.updateItem(item.id, { markdownPct: pct });
     }
   }
+
   console.log("Done marking down items");
 };
 
@@ -237,25 +238,112 @@ const removeStaleItems = async () => {
   console.log("Done ending items");
 };
 
-const removeCheapItems = async () => {
-  console.log("Ending items under $10");
+const fixDrafts = async () => {
+  console.log("Fixing drafts");
   await api.login();
-  const items = await api.getEndedItems();
+  const items = await api.getItems();
   for (const item of items) {
-    if (item.price < 10) {
-      console.log(`Remove ${item.title} @ $${item.price}`);
+    if (!item.ebayListingId && item.status === "ended") {
+      console.log(item.title);
+      await api.updateItem(item.id, {
+        endedAt: null,
+      });
+    }
+  }
+  console.log("Done fixing drafts");
+};
 
-      try {
-        await api.updateEbayListing(item.id, true);
+const fixEndedAt = async () => {
+  console.log("Fixing endedAt");
+  await api.login();
+  const items = await api.getItems();
+
+  for (const item of items) {
+    try {
+      const details = await api.getEbayListing(item.ebayListingId);
+      const endTime = Date.parse(details.Item.ListingDetails.EndTime);
+
+      console.log(
+        `${item.title} - endTime = ${new Date(
+          endTime,
+        ).toISOString()}, endedAt = ${item.endedAt}`,
+      );
+
+      if (endTime < Date.now() && !item.endedAt) {
+        console.log("Set endedAt to endTime");
         await api.updateItem(item.id, {
-          endedAt: new Date(Date.now()).toISOString(),
+          endedAt: new Date(endTime).toISOString(),
         });
-      } catch {
-        console.log("Unable to end item");
+      }
+
+      if (endTime > Date.now() && item.endedAt) {
+        console.log("Set endedAt to null");
+        await api.updateItem(item.id, { endedAt: null });
+      }
+    } catch {}
+  }
+  console.log("Done fixing endedAt");
+};
+
+const makeDrafts = async () => {
+  console.log("Making ended items into drafts where appropriate");
+  await api.login();
+  const items = await api.getItems();
+
+  for (const item of items) {
+    if (item.endedAt && !item.soldAt) {
+      console.log(
+        `${item.title} endedAt = ${item.endedAt} soldAt = ${item.soldAt} weeksActive = ${item.weeksActive} price = ${item.price}`,
+      );
+      if (
+        item.price > 9 &&
+        item.quantity === 1 &&
+        (item.weeksActive < 24 || item.ebayCategoryName.startsWith("Comics"))
+      ) {
+        console.log(`Making into a draft`);
+        await api.updateItem(item.id, {
+          ebayListingId: "",
+          endedAt: null,
+          listedAt: null,
+          ready: false,
+          markdownPct: 0,
+        });
       }
     }
   }
-  console.log("Done ending items");
+  console.log("Done making drafts");
+};
+
+const fixMarkdowns = async () => {
+  console.log("Fixing markdowns... ");
+  await api.login();
+  const items = await api.getActiveItems();
+  const response = await api.getEbayMarkdowns();
+
+  for (const promotion of response.promotions) {
+    const markdown = await api.getEbayMarkdown(promotion.promotionId);
+    const listingIds =
+      markdown.selectedInventoryDiscounts[0].inventoryCriterion.listingIds;
+    let newListingIds = [];
+    for (const listingId of listingIds) {
+      const find = items.filter((item) => item.ebayListingId === listingId);
+      if (find.length > 0) {
+        newListingIds.push(listingId);
+      }
+    }
+    if (newListingIds.length != listingIds.length) {
+      console.log(`Updating markdown ${promotion.name} with new listingIds`);
+      console.log(promotion.promotionId);
+      console.log(listingIds);
+      console.log(JSON.stringify(newListingIds));
+      const response = await api.updateEbayMarkdown(promotion.promotionId, {
+        itemIds: newListingIds,
+      });
+      console.log(response);
+      return;
+    }
+  }
+  console.log("Done fixing markdowns");
 };
 
 const main = async () => {
@@ -264,11 +352,11 @@ const main = async () => {
 
   while (true) {
     try {
+      //await fixMarkdowns();
       await processSales();
       await listItem();
-      //await markdownItems();
-      //await removeStaleItems();
-      //await actuallyEndItems();
+      await markdownItems();
+      ////await removeStaleItems();
     } catch (e) {
       console.error(e);
     }

@@ -105,14 +105,12 @@ export default {
         },
         { name: "ebayCategoryName", title: "Category" },
         { name: "location", title: "Location", editable: true },
-        { name: "quantity", title: "Qty" },
-        { name: "quantitySold", title: "Sold" },
         { name: "markdownPct", title: "% off" },
         { name: "shippingType", title: "ShipType" },
         { name: "shippingPrice", title: "ShipPrice" },
         { name: "price", title: "Price" },
 
-        { name: "status", title: "Status", visible: false },
+        { name: "status", title: "Status", visible: true },
         {
           name: "ebayListingId",
           title: "eBay Listing ID",

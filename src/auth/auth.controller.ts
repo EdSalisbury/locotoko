@@ -9,8 +9,8 @@ export class AuthController {
   @Post("register")
   register(@Body() dto: AuthDto) {
     // Disabling for now
-    //return this.authService.register(dto);
-    return { error: "Registration not allowed at this time" };
+    return this.authService.register(dto);
+    //return { error: "Registration not allowed at this time" };
   }
 
   @HttpCode(HttpStatus.OK)

@@ -18,6 +18,10 @@ export class EditItemDto {
   @IsOptional()
   description?: string;
 
+  @IsString()
+  @IsOptional()
+  ebayListingId: string;
+
   @IsNumber()
   @IsOptional()
   ebayCategoryId: number;
@@ -113,7 +117,7 @@ export class EditItemDto {
 
   @IsArray()
   @IsOptional()
-  images: [string];
+  images: string[];
 
   @IsOptional()
   specifics: string;
