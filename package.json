@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.29.15",
+  "version": "0.29.16",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -32,7 +32,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "yarn db:test:restart",
     "test:e2e": "dotenv -e .env.test -- jest --watch --no-cache --config ./test/jest-e2e.json",
-    "ebay:prod": "dotenv -e .env.prod node ebay/index.js"
+    "ebay:prod": "dotenv -e .env.prod node ebay/index.js",
+    "prisma:prod:rollback": "dotenv -e .env.prod -- prisma migrate resolve --rolled-back"
   },
   "dependencies": {
     "@nestjs/common": "^8.4.5",
