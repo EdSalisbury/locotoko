@@ -53,6 +53,20 @@ export class ItemService {
     location: item.location || "Unknown",
   });
 
+  totalPriceMap = (item) => ({
+    ...item,
+    totalPrice: (
+      (parseFloat(item.price.toString()) +
+        parseFloat(item.shippingPrice.toString())) *
+      ((100 - item.markdownPct) / 100)
+    ).toFixed(2),
+  });
+
+  weeksActiveMap = (item) => ({
+    ...item,
+    weeksActive: getWeeksDiff(item.listedAt, new Date()),
+  });
+
   getStatus = (item) => {
     if (item.soldAt) {
       return "sold";
@@ -90,7 +104,12 @@ export class ItemService {
       select: this.itemSelection,
       where: { soldAt: { not: null } },
     });
-    return items.map(this.categoryMap);
+    return items
+      .map(this.weeksActiveMap)
+      .map(this.totalPriceMap)
+      .map(this.categoryMap)
+      .map(this.locationMap)
+      .map(this.statusMap);
   }
 
   async getActiveItems() {
@@ -104,12 +123,11 @@ export class ItemService {
     );
 
     return items
-      .map((item) => ({
-        ...item,
-        weeksActive: getWeeksDiff(item.listedAt, new Date()),
-      }))
+      .map(this.weeksActiveMap)
+      .map(this.totalPriceMap)
       .map(this.categoryMap)
-      .map(this.locationMap);
+      .map(this.locationMap)
+      .map(this.statusMap);
   }
 
   async getDraftItems() {
@@ -119,7 +137,12 @@ export class ItemService {
       where: { ebayListingId: "" },
     });
 
-    return items.map(this.categoryMap).map(this.locationMap);
+    return items
+      .map(this.weeksActiveMap)
+      .map(this.totalPriceMap)
+      .map(this.categoryMap)
+      .map(this.locationMap)
+      .map(this.statusMap);
   }
 
   async getItems() {
@@ -129,10 +152,8 @@ export class ItemService {
     });
 
     return items
-      .map((item) => ({
-        ...item,
-        weeksActive: getWeeksDiff(item.listedAt, new Date()),
-      }))
+      .map(this.weeksActiveMap)
+      .map(this.totalPriceMap)
       .map(this.categoryMap)
       .map(this.locationMap)
       .map(this.statusMap);

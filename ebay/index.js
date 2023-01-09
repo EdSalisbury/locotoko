@@ -350,13 +350,16 @@ const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
   await sleep(1000 * 60);
 
+  let lastMarkdown = 0;
+
   while (true) {
     try {
-      //await fixMarkdowns();
       await processSales();
       await listItem();
-      await markdownItems();
-      ////await removeStaleItems();
+      if (Date.now() > lastMarkdown + 1000 * 60 * 60 * 24) {
+        await markdownItems();
+        lastMarkdown = Date.now();
+      }
     } catch (e) {
       console.error(e);
     }

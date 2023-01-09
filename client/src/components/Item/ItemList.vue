@@ -28,6 +28,8 @@
         ref="itemTable"
       >
         <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
+        <template v-slot:shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
+        <template v-slot:totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
 
         <template v-slot:ebayListingId="data">
           <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
@@ -105,10 +107,10 @@ export default {
         },
         { name: "ebayCategoryName", title: "Category" },
         { name: "location", title: "Location", editable: true },
-        { name: "markdownPct", title: "% off" },
-        { name: "shippingType", title: "ShipType" },
-        { name: "shippingPrice", title: "ShipPrice" },
         { name: "price", title: "Price" },
+        { name: "shippingPrice", title: "Shipping" },
+        { name: "markdownPct", title: "% off" },
+        { name: "totalPrice", title: "Total" },
 
         { name: "status", title: "Status", visible: true },
         {
@@ -142,6 +144,13 @@ export default {
     async getItems() {
       this.items = await api.getItems(this.token);
       this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+      this.items = this.items.map((item) => ({
+        ...item,
+        price: parseFloat(item.price),
+        shippingPrice: parseFloat(item.shippingPrice),
+        totalPrice: parseFloat(item.totalPrice),
+      }));
+
       this.allItems = [...this.items];
       this.activeItems = this.items.filter((item) => item.status === "active");
       this.draftItems = this.items.filter((item) => item.status === "draft");
