@@ -92,7 +92,6 @@ export class EbayMarkdownService {
 
     payload.promotionStatus = "SCHEDULED";
 
-    console.log(JSON.stringify(payload, null, 4));
     try {
       return await this.ebay.sell.marketing.put(
         `/item_price_markdown/${id}`,

@@ -375,16 +375,16 @@ export default {
         console.error(err);
       }
 
-      if (this.form.ebayListingId !== null) {
+      if (this.form.ebayListingId) {
         try {
           const response = await api.updateEbayListing(token, itemId, {
             itemId: itemId,
           });
           console.log(response);
-          this.$toast.success("Edit Item Successful");
+          this.$toast.success("Edit eBay Listing Successful");
           this.$router.push({ path: "/items" });
         } catch (err) {
-          this.$toast.error("Edit Item Unsuccessful!</br>Reasons:</br>" + err.response.data.ShortMessage, {
+          this.$toast.error("Edit eBay Listing Unsuccessful!</br>Reasons:</br>" + err.response.data.ShortMessage, {
             duration: 0,
           });
           console.error(err);
