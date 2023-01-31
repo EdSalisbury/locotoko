@@ -7,8 +7,19 @@ const listItem = async (id, context) => {
     context.$toast.success("Listing Item Successful");
     context.items = await api.getItems(context.token);
   } catch (err) {
-    context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + err.response, { duration: 0 });
-    console.error(err);
+    let messages = [];
+
+    if (!err.response.data.message) {
+      messages = [err.response.data.ShortMessage];
+    } else {
+      messages = err.response.data.message.map((msg) => {
+        return msg.ShortMessage;
+      });
+    }
+
+    const msgList = "<ul><li>" + messages.join("</li><li>") + "</ul></li>";
+
+    context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + msgList, { duration: 0 });
     const request = {
       ready: false,
     };
