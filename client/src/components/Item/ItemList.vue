@@ -23,6 +23,8 @@
         :paginated="true"
         :selectable="false"
         :multi-column-sortable="false"
+        default-order-column="updatedAt"
+        :default-order-direction="false"
         :filter-case-sensitive="false"
         class="pb-2"
         ref="itemTable"
@@ -122,6 +124,10 @@ export default {
           name: "weeksActive",
           title: "Weeks",
         },
+        {
+          name: "updatedAt",
+          title: "Updated At",
+        },
         { name: "actions", title: "Actions", sortable: false, cellstyle: "text-nowrap" },
       ],
     };
@@ -144,28 +150,26 @@ export default {
   methods: {
     async getItems() {
       this.items = await api.getItems(this.token);
-      this.sortItems();
-    },
-    async sortItems() {
-      this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+      //this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+      this.allItems = [...this.items];
       this.items = this.items.map((item) => ({
         ...item,
         price: parseFloat(item.price),
         shippingPrice: parseFloat(item.shippingPrice),
         totalPrice: parseFloat(item.totalPrice),
       }));
-
-      this.allItems = [...this.items];
-      this.activeItems = this.items.filter((item) => item.status === "active");
-      this.draftItems = this.items.filter((item) => item.status === "draft");
-      this.soldItems = this.items.filter((item) => item.status === "sold");
-      this.endedItems = this.items.filter((item) => item.status === "ended");
     },
     async updateItem(itemId) {
       const newItem = await api.getItem(this.token, itemId);
+
+      newItem.price = parseFloat(newItem.price);
+      newItem.shippingprice = parseFloat(newItem.shippingPrice);
+      newItem.totalPrice = parseFloat(newItem.totalPrice);
+
       const index = this.items.findIndex((item) => item.id === newItem.id);
       this.items[index] = newItem;
-      this.sortItems();
+      const allIndex = this.allItems.findIndex((item) => item.id === newItem.id);
+      this.allItems[allIndex] = newItem;
     },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);
@@ -188,8 +192,9 @@ export default {
       item.specifics = JSON.stringify(item.specifics);
       const response = await api.createItem(this.token, item);
       const newItem = await api.getItem(this.token, response.id);
+      this.allItems.push(newItem);
       this.items.push(newItem);
-      this.sortItems();
+      this.updateItem(newItem.id);
     },
     async listItem(id) {
       await itemUtils.listItem(id, this);
@@ -242,23 +247,24 @@ export default {
       this.items = this.allItems.slice();
     },
     showDrafts() {
-      this.items = this.draftItems.slice();
+      this.items = this.allItems.filter((item) => item.status === "draft").slice();
     },
     showActive() {
-      this.items = this.activeItems.slice();
+      this.items = this.allItems.filter((item) => item.status === "active").slice();
     },
     showSold() {
-      this.items = this.soldItems.slice();
+      this.items = this.allItems.filter((item) => item.status === "sold").slice();
     },
     showEnded() {
-      this.items = this.endedItems.slice();
+      this.items = this.allItems.filter((item) => item.status === "ended").slice();
     },
     async deleteItem(id) {
       const response = await api.deleteItem(this.token, id);
       if (response.status == 204) {
         const index = this.items.findIndex((item) => item.id === id);
         this.items.splice(index, 1);
-        this.sortItems();
+        const allIndex = this.allItems.findIndex((item) => item.id === id);
+        this.allItems.splice(allIndex, 1);
       } else {
         console.error(response);
       }
