@@ -2,22 +2,12 @@ import api from "@/api";
 import util from "@/util";
 
 const listItem = async (id, context) => {
-  const response = await api.createEbayListing(context.token, { itemId: id });
-  if (response.status == 201) {
+  try {
+    await api.createEbayListing(context.token, { itemId: id });
     context.$toast.success("Listing Item Successful");
-    // TODO: Make this only get the appropriate item
     context.items = await api.getItems(context.token);
-  } else {
-    const err = await response.json();
-    let errMsgs = [];
-    if (err.message) {
-      errMsgs = err.message;
-    } else {
-      errMsgs = [err];
-    }
-    const msgs = errMsgs.map((msg) => "<li>" + msg.ShortMessage + "</li>");
-    let msg = "<ul>" + msgs.join("") + "</ul>";
-    context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + msg, { duration: 0 });
+  } catch (err) {
+    context.$toast.error("Listing Item Unsuccessful!</br>Reasons:</br>" + err.response, { duration: 0 });
     console.error(err);
     const request = {
       ready: false,

@@ -72,7 +72,7 @@
                 <b-icon-printer-fill />
               </b-button>
               <b-button
-                v-if="!data.value.ebayListingId"
+                v-if="data.value.status === 'ended' || data.value.status === 'draft'"
                 class="p-1"
                 variant="danger"
                 @click="deleteItem(data.value.id)"

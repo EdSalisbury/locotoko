@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import e from "express";
 var Ptouch = require("node-ptouch");
 var net = require("net");
 
@@ -17,18 +18,23 @@ export class PtouchService extends Ptouch {
     var data = this.generate();
     var socket = new net.Socket();
 
-    const ipAddress = this.config.get("PTOUCH_ITEM_LABEL_PRINTER_IP");
-    socket.connect(9100, ipAddress, function (err) {
-      if (err) {
-        return console.log(err);
-      }
-      socket.write(data, function (err) {
+    try {
+      const ipAddress = this.config.get("PTOUCH_ITEM_LABEL_PRINTER_IP");
+      socket.connect(9100, ipAddress, function (err) {
         if (err) {
           return console.log(err);
         }
-        console.log(`Item label printed for ${itemId}`);
-        socket.destroy();
+        socket.write(data, function (err) {
+          if (err) {
+            return console.log(err);
+          }
+          console.log(`Item label printed for ${itemId}`);
+          socket.destroy();
+        });
       });
-    });
+    } catch (e) {
+      console.error("Unable to connect to printer: " + e)
+      return e;
+    }
   }
 }
