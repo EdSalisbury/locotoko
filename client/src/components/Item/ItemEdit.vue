@@ -59,6 +59,9 @@
             <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Price" v-model="form.price" />
             </b-col>
+            <b-col xs="3" class="m-0 p-0">
+              <DateInput label="Ended At" v-model="form.endedAt" />
+            </b-col>
           </b-row>
         </b-container>
         <b-container fluid class="p-0" style="margin-top: 10px">
@@ -183,6 +186,7 @@ export default {
         shippingCost: 0.0,
         shippingType: 0,
         soldAt: "",
+        endedAt: "",
         ownerId: "",
         oldTemplateId: "",
         templateId: "",
@@ -345,6 +349,17 @@ export default {
         }
       } else {
         this.payload.soldAt = null;
+      }
+
+      if (this.payload.endedAt) {
+        try {
+          const date = new Date(this.payload.endedAt);
+          this.payload.endedAt = date.toISOString();
+        } catch {
+          this.payload.endedAt = null;
+        }
+      } else {
+        this.payload.endedAt = null;
       }
 
       this.payload.shipWeightPounds = parseInt(this.payload.weight.pounds);
