@@ -399,7 +399,19 @@ export default {
           this.$toast.success("Edit eBay Listing Successful");
           this.$router.push({ path: "/items" });
         } catch (err) {
-          this.$toast.error("Edit eBay Listing Unsuccessful!</br>Reasons:</br>" + err.response.data.ShortMessage, {
+          let messages = [];
+
+          if (!err.response.data.message) {
+            messages = [err.response.data.ShortMessage];
+          } else {
+            messages = err.response.data.message.map((msg) => {
+              return msg.ShortMessage;
+            });
+          }
+
+          const msgList = "<ul><li>" + messages.join("</li><li>") + "</ul></li>";
+
+          this.$toast.error("Edit eBay Listing Unsuccessful!</br>Reasons:</br>" + msgList, {
             duration: 0,
           });
           console.error(err);
