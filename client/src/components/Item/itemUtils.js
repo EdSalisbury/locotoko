@@ -5,7 +5,6 @@ const listItem = async (id, context) => {
   try {
     await api.createEbayListing(context.token, { itemId: id });
     context.$toast.success("Listing Item Successful");
-    context.items = await api.getItems(context.token);
   } catch (err) {
     let messages = [];
 
