@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.30.4",
+  "version": "0.30.5",
   "private": true,
   "scripts": {
     "start": "dotenv -e ../.env.dev vue-cli-service serve",
