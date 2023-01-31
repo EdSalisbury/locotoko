@@ -160,16 +160,19 @@ export class ItemService {
   }
 
   async getItemById(itemId: string) {
+    await this.getCategories();
     try {
       const item = await this.prisma.item.findUnique({
         where: { id: itemId },
       });
-      const newItem = Object(item);
-      newItem.ebayCategoryName = (
-        await this.cat.getCategory(item.ebayCategoryId)
-      ).name;
-
-      return item;
+      const items = [item];
+      const mappedItems = items
+        .map(this.weeksActiveMap)
+        .map(this.totalPriceMap)
+        .map(this.categoryMap)
+        .map(this.locationMap)
+        .map(this.statusMap);
+      return mappedItems[0];
     } catch {
       throw new NotFoundException();
     }
