@@ -144,6 +144,9 @@ export default {
   methods: {
     async getItems() {
       this.items = await api.getItems(this.token);
+      this.sortItems();
+    },
+    async sortItems() {
       this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
       this.items = this.items.map((item) => ({
         ...item,
@@ -157,6 +160,12 @@ export default {
       this.draftItems = this.items.filter((item) => item.status === "draft");
       this.soldItems = this.items.filter((item) => item.status === "sold");
       this.endedItems = this.items.filter((item) => item.status === "ended");
+    },
+    async updateItem(itemId) {
+      const newItem = await api.getItem(this.token, itemId);
+      const index = this.items.findIndex((item) => item.id === newItem.id);
+      this.items[index] = newItem;
+      this.sortItems();
     },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);
@@ -177,11 +186,14 @@ export default {
       item.listingUserId = this.$cookie.get("userId");
 
       item.specifics = JSON.stringify(item.specifics);
-      await api.createItem(this.token, item);
-      await this.getItems();
+      const response = await api.createItem(this.token, item);
+      const newItem = await api.getItem(this.token, response.id);
+      this.items.push(newItem);
+      this.sortItems();
     },
     async listItem(id) {
       await itemUtils.listItem(id, this);
+      await this.updateItem(id);
     },
     async ready(id, value) {
       const item = await api.getItem(this.token, id);
@@ -244,7 +256,9 @@ export default {
     async deleteItem(id) {
       const response = await api.deleteItem(this.token, id);
       if (response.status == 204) {
-        await this.getItems();
+        const index = this.items.findIndex((item) => item.id === id);
+        this.items.splice(index, 1);
+        this.sortItems();
       } else {
         console.error(response);
       }

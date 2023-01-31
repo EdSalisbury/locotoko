@@ -24,7 +24,6 @@ const listItem = async (id, context) => {
       ready: false,
     };
     await api.updateItem(context.token, id, request);
-    context.items = await api.getItems(context.token);
   }
 };
 
