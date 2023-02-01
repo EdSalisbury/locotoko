@@ -149,10 +149,8 @@ export default {
   },
   methods: {
     async getItems() {
-      this.items = await api.getItems(this.token);
-      //this.items.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
-      this.allItems = [...this.items];
-      this.items = this.items.map((item) => ({
+      this.allItems = await api.getItems(this.token);
+      this.allItems = this.allItems.map((item) => ({
         ...item,
         price: parseFloat(item.price),
         shippingPrice: parseFloat(item.shippingPrice),
@@ -167,9 +165,10 @@ export default {
       newItem.totalPrice = parseFloat(newItem.totalPrice);
 
       const index = this.items.findIndex((item) => item.id === newItem.id);
-      this.items[index] = newItem;
+      this.$set(this.items[index], newItem);
+
       const allIndex = this.allItems.findIndex((item) => item.id === newItem.id);
-      this.allItems[allIndex] = newItem;
+      this.$set(this.allItems[allIndex], newItem);
     },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);
@@ -273,9 +272,9 @@ export default {
     async printItemLabel(id) {
       const response = await api.printItemLabel(this.token, id);
       if (response.status == 201) {
-        alert("Item Label Printed");
+        context.$toast.success("Item Label Printed");
       } else {
-        alert("Error printing item label");
+        context.$toast.error("Unable to print label");
       }
     },
   },
