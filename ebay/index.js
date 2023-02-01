@@ -1,5 +1,7 @@
 import * as api from "./api.js";
 
+let listLowPrice = true;
+
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -178,8 +180,12 @@ const listItem = async () => {
   await api.login();
 
   let drafts = await api.getDraftItems();
-  drafts.sort((a, b) => b.price - a.price);
 
+  if (listLowPrice) {
+    drafts.sort((a, b) => a.price - b.price);
+  } else {
+    drafts.sort((a, b) => b.price - a.price);
+  }
   let startTime = new Date();
   startTime.setHours(startTime.getHours() - 24);
   const items = await api.getItems();
@@ -199,6 +205,7 @@ const listItem = async () => {
         try {
           console.log(`Listing ${item.id} - ${item.title} - ${item.price}`);
           await api.createEbayListing(item.id);
+          listLowPrice = !listLowPrice;
           console.log("Item listed successfully");
           return;
         } catch (e) {
