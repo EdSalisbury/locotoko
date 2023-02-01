@@ -258,17 +258,18 @@ export default {
       this.items = this.allItems.filter((item) => item.status === "ended").slice();
     },
     async deleteItem(id) {
-      const response = await api.deleteItem(this.token, id);
-      if (response.status == 204) {
+      try {
+        await api.deleteItem(this.token, id);
+        context.$toast.success("Deleted item successfully");
         const index = this.items.findIndex((item) => item.id === id);
         this.items.splice(index, 1);
         const allIndex = this.allItems.findIndex((item) => item.id === id);
         this.allItems.splice(allIndex, 1);
-      } else {
-        console.error(response);
+      } catch (e) {
+        context.$toast.error("Unable to delete item" + e.response);
+        console.error(e.response);
       }
     },
-
     async printItemLabel(id) {
       const response = await api.printItemLabel(this.token, id);
       if (response.status == 201) {
