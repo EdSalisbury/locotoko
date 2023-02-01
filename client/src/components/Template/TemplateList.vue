@@ -2,6 +2,7 @@
   <b-card>
     <b-card-title>Templates</b-card-title>
     <b-card-body>
+      <router-link to="/addTemplate"><b-button variant="primary" class="mb-2">Add</b-button></router-link>
       <b-table hover :items="templates" :fields="fields">
         <template #cell(templateLink)="data">
           <router-link :to="'/templates/' + data.item.id">

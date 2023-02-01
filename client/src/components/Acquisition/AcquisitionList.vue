@@ -1,7 +1,9 @@
 <template>
   <b-card>
     <b-card-title>Acquisitions</b-card-title>
+
     <b-card-body>
+      <router-link to="/addAcquisition"><b-button variant="primary" class="mb-2">Add</b-button></router-link>
       <b-table hover :items="acquisitions" :fields="fields">
         <template #cell(acquisitionLink)="data">
           <router-link :to="'/acquisitions/' + data.item.id">

@@ -260,22 +260,22 @@ export default {
     async deleteItem(id) {
       try {
         await api.deleteItem(this.token, id);
-        context.$toast.success("Deleted item successfully");
+        this.$toast.success("Deleted item successfully");
         const index = this.items.findIndex((item) => item.id === id);
         this.items.splice(index, 1);
         const allIndex = this.allItems.findIndex((item) => item.id === id);
         this.allItems.splice(allIndex, 1);
       } catch (e) {
-        context.$toast.error("Unable to delete item" + e.response);
+        this.$toast.error("Unable to delete item" + e.response);
         console.error(e.response);
       }
     },
     async printItemLabel(id) {
       const response = await api.printItemLabel(this.token, id);
       if (response.status == 201) {
-        context.$toast.success("Item Label Printed");
+        this.$toast.success("Item Label Printed");
       } else {
-        context.$toast.error("Unable to print label");
+        this.$toast.error("Unable to print label");
       }
     },
   },
