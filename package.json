@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.31.0",
+  "version": "0.31.1",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -34,7 +34,7 @@
     "test:e2e": "dotenv -e .env.test -- jest --watch --no-cache --config ./test/jest-e2e.json",
     "ebay:prod": "dotenv -e .env.prod node ebay/index.js",
     "prisma:prod:rollback": "dotenv -e .env.prod -- prisma migrate resolve --rolled-back",
-    "db:dev:copy": "scp 192.168.1.42:/data01/backups/locotoko/latest.tgz /tmp && mkdir -p /tmp/sql && tar zxvf /tmp/latest.tgz -C /tmp/sql && docker exec -i locotoko-dev-db-1 psql -U postgres locotoko < `ls -1 /tmp/sql/data01/backups/locotoko/*.sql`"
+    "db:dev:copy": "scp 192.168.1.42:/data01/backups/locotoko/locotoko_2023-01-01.sql.tgz /tmp && mkdir -p /tmp/sql && tar zxvf /tmp/locotoko_2023-01-01.sql.tgz -C /tmp/sql && docker exec -i locotoko-dev-db-1 psql -U postgres locotoko < `ls -1 /tmp/sql/data01/backups/locotoko/*.sql`"
   },
   "dependencies": {
     "@nestjs/common": "^8.4.5",
