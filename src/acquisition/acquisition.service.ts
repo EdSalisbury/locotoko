@@ -9,10 +9,20 @@ export class AcquisitionService {
     return this.prisma.acquisition.findMany();
   }
 
-  getAcquisition(acquisitionId: string) {
-    return this.prisma.acquisition.findUnique({
+  async getAcquisition(acquisitionId: string) {
+    const acquisition = await this.prisma.acquisition.findUnique({
       where: { id: acquisitionId },
     });
+    let acquisitions = [acquisition];
+    const items = await this.prisma.item.findMany({
+      where: { acquisitionId: acquisitionId },
+    });
+
+    return acquisitions.map((acquisition) => ({
+      ...acquisition,
+      totalItems: items.length,
+      costPerItem: Number(acquisition.price) / items.length,
+    }))[0];
   }
 
   async createAcquisition(dto: CreateAcquisitionDto) {

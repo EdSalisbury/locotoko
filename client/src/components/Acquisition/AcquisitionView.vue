@@ -7,6 +7,9 @@
           <template #cell(date)="data">
             {{ data.item.date ? data.item.date.split("T")[0] : "" }}
           </template>
+          <template #cell(costPerItem)="data">
+            {{ Number(data.item.costPerItem).toFixed(2) }}
+          </template>
         </b-table>
         <vue-bootstrap-table
           :columns="columns"
@@ -22,7 +25,6 @@
           ref="itemTable"
         >
           <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
-
           <template v-slot:ebayListingId="data">
             <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
               {{ data.value.ebayListingId }}
@@ -73,8 +75,9 @@ export default {
   data() {
     return {
       acquisition: [{}],
-      fields: ["name", "price", "date"],
+      fields: ["name", "price", "date", "totalItems", "costPerItem"],
       items: [],
+      totalItems: 0,
       total: 0,
       unsoldTotal: 0,
       soldTotal: 0,
@@ -102,7 +105,8 @@ export default {
 
     const allItems = await api.getItems(token);
     this.items = allItems.filter((item) => item.acquisitionId === acquisitionId);
-
+    this.$set(this.acquisition[0], "totalItems", this.items.length);
+    this.$set(this.acquisition[0], "costPerItem", this.acquisition[0].price / this.items.length);
     this.items.forEach((item) => {
       if (item.soldPrice) {
         this.total += item.soldPrice;

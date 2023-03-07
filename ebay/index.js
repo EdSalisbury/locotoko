@@ -17,7 +17,7 @@ const processSales = async () => {
       const item = await api.getItemByEbayItemId(ebayItem.ebayItemId);
       if (!item) {
         console.error(
-          `Unable to find item with eBay Listing ID: ${ebayItem.ItemID} (${ebayItem.Title})`,
+          `Unable to find item with eBay Listing ID: ${ebayItem.ebayItemId} (${ebayItem.title})`,
         );
         continue;
       }
@@ -71,15 +71,16 @@ const getMarkdownPercentage = (price, shippingPrice, weeksActive) => {
   return pct;
 };
 
-const markdownItems = async () => {
-  console.log("Marking down items... ");
-  await api.login();
 
+const getMarkdowns = async () => {
   // Get all current markdowns
   let markdowns = [];
   const response = await api.getEbayMarkdowns();
   for (const promotion of response.promotions) {
-    if (promotion.name.startsWith("md-")) {
+    if (
+      promotion.promotionStatus !== "ENDED" &&
+      promotion.name.startsWith("md-")
+    ) {
       const details = await api.getEbayMarkdown(promotion.promotionId);
       const pct = promotion.name.split("md-")[1];
 
@@ -91,6 +92,14 @@ const markdownItems = async () => {
       });
     }
   }
+  return markdowns;
+}
+
+const markdownItems = async () => {
+  console.log("Marking down items... ");
+  await api.login();
+
+  let markdowns = await getMarkdowns();
 
   const items = await api.getActiveItems();
 
@@ -167,6 +176,7 @@ const markdownItems = async () => {
           percentage: pct.toString(),
           itemIds: [item.ebayListingId],
         });
+        markdowns = await getMarkdowns();
       }
       await api.updateItem(item.id, { markdownPct: pct });
     }

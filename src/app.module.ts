@@ -21,6 +21,7 @@ import { EbayItemTransactionModule } from "./ebay-item-transaction/ebay-item-tra
 import { EbayOrderModule } from "./ebay-order/ebay-order.module";
 import { PickModule } from './pick/pick.module';
 import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
+import { MetricModule } from './metric/metric.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -46,6 +47,7 @@ import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
     EbayOrderModule,
     PickModule,
     EbayMarkdownModule,
+    MetricModule,
   ],
 })
 export class AppModule {}
