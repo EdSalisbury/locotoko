@@ -122,4 +122,8 @@ export default {
 .packingSlip {
   page-break-after: always;
 }
+
+.packingSlip:last-child {
+  page-break-after: avoid;
+}
 </style>
