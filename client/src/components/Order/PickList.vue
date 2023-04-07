@@ -2,6 +2,7 @@
   <b-card>
     <b-card-title>Pick List</b-card-title>
     <b-card-body>
+      <b-button @click="printWindow()" variant="primary" class="m-2">Print</b-button>
       <vue-bootstrap-table
         :columns="columns"
         :values="data"
@@ -37,6 +38,11 @@ export default {
         { name: "id", title: "Item ID" },
       ],
     };
+  },
+  methods: {
+    printWindow: function () {
+      window.print();
+    },
   },
   async created() {
     this.token = this.$cookie.get("token");
