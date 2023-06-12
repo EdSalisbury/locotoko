@@ -69,6 +69,11 @@ export class ItemService {
     weeksActive: getWeeksDiff(item.listedAt, new Date()),
   });
 
+  titleMap = (item) => ({
+    ...item,
+    title: item.title + "-" + item.id.slice(-4),
+  });
+
   getStatus = (item) => {
     if (item.soldAt) {
       return "sold";
@@ -107,6 +112,7 @@ export class ItemService {
       where: { soldAt: { not: null } },
     });
     return items
+      .map(this.titleMap)
       .map(this.weeksActiveMap)
       .map(this.totalPriceMap)
       .map(this.categoryMap)
@@ -125,6 +131,7 @@ export class ItemService {
     );
 
     return items
+      .map(this.titleMap)
       .map(this.weeksActiveMap)
       .map(this.totalPriceMap)
       .map(this.categoryMap)
@@ -140,6 +147,7 @@ export class ItemService {
     });
 
     return items
+      .map(this.titleMap)
       .map(this.weeksActiveMap)
       .map(this.totalPriceMap)
       .map(this.categoryMap)
@@ -154,6 +162,7 @@ export class ItemService {
     });
 
     return items
+      .map(this.titleMap)
       .map(this.weeksActiveMap)
       .map(this.totalPriceMap)
       .map(this.categoryMap)
@@ -169,6 +178,7 @@ export class ItemService {
       });
       const items = [item];
       const mappedItems = items
+        .map(this.titleMap)
         .map(this.weeksActiveMap)
         .map(this.totalPriceMap)
         .map(this.categoryMap)

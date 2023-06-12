@@ -29,7 +29,6 @@
         class="pb-2"
         ref="itemTable"
       >
-        <template v-slot:title="data"> {{ data.value.title + "-" + data.value.id.slice(-4) }} </template>
         <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
         <template v-slot:shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
         <template v-slot:totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
