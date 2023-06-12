@@ -27,7 +27,7 @@ const processSales = async () => {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
           endedAt: order.paidTime,
-          soldPrice: parseFloat(item.price).toFixed(2),
+          soldPrice: (parseFloat(item.currentPrice) - parseFloat(item.shippingPrice)).toFixed(2),
         };
         await api.updateItem(item.id, request);
       }
@@ -71,7 +71,6 @@ const getMarkdownPercentage = (price, shippingPrice, weeksActive) => {
   return pct;
 };
 
-
 const getMarkdowns = async () => {
   // Get all current markdowns
   let markdowns = [];
@@ -93,7 +92,7 @@ const getMarkdowns = async () => {
     }
   }
   return markdowns;
-}
+};
 
 const markdownItems = async () => {
   console.log("Marking down items... ");
@@ -361,6 +360,55 @@ const fixMarkdowns = async () => {
     }
   }
   console.log("Done fixing markdowns");
+};
+
+const fixSoldPrices = async () => {
+  console.log("Fixing sold prices... ");
+  await api.login();
+  const items = await api.getSoldItems();
+  for (const item of items) {
+    console.log(
+      `${item.title}: currentPrice = ${item.currentPrice}, soldPrice = ${item.soldPrice}`,
+    );
+    //if (item.currentPrice > 0 && item.currentPrice < item.soldPrice) {
+    try {
+      const ebayItem = await api.getEbayListing(item.ebayListingId);
+
+      if (item.soldPrice != ebayItem.Item.SellingStatus.CurrentPrice.value) {
+        await api.updateItem(item.id, {
+          soldPrice: (
+            parseFloat(ebayItem.Item.SellingStatus.CurrentPrice.value) -
+            item.shippingPrice
+          ).toFixed(2),
+        });
+      }
+    } catch {}
+    //}
+  }
+  console.log("Done fixing sold prices");
+};
+
+const updateSoldPrices = async () => {
+  console.log("Updating sold prices... ");
+  await api.login();
+  const items = await api.getSoldItems();
+  for (const item of items) {
+    console.log(
+      `${item.title}: currentPrice = ${item.currentPrice}, soldPrice = ${item.soldPrice}`,
+    );
+    if (item.soldPrice == 0) {
+      try {
+        const ebayItem = await api.getEbayListing(item.ebayListingId);
+
+        await api.updateItem(item.id, {
+          soldPrice: (
+            parseFloat(ebayItem.Item.SellingStatus.CurrentPrice.value) -
+            item.shippingPrice
+          ).toFixed(2),
+        });
+      } catch {}
+    }
+  }
 };
 
 const main = async () => {

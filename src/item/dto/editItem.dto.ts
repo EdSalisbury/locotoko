@@ -55,6 +55,10 @@ export class EditItemDto {
   @IsOptional()
   soldPrice: number;
 
+  @IsCurrency()
+  @IsOptional()
+  currentPrice: number;
+
   @IsDateString()
   @IsOptional()
   soldAt: string;

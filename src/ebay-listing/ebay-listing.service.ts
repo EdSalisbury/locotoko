@@ -75,6 +75,7 @@ export class EbayListingService {
           ListingDuration: "GTC",
           ProductListingDetails: {
             UPC: item.upc,
+            ISBN: item.upc,
           },
           ListingType: "FixedPriceItem",
           SellerProfiles: {
@@ -204,6 +205,7 @@ export class EbayListingService {
           ListingDuration: "GTC",
           ProductListingDetails: {
             UPC: item.upc,
+            ISBN: item.upc,
           },
           ListingType: "FixedPriceItem",
           SellerProfiles: {
