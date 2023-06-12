@@ -221,6 +221,8 @@ export default {
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
 
     this.form = await api.getItem(token, itemId);
+    // Remove the ID from the title
+    this.form.title = this.form.title.slice(0, -5);
     this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {

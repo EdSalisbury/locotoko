@@ -155,6 +155,7 @@ export default {
         shippingPrice: parseFloat(item.shippingPrice),
         totalPrice: parseFloat(item.totalPrice),
       }));
+      this.items = this.allItems.slice();
     },
     async updateItem(itemId) {
       const newItem = await api.getItem(this.token, itemId);
