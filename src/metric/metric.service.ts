@@ -12,6 +12,49 @@ export class MetricService {
   ) {}
 
   async getMetrics() {
+    let listedDates = {};
+    let items = await this.itemService.getActiveItems();
+    for (let item of items) {
+      if (item.listedAt) {
+        const date = item.listedAt.toISOString().split("T")[0];
+        if (!(date in listedDates)) {
+          listedDates[date] = 0;
+        }
+        listedDates[date]++;
+      }
+    }
+
+    const now = new Date();
+    let oneYearAgo = new Date();
+    oneYearAgo.setFullYear(now.getFullYear() - 1);
+
+    let dates = this.getDatesInRange(oneYearAgo, now);
+
+    let output = [];
+
+    for (let date of dates) {
+      let metric = { x: new Date(date), y: 0 };
+      if (date in listedDates) {
+        metric = { x: new Date(date), y: listedDates[date] };
+      }
+      output.push(metric);
+    }
+    return {
+      newEbayListings: output,
+    };
+  }
+
+  getDatesInRange(startDate, endDate) {
+    let date = new Date(startDate.getTime());
+    let dates = [];
+    while (date <= endDate) {
+      dates.push(date.toISOString().split("T")[0]);
+      date.setDate(date.getDate() + 1);
+    }
+    return dates;
+  }
+
+  async getInventory() {
     let items = await this.itemService.getActiveItems();
     let totalItems = 0;
     let totalValue = 0;
@@ -51,10 +94,5 @@ export class MetricService {
     }
 
     return csv;
-
-    return {
-      totalItems: totalItems,
-      totalValue: totalValue,
-    };
   }
 }
