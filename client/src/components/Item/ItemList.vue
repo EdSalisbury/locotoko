@@ -206,7 +206,7 @@ export default {
       const ebayConditions = await api.getEbayConditions(this.token, item.ebayCategoryId);
 
       if (value) {
-        if (item.title.length > 75) {
+        if (item.title.length > 80) {
           errors.push(`Title too long (${item.title.length} chars)`);
         }
         if (parseFloat(item.price) < 9.99) {

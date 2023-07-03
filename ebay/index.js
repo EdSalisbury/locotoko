@@ -27,7 +27,9 @@ const processSales = async () => {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
           endedAt: order.paidTime,
-          soldPrice: (parseFloat(item.currentPrice) - parseFloat(item.shippingPrice)).toFixed(2),
+          soldPrice: (
+            parseFloat(item.currentPrice) - parseFloat(item.shippingPrice)
+          ).toFixed(2),
         };
         await api.updateItem(item.id, request);
       }
@@ -188,44 +190,68 @@ const listItem = async () => {
   console.log("Listing ready item from drafts");
   await api.login();
 
-  let drafts = await api.getDraftItems();
-
-  if (listLowPrice) {
-    drafts.sort((a, b) => a.price - b.price);
-  } else {
-    drafts.sort((a, b) => b.price - a.price);
-  }
+  // Get items that have been listed in the last 24 hours
   let startTime = new Date();
   startTime.setHours(startTime.getHours() - 24);
-  const items = await api.getItems();
-  let count = 0;
-  for (const item of items) {
-    if (item.listedAt && Date.parse(item.listedAt) > startTime) {
-      count++;
-    }
+  let listedItems = await api.getItems();
+  listedItems = listedItems.filter(
+    (item) => Date.parse(item.listedAt) > startTime,
+  );
+
+  console.log(`Found ${listedItems.length} item(s) listed today`);
+
+  if (listedItems.length >= process.env.LISTINGS_PER_DAY) {
+    console.log("Enough items have been listed today");
+    return;
   }
 
-  console.log(`Found ${count} items listed today`);
-  if (count < process.env.LISTINGS_PER_DAY) {
+  // Get drafts
+  let drafts = await api.getDraftItems();
+
+  // We only care about drafts that are ready to list
+  drafts = drafts.filter((item) => item.ready);
+
+  // Figure out how many items to list, based on available drafts and max listings per day, and how many have been listed today
+  let numToList = Math.floor(drafts.length * 0.25);
+  if (numToList > process.env.LISTINGS_PER_DAY) {
+    numToList = process.env.LISTINGS_PER_DAY;
+  }
+  numToList -= listedItems.length;
+  if (numToList < 0) {
+    numToList = 0;
+  }
+
+  if (drafts.length === 0) {
+    console.log("No drafts available to list");
+    return;
+  }
+
+  if (listedItems.length === 0 && numToList < 1) {
+    numToList = 1;
+  }
+
+  console.log(
+    `Listing ${numToList} item(s) today, based on ${drafts.length} draft(s) available and ${listedItems.length} listing(s) today`,
+  );
+
+  if (numToList > 0) {
     console.log("Looking for draft to list");
 
-    for (const item of drafts) {
-      if (item.ready) {
-        try {
-          console.log(`Listing ${item.id} - ${item.title} - ${item.price}`);
-          await api.createEbayListing(item.id);
-          listLowPrice = !listLowPrice;
-          console.log("Item listed successfully");
-          return;
-        } catch (e) {
-          console.error("ERROR: " + e.response.data.LongMessage);
-          const request = {
-            ready: false,
-          };
-          console.log(`Marking item ${item.id} as NOT ready`);
-          await api.updateItem(item.id, request);
-        }
-      }
+    // Get random item to list
+    const item = drafts[Math.floor(Math.random() * drafts.length)];
+
+    try {
+      console.log(`Listing ${item.id} - ${item.title} - ${item.price}`);
+      await api.createEbayListing(item.id);
+      console.log("Item listed successfully");
+      return;
+    } catch (e) {
+      console.error("ERROR: " + e.response.data.LongMessage);
+      const request = {
+        ready: false,
+      };
+      console.log(`Marking item ${item.id} as NOT ready`);
+      await api.updateItem(item.id, request);
     }
   }
   console.log("No items to list!");
