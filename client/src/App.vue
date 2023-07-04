@@ -3,6 +3,7 @@
     <b-navbar type="dark" variant="success">
       <b-navbar-brand>LocoToko</b-navbar-brand>
       <b-navbar-nav>
+        <b-nav-item to="/">Home</b-nav-item>
         <b-nav-item to="/login">Login</b-nav-item>
         <b-nav-item to="/items">Items</b-nav-item>
         <b-nav-item to="/owners">Owners</b-nav-item>

@@ -18,6 +18,7 @@ Vue.use(VueCookie);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(VModal);
+
 Vue.use(VueToast, { position: "top-right", duration: 5000 });
 
 new Vue({

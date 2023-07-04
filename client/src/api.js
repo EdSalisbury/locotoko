@@ -285,6 +285,11 @@ const getOrder = async (token, id) => {
   return await response.json();
 };
 
+const getMetrics = async (token) => {
+  const response = await fetch(apiUrl("metrics"), apiHeaders(token));
+  return await response.json();
+}
+
 export default {
   login,
   getItem,
@@ -318,4 +323,5 @@ export default {
   getOrder,
   getPicks,
   getItems,
+  getMetrics,
 };

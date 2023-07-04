@@ -11,16 +11,47 @@ export class MetricService {
     private ownerService: OwnerService,
   ) {}
 
+  getLocalDate(date) {
+    const getYear = date.toLocaleString("default", { year: "numeric" });
+    const getMonth = date.toLocaleString("default", { month: "2-digit" });
+    const getDay = date.toLocaleString("default", { day: "2-digit" });
+    return getYear + "-" + getMonth + "-" + getDay;
+  }
+
   async getMetrics() {
     let listedDates = {};
-    let items = await this.itemService.getActiveItems();
+    let createdDates = {};
+    let soldDates = {};
+    let currentDrafts = 0;
+
+    let items = await this.itemService.getItems();
     for (let item of items) {
       if (item.listedAt) {
-        const date = item.listedAt.toISOString().split("T")[0];
-        if (!(date in listedDates)) {
-          listedDates[date] = 0;
+        const listedDate = this.getLocalDate(item.listedAt);
+        if (!(listedDate in listedDates)) {
+          listedDates[listedDate] = 0;
         }
-        listedDates[date]++;
+        listedDates[listedDate]++;
+      }
+
+      if (item.soldAt) {
+        const soldDate = this.getLocalDate(item.soldAt);
+        if (!(soldDate in soldDates)) {
+          soldDates[soldDate] = 0;
+        }
+        soldDates[soldDate]++;
+      }
+
+      if (item.createdAt) {
+        const createdDate = this.getLocalDate(item.createdAt);
+        if (!(createdDate in createdDates)) {
+          createdDates[createdDate] = 0;
+        }
+        createdDates[createdDate]++;
+      }
+
+      if (item.createdAt && !item.listedAt && !item.soldAt && item.ready) {
+        currentDrafts++;
       }
     }
 
@@ -30,25 +61,47 @@ export class MetricService {
 
     let dates = this.getDatesInRange(oneYearAgo, now);
 
-    let output = [];
+    let newEbayListings = [];
+    let newDrafts = [];
+    let newSales = [];
 
     for (let date of dates) {
-      let metric = { x: new Date(date), y: 0 };
+      let listedMetric = { x: date, y: 0 };
       if (date in listedDates) {
-        metric = { x: new Date(date), y: listedDates[date] };
+        listedMetric = { x: date, y: listedDates[date] };
       }
-      output.push(metric);
+      newEbayListings.push(listedMetric);
+
+      let createdMetric = { x: date, y: 0 };
+      if (date in createdDates) {
+        createdMetric = { x: date, y: createdDates[date] };
+      }
+      newDrafts.push(createdMetric);
+
+      let soldMetric = { x: date, y: 0 };
+      if (date in soldDates) {
+        soldMetric = { x: date, y: soldDates[date] };
+      }
+      newSales.push(soldMetric);
     }
+
     return {
-      newEbayListings: output,
+      currentDrafts: currentDrafts,
+      createdToday: newDrafts.slice(-1)[0].y,
+      listedToday: newEbayListings.slice(-1)[0].y,
+      soldToday: newSales.slice(-1)[0].y,
+      newDrafts: newDrafts,
+      newEbayListings: newEbayListings,
+      newSales: newSales,
     };
   }
 
   getDatesInRange(startDate, endDate) {
+    console.log("endDate = " + endDate);
     let date = new Date(startDate.getTime());
     let dates = [];
     while (date <= endDate) {
-      dates.push(date.toISOString().split("T")[0]);
+      dates.push(this.getLocalDate(date));
       date.setDate(date.getDate() + 1);
     }
     return dates;
