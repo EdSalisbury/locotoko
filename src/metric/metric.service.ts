@@ -22,6 +22,7 @@ export class MetricService {
     let listedDates = {};
     let createdDates = {};
     let soldDates = {};
+
     let currentDrafts = 0;
 
     let items = await this.itemService.getItems();
@@ -29,25 +30,34 @@ export class MetricService {
       if (item.listedAt) {
         const listedDate = this.getLocalDate(item.listedAt);
         if (!(listedDate in listedDates)) {
-          listedDates[listedDate] = 0;
+          listedDates[listedDate] = {};
+          listedDates[listedDate].count = 0;
+          listedDates[listedDate].amount = 0.0;
         }
-        listedDates[listedDate]++;
+        listedDates[listedDate].count++;
+        listedDates[listedDate].amount += parseFloat(item.price);
       }
 
       if (item.soldAt) {
         const soldDate = this.getLocalDate(item.soldAt);
         if (!(soldDate in soldDates)) {
-          soldDates[soldDate] = 0;
+          soldDates[soldDate] = {};
+          soldDates[soldDate].count = 0;
+          soldDates[soldDate].amount = 0.0;
         }
-        soldDates[soldDate]++;
+        soldDates[soldDate].count++;
+        soldDates[soldDate].amount += parseFloat(item.soldPrice);
       }
 
       if (item.createdAt) {
         const createdDate = this.getLocalDate(item.createdAt);
         if (!(createdDate in createdDates)) {
-          createdDates[createdDate] = 0;
+          createdDates[createdDate] = {};
+          createdDates[createdDate].count = 0;
+          createdDates[createdDate].amount = 0.0;
         }
-        createdDates[createdDate]++;
+        createdDates[createdDate].count++;
+        createdDates[createdDate].amount += parseFloat(item.price);
       }
 
       if (item.createdAt && !item.listedAt && !item.soldAt && item.ready) {
@@ -64,25 +74,37 @@ export class MetricService {
     let newEbayListings = [];
     let newDrafts = [];
     let newSales = [];
+    let newEbayListingAmounts = [];
+    let newDraftAmounts = [];
+    let newSalesAmounts = [];
 
     for (let date of dates) {
       let listedMetric = { x: date, y: 0 };
+      let listedAmountMetric = { x: date, y: 0 };
       if (date in listedDates) {
-        listedMetric = { x: date, y: listedDates[date] };
+        listedMetric = { x: date, y: listedDates[date].count };
+        listedAmountMetric = { x: date, y: listedDates[date].amount };
       }
       newEbayListings.push(listedMetric);
+      newEbayListingAmounts.push(listedAmountMetric);
 
       let createdMetric = { x: date, y: 0 };
+      let createdAmountMetric = { x: date, y: 0 };
       if (date in createdDates) {
-        createdMetric = { x: date, y: createdDates[date] };
+        createdMetric = { x: date, y: createdDates[date].count };
+        createdAmountMetric = { x: date, y: createdDates[date].amount };
       }
       newDrafts.push(createdMetric);
+      newDraftAmounts.push(createdAmountMetric);
 
       let soldMetric = { x: date, y: 0 };
+      let soldAmountMetric = { x: date, y: 0 };
       if (date in soldDates) {
-        soldMetric = { x: date, y: soldDates[date] };
+        soldMetric = { x: date, y: soldDates[date].count };
+        soldAmountMetric = { x: date, y: soldDates[date].amount };
       }
       newSales.push(soldMetric);
+      newSalesAmounts.push(soldAmountMetric);
     }
 
     return {
@@ -93,11 +115,13 @@ export class MetricService {
       newDrafts: newDrafts,
       newEbayListings: newEbayListings,
       newSales: newSales,
+      newEbayListingAmounts: newEbayListingAmounts,
+      newDraftAmounts: newDraftAmounts,
+      newSalesAmounts: newSalesAmounts,
     };
   }
 
   getDatesInRange(startDate, endDate) {
-    console.log("endDate = " + endDate);
     let date = new Date(startDate.getTime());
     let dates = [];
     while (date <= endDate) {

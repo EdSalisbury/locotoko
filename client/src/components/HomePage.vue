@@ -81,6 +81,40 @@
         </b-card>
       </b-card-group>
     </div>
+    <div class="p-4">
+      <b-card-group deck>
+        <b-card
+          header-bg-variant="primary"
+          header-text-variant="white"
+          text-variant="primary"
+          header="New eBay Listing Amounts (30 days)"
+          class="text-center"
+          border-variant="primary"
+        >
+          <LineChart v-if="loaded" :data="newListingAmounts" />
+        </b-card>
+        <b-card
+          header-bg-variant="primary"
+          header-text-variant="white"
+          text-variant="primary"
+          header="New Sales Amounts (30 days)"
+          class="text-center"
+          border-variant="primary"
+        >
+          <LineChart v-if="loaded" :data="newSalesAmounts" />
+        </b-card>
+        <b-card
+          header-bg-variant="primary"
+          header-text-variant="white"
+          text-variant="primary"
+          header="New Draft Amounts (30 days)"
+          class="text-center"
+          border-variant="primary"
+        >
+          <LineChart v-if="loaded" :data="newDraftAmounts" />
+        </b-card>
+      </b-card-group>
+    </div>
   </div>
 </template>
 
@@ -113,6 +147,15 @@ export default {
         datasets: [],
       },
       newDrafts: {
+        datasets: [],
+      },
+      newListingAmounts: {
+        datasets: [],
+      },
+      newSalesAmounts: {
+        datasets: [],
+      },
+      newDraftAmounts: {
         datasets: [],
       },
     };
@@ -155,7 +198,39 @@ export default {
           },
         ],
       };
-
+      this.newListingAmounts = {
+        datasets: [
+          {
+            label: "New Listing Amounts",
+            backgroundColor: "#457B9D",
+            borderColor: "#457B9D",
+            pointStyle: false,
+            data: this.metrics.newEbayListingAmounts.slice(-30),
+          },
+        ],
+      };
+      this.newSalesAmounts = {
+        datasets: [
+          {
+            label: "Sold Listing Amounts",
+            backgroundColor: "#1D3557",
+            borderColor: "#1D3557",
+            pointStyle: false,
+            data: this.metrics.newSalesAmounts.slice(-30),
+          },
+        ],
+      };
+      this.newDraftAmounts = {
+        datasets: [
+          {
+            label: "New Draft Amounts",
+            backgroundColor: "#f33",
+            borderColor: "#f33",
+            pointStyle: false,
+            data: this.metrics.newDraftAmounts.slice(-30),
+          },
+        ],
+      };
       this.loaded = true;
     } catch (e) {
       console.error(e);
