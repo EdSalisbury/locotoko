@@ -6,7 +6,7 @@
           header-bg-variant="primary"
           header-text-variant="white"
           text-variant="primary"
-          header="Listings Today"
+          header="Items Listed Today"
           class="text-center"
           border-variant="primary"
         >
@@ -39,11 +39,21 @@
           header-bg-variant="primary"
           header-text-variant="white"
           text-variant="primary"
-          header="Sold Today"
+          header="Items Sold Today"
           class="text-center"
           border-variant="primary"
         >
           <b-card-text>{{ this.metrics.soldToday }}</b-card-text>
+        </b-card>
+        <b-card
+          header-bg-variant="primary"
+          header-text-variant="white"
+          text-variant="primary"
+          header="Sales (30 days)"
+          class="text-center"
+          border-variant="primary"
+        >
+          <b-card-text>${{ this.sold30Days }}</b-card-text>
         </b-card>
       </b-card-group>
     </div>
@@ -139,6 +149,7 @@ export default {
   data() {
     return {
       loaded: false,
+      sold30Days: 0,
       metrics: {},
       newListings: {
         datasets: [],
@@ -165,6 +176,10 @@ export default {
     try {
       this.token = this.$cookie.get("token");
       this.metrics = await api.getMetrics(this.token);
+      for (let metric of this.metrics.newSalesAmounts.slice(-30)) {
+        this.sold30Days += metric.y;
+      }
+
       this.newListings = {
         datasets: [
           {

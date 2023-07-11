@@ -21,15 +21,26 @@ const processSales = async () => {
         );
         continue;
       }
+
+      const listing = await api.getEbayListing(ebayItem.ebayItemId);
+      if (!listing) {
+        console.error(
+          `Unable to find ebay listing with eBay Listing ID: ${ebayItem.ebayItemId} (${ebayItem.title})`,
+        );
+        continue;
+      }
+      const soldPrice = parseFloat(
+        listing.Item.SellingStatus.CurrentPrice.value,
+      ).toFixed(2);
+
       if (item.soldAt !== order.paidTime) {
         console.log(`Marking ${item.title} as sold`);
         const request = {
           quantitySold: item.quantitySold + ebayItem.quantity,
           soldAt: order.paidTime,
           endedAt: order.paidTime,
-          soldPrice: (
-            parseFloat(item.currentPrice) - parseFloat(item.shippingPrice)
-          ).toFixed(2),
+          soldPrice: soldPrice,
+          currentPrice: soldPrice,
         };
         await api.updateItem(item.id, request);
       }
@@ -396,20 +407,27 @@ const fixSoldPrices = async () => {
     console.log(
       `${item.title}: currentPrice = ${item.currentPrice}, soldPrice = ${item.soldPrice}`,
     );
-    //if (item.currentPrice > 0 && item.currentPrice < item.soldPrice) {
-    try {
+    if (item.soldPrice < 0) {
       const ebayItem = await api.getEbayListing(item.ebayListingId);
-
-      if (item.soldPrice != ebayItem.Item.SellingStatus.CurrentPrice.value) {
+      if (!ebayItem) {
+        console.error(
+          `Unable to find ebay listing with eBay Listing ID: ${item.ebayItemId} (${item.title})`,
+        );
+        continue;
+      }
+      if (
+        parseFloat(item.soldPrice).toFixed(2) !==
+        parseFloat(ebayItem.Item.SellingStatus.CurrentPrice.value).toFixed(2)
+      ) {
+        const soldPrice = parseFloat(
+          ebayItem.Item.SellingStatus.CurrentPrice.value,
+        ).toFixed(2);
+        console.log(`Updating item ${item.id} with soldPrice: ${soldPrice}`);
         await api.updateItem(item.id, {
-          soldPrice: (
-            parseFloat(ebayItem.Item.SellingStatus.CurrentPrice.value) -
-            item.shippingPrice
-          ).toFixed(2),
+          soldPrice: soldPrice,
         });
       }
-    } catch {}
-    //}
+    }
   }
   console.log("Done fixing sold prices");
 };
@@ -440,7 +458,6 @@ const updateSoldPrices = async () => {
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
   await sleep(1000 * 60);
-
   let lastMarkdown = 0;
 
   while (true) {

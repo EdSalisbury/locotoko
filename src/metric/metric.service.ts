@@ -24,6 +24,7 @@ export class MetricService {
     let soldDates = {};
 
     let currentDrafts = 0;
+    let totalSales = 0;
 
     let items = await this.itemService.getItems();
     for (let item of items) {
@@ -46,6 +47,12 @@ export class MetricService {
           soldDates[soldDate].amount = 0.0;
         }
         soldDates[soldDate].count++;
+        totalSales += parseFloat(item.soldPrice);
+        console.log(
+          `${item.id}\t${item.soldPrice} = ${parseFloat(
+            item.soldPrice,
+          )} (${totalSales})`,
+        );
         soldDates[soldDate].amount += parseFloat(item.soldPrice);
       }
 
