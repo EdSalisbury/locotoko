@@ -144,6 +144,9 @@ export default {
     this.loaded = false;
     try {
       this.token = this.$cookie.get("token");
+      if (!this.token) {
+        this.$router.push({ path: "/login" });
+      }
       this.metrics = await api.getMetrics(this.token);
       for (let metric of this.metrics.newSalesAmounts.slice(-30)) {
         this.sold30Days += metric.y;

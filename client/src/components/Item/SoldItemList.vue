@@ -69,6 +69,9 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.items = await api.getSoldItems(this.token);
     this.items.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
   },

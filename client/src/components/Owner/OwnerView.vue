@@ -121,6 +121,9 @@ export default {
   async created() {
     const ownerId = this.$route.params.id;
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.owner = await api.getOwner(this.token, ownerId);
     const rate = this.owner.rate;
     this.owner = [this.owner];

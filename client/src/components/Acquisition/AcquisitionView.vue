@@ -101,6 +101,9 @@ export default {
   async created() {
     const acquisitionId = this.$route.params.id;
     const token = this.$cookie.get("token");
+    if (!token) {
+      this.$router.push({ path: "/login" });
+    }
     this.acquisition = [await api.getAcquisition(token, acquisitionId)];
 
     const allItems = await api.getItems(token);

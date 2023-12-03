@@ -41,6 +41,9 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.templates = await api.getTemplates(this.token);
   },
   methods: {

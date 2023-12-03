@@ -46,6 +46,9 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.data = await api.getPicks(this.token);
     this.data.sort((a, b) => (a.location > b.location ? 1 : -1));
   },

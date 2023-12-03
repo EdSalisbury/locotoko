@@ -44,6 +44,9 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.acquisitions = await api.getAcquisitions(this.token);
   },
   methods: {

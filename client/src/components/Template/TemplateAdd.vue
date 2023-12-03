@@ -66,6 +66,9 @@ export default {
   },
   async created() {
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     const ebayCategories = await api.getEbayCategories(this.token);
 
     this.ebayCategories = ebayCategories.map((ebayCategory) => ({
