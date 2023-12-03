@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar type="dark" variant="success" toggleable="lg">
+    <b-navbar type="dark" style="background: #00b8d1" toggleable="lg">
       <b-navbar-brand href="/"><img :src="logo" width="52" height="35" /></b-navbar-brand>
       <b-navbar-toggle target="navbar-toggle-collapse"></b-navbar-toggle>
       <b-collapse id="navbar-toggle-collapse" is-nav>
