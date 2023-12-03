@@ -91,53 +91,12 @@
         </b-card>
       </b-card-group>
     </div>
-    <div class="p-4">
-      <b-card-group deck>
-        <!-- <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New eBay Listing Amounts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newListingAmounts" />
-        </b-card> -->
-        
-        
-        <!-- <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="Sales Amounts"
-          class="text-center"
-          border-variant="primary"
-        >
-          <BarChart v-if="loaded" :data="salesByMonth" />
-        </b-card> -->
-        
-        
-        
-        
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New Draft Amounts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newDraftAmounts" />
-        </b-card>
-      </b-card-group>
-    </div>
   </div>
 </template>
 
 <script>
 import api from "../api";
 import { Line as LineChart } from "vue-chartjs";
-//import { Bar as BarChart } from "vue-chartjs";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -231,48 +190,6 @@ export default {
             borderColor: "#457B9D",
             pointStyle: false,
             data: this.metrics.newEbayListingAmounts.slice(-30),
-          },
-        ],
-      };
-
-      // console.log(this.metrics.newSalesAmounts.slice(-365, -335));
-      // let salesData = [];
-      // for (let sale of this.metrics.newSalesAmounts) {
-
-      // }
-      this.salesByMonth = {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ],
-        datasets: [
-          {
-            label: "Sales (in $)",
-            backgroundColor: "#1D3557",
-            borderColor: "#1D3557",
-            pointStyle: false,
-            data: this.metrics.newSalesAmounts,
-          },
-        ],
-      };
-      this.newDraftAmounts = {
-        datasets: [
-          {
-            label: "New Draft Amounts",
-            backgroundColor: "#f33",
-            borderColor: "#f33",
-            pointStyle: false,
-            data: this.metrics.newDraftAmounts.slice(-30),
           },
         ],
       };
