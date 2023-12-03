@@ -11,6 +11,10 @@ export class MetricService {
     private ownerService: OwnerService,
   ) {}
 
+  cacheTimeoutMinutes = 5;
+  cache = {};
+  cacheTime = new Date();
+
   getLocalDate(date) {
     const getYear = date.toLocaleString("default", { year: "numeric" });
     const getMonth = date.toLocaleString("default", { month: "2-digit" });
@@ -18,7 +22,7 @@ export class MetricService {
     return getYear + "-" + getMonth + "-" + getDay;
   }
 
-  async getMetrics() {
+  async getMetricData() {
     let listedDates = {};
     let createdDates = {};
     let soldDates = {};
@@ -48,11 +52,6 @@ export class MetricService {
         }
         soldDates[soldDate].count++;
         totalSales += parseFloat(item.soldPrice);
-        console.log(
-          `${item.id}\t${item.soldPrice} = ${parseFloat(
-            item.soldPrice,
-          )} (${totalSales})`,
-        );
         soldDates[soldDate].amount += parseFloat(item.soldPrice);
       }
 
@@ -114,7 +113,7 @@ export class MetricService {
       newSalesAmounts.push(soldAmountMetric);
     }
 
-    return {
+    const data = {
       currentDrafts: currentDrafts,
       createdToday: newDrafts.slice(-1)[0].y,
       listedToday: newEbayListings.slice(-1)[0].y,
@@ -126,6 +125,28 @@ export class MetricService {
       newDraftAmounts: newDraftAmounts,
       newSalesAmounts: newSalesAmounts,
     };
+
+    this.cache = data;
+    this.cacheTime = new Date();
+    return data;
+  }
+
+  async getMetrics() {
+    const rightNow = new Date();
+    if (
+      Math.floor((+rightNow - +this.cacheTime) / 1000) / 60 >
+      this.cacheTimeoutMinutes
+    ) {
+      // Send the cached data, then clear it
+      const data = this.cache;
+      this.cache = {};
+      this.getMetricData(); // Not async so that it will happen in the background
+      return data;
+    } else if (Object.keys(this.cache).length > 0) {
+      return this.cache;
+    }
+
+    return this.getMetricData();
   }
 
   getDatesInRange(startDate, endDate) {

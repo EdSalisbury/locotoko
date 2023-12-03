@@ -28,7 +28,7 @@ export class EbayMarkdownService {
     const startDate = dateTmp.toISOString();
     dateTmp = new Date();
 
-    dateTmp.setDate(dateTmp.getDate() + 45);
+    dateTmp.setDate(dateTmp.getDate() + 30);
     const endDate = dateTmp.toISOString();
 
     const name = `md-${dto.percentage}`;

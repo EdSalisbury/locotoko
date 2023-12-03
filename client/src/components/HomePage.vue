@@ -93,7 +93,7 @@
     </div>
     <div class="p-4">
       <b-card-group deck>
-        <b-card
+        <!-- <b-card
           header-bg-variant="primary"
           header-text-variant="white"
           text-variant="primary"
@@ -102,17 +102,23 @@
           border-variant="primary"
         >
           <LineChart v-if="loaded" :data="newListingAmounts" />
-        </b-card>
-        <b-card
+        </b-card> -->
+        
+        
+        <!-- <b-card
           header-bg-variant="primary"
           header-text-variant="white"
           text-variant="primary"
-          header="New Sales Amounts (30 days)"
+          header="Sales Amounts"
           class="text-center"
           border-variant="primary"
         >
-          <LineChart v-if="loaded" :data="newSalesAmounts" />
-        </b-card>
+          <BarChart v-if="loaded" :data="salesByMonth" />
+        </b-card> -->
+        
+        
+        
+        
         <b-card
           header-bg-variant="primary"
           header-text-variant="white"
@@ -131,6 +137,7 @@
 <script>
 import api from "../api";
 import { Line as LineChart } from "vue-chartjs";
+//import { Bar as BarChart } from "vue-chartjs";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -167,6 +174,9 @@ export default {
         datasets: [],
       },
       newDraftAmounts: {
+        datasets: [],
+      },
+      salesByMonth: {
         datasets: [],
       },
     };
@@ -224,14 +234,34 @@ export default {
           },
         ],
       };
-      this.newSalesAmounts = {
+
+      // console.log(this.metrics.newSalesAmounts.slice(-365, -335));
+      // let salesData = [];
+      // for (let sale of this.metrics.newSalesAmounts) {
+
+      // }
+      this.salesByMonth = {
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
         datasets: [
           {
-            label: "Sold Listing Amounts",
+            label: "Sales (in $)",
             backgroundColor: "#1D3557",
             borderColor: "#1D3557",
             pointStyle: false,
-            data: this.metrics.newSalesAmounts.slice(-30),
+            data: this.metrics.newSalesAmounts,
           },
         ],
       };

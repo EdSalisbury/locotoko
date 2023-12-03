@@ -112,7 +112,6 @@ const markdownItems = async () => {
   await api.login();
 
   let markdowns = await getMarkdowns();
-
   const items = await api.getActiveItems();
 
   for (let item of items) {
@@ -187,6 +186,7 @@ const markdownItems = async () => {
         await api.createEbayMarkdown({
           percentage: pct.toString(),
           itemIds: [item.ebayListingId],
+          endDate: new Date(Date.now()).toISOString(),
         });
         markdowns = await getMarkdowns();
       }
