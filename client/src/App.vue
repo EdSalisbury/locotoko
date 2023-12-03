@@ -4,13 +4,19 @@
       <b-navbar-brand>LocoToko</b-navbar-brand>
       <b-navbar-nav>
         <b-nav-item to="/">Home</b-nav-item>
-        <b-nav-item to="/login">Login</b-nav-item>
+
         <b-nav-item to="/items">Items</b-nav-item>
+        <b-nav-item to="/orders">Orders</b-nav-item>
         <b-nav-item to="/owners">Owners</b-nav-item>
         <b-nav-item to="/templates">Templates</b-nav-item>
         <b-nav-item to="/acquisitions">Acquisitions</b-nav-item>
-        <b-nav-item to="/orders">Orders</b-nav-item>
-
+      </b-navbar-nav>
+      <b-navbar-nav v-if="this.$cookie.get('token')" class="ml-auto">
+        <b-nav-item>{{ this.$cookie.get("email") }}</b-nav-item>
+        <b-nav-item to="/logout">Logout</b-nav-item>
+      </b-navbar-nav>
+      <b-navbar-nav v-else class="ml-auto">
+        <b-nav-item to="/login">Login</b-nav-item>
         <b-nav-item to="/register">Register</b-nav-item>
       </b-navbar-nav>
     </b-navbar>

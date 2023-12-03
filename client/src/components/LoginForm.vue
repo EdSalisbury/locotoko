@@ -62,6 +62,9 @@ export default {
       this.$cookie.set("userId", data.id, {
         expires: "24h",
       });
+      this.$cookie.set("email", data.email, {
+        expires: "24h",
+      });
       this.$router.push({ path: "/" });
     },
   },
