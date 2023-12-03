@@ -1,11 +1,10 @@
 <template>
   <div id="app">
     <b-navbar type="dark" variant="success" toggleable="lg">
-      <b-navbar-brand>LocoToko</b-navbar-brand>
+      <b-navbar-brand href="/"><img :src="logo" width="52" height="35" /></b-navbar-brand>
       <b-navbar-toggle target="navbar-toggle-collapse"></b-navbar-toggle>
       <b-collapse id="navbar-toggle-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item to="/">Home</b-nav-item>
           <b-nav-item to="/items">Items</b-nav-item>
           <b-nav-item to="/orders">Orders</b-nav-item>
           <b-nav-item to="/owners">Owners</b-nav-item>
@@ -32,6 +31,9 @@ export default {
   computed: {
     isLoggedIn: function () {
       return this.$cookie.get("token");
+    },
+    logo: function () {
+      return `${process.env.BASE_URL}logo.png`;
     },
   },
 };
