@@ -53,7 +53,7 @@
           class="text-center"
           border-variant="primary"
         >
-          <b-card-text>${{ this.sold30Days }}</b-card-text>
+          <b-card-text>${{ Math.round(this.sold30Days).toLocaleString() }}</b-card-text>
         </b-card>
       </b-card-group>
     </div>
