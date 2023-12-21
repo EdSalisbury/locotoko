@@ -455,6 +455,21 @@ const updateSoldPrices = async () => {
   }
 };
 
+const updateLocations = async () => {
+  console.log("Updating locations... ");
+  await api.login();
+  const items = await api.getActiveItems();
+  for (const item of items) {
+    console.log(`Updating item ${item.id} with location ${item.location}`);
+    try {
+      const ebayItem = await api.getEbayListing(item.ebayListingId);
+      await api.updateEbayListing(item.id);
+    } catch (e) {
+      console.error("Unable to update location: " + e);
+    }
+  }
+};
+
 const main = async () => {
   console.log("Sleeping 1 minute to wait for the server to come up...");
   await sleep(1000 * 60);

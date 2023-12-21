@@ -51,6 +51,7 @@ export class EbayListingService {
       let request = {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
+          SKU: item.location,
           ConditionID: item.ebayConditionId,
           Description: {
             __cdata: item.description.replaceAll("\n", "<br />\n"),
@@ -181,6 +182,7 @@ export class EbayListingService {
         Item: {
           ItemID: item.ebayListingId,
           Title: item.title + "-" + item.id.slice(-4),
+          SKU: item.location,
           ConditionID: item.ebayConditionId,
           ItemSpecifics: this.getSpecificArray(item.specifics),
           Description: {
