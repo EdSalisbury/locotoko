@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.35.3",
+  "version": "0.35.4",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -57,7 +57,8 @@
     "qrcode": "^1.5.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
