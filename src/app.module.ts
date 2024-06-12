@@ -13,6 +13,7 @@ import { TemplateModule } from "./template/template.module";
 import { EbayListingModule } from "./ebay-listing/ebay-listing.module";
 import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
 import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
+import { EbaySpecificsModule } from "./ebay-specifics/ebay-specifics.module";
 import { EbaySellerEventModule } from "./ebay-seller-event/ebay-seller-event.module";
 import { ProductModule } from "./product/product.module";
 import { AcquisitionModule } from "./acquisition/acquisition.module";
@@ -41,6 +42,7 @@ import { InventoryModule } from './inventory/inventory.module';
     EbayListingModule,
     EbayCategoryModule,
     EbayConditionModule,
+    EbaySpecificsModule,
     EbaySellerEventModule,
     ProductModule,
     AcquisitionModule,
