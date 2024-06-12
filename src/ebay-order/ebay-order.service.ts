@@ -58,6 +58,12 @@ export class EbayOrderService {
   };
 
   async getEbayOrders(numberOfDays = 4) {
+    // console.log("Trying to refresh token");
+    // try {
+    //   console.log(await this.ebay.OAuth2.refreshToken());
+    // } catch (e) {
+    //   console.log(e);
+    // }
     let pageNumber = 1;
     let maxPages = 1;
     if (numberOfDays > 30) {
@@ -73,10 +79,16 @@ export class EbayOrderService {
 
     let orders = [];
 
+    try {
+      await this.ebay.OAuth2.refreshToken()
     const response = await this.ebay.trading.GetOrders(request);
+
+    
     orders.push(...response.OrderArray.Order);
     maxPages = response.PaginationResult.TotalNumberOfPages;
-
+  } catch(e) {
+    console.log("%o", e);
+  }
     if (maxPages > 1) {
       while (pageNumber < maxPages) {
         pageNumber++;

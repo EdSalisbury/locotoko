@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+
 import { PrismaService } from "../prisma/prisma.service";
 import { PtouchService } from "../ptouch/ptouch.service";
 import { ConfigService } from "@nestjs/config";
@@ -129,7 +130,6 @@ export class ItemService {
     items = items.filter(
       (item) => item.ebayListingId !== "" && !item.soldAt && !item.endedAt,
     );
-
     return items
       .map(this.titleMap)
       .map(this.weeksActiveMap)
@@ -160,7 +160,6 @@ export class ItemService {
     const items = await this.prisma.item.findMany({
       select: this.itemSelection,
     });
-
     return items
       .map(this.titleMap)
       .map(this.weeksActiveMap)
@@ -235,6 +234,7 @@ export class ItemService {
         throw new BadRequestException();
       }
     }
+
     try {
       const item = await this.prisma.item.create({
         data: {
