@@ -208,7 +208,7 @@ export default {
       } else if (parseInt(event) == 5) {
         this.form.shippingPrice = 19;
       } else if (parseInt(event) === 99) {
-        this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
+        this.form.shippingPrice = parseInt(5) + parseInt(this.form.weight.pounds) * 2;
       }
     },
     deleteImage(index) {
