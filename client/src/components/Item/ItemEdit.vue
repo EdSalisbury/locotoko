@@ -241,8 +241,20 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
-      this.form.specifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
-    },
+      const oldSpecifics = this.form.specifics;
+      const newSpecifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
+      const combined = [...oldSpecifics, ...newSpecifics];
+      const merged = combined.reduce((acc, obj) => {
+        acc[obj["key"]] = { ...acc[obj["key"]], ...obj};
+        return acc;
+      }, {});
+
+      this.form.specifics = [...Object.values(merged)].sort((a, b) => {
+        const aRequired = a.required ? 1 : 0;
+        const bRequired = b.required ? 1 : 0;
+        return bRequired - aRequired;  // Sort in descending order of required
+      });
+  },
     changeShippingType(event) {
       if (parseInt(event) === 1) {
         this.form.shippingPrice = 1;
