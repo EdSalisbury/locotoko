@@ -13,6 +13,6 @@ export class EbaySpecificsService {
     await this.ebay.OAuth2.refreshToken()
     const treeData = await this.ebay.commerce.taxonomy.getDefaultCategoryTreeId("EBAY_US");
     const data = await this.ebay.commerce.taxonomy.getItemAspectsForCategory(treeData.categoryTreeId, categoryId.toString());
-    return JSON.stringify(data);
+    return JSON.stringify(data.aspects);
   }
 }

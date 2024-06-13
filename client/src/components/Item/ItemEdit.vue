@@ -241,6 +241,7 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+      this.form.specifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
     },
     changeShippingType(event) {
       if (parseInt(event) === 1) {

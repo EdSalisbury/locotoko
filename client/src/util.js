@@ -49,6 +49,21 @@ const getEbayConditionOptions = async (token, categoryId) => {
   return newConditions;
 };
 
+const getEbaySpecifics = async (token, categoryId) => {
+  let ebaySpecifics = await api.getEbaySpecifics(token, categoryId);
+  if (!Array.isArray(ebaySpecifics)) {
+    ebaySpecifics = [ebaySpecifics];
+  }
+  let required = ebaySpecifics
+    .filter((item) => item.aspectConstraint.aspectRequired === true)
+    .map((item) => ({ key: item.localizedAspectName, required: true }));
+  let other = ebaySpecifics
+    .filter((item) => item.aspectConstraint.aspectRequired === false)
+    .map((item) => ({ key: item.localizedAspectName }));
+
+  return [...required, ...other];
+};
+
 const getShippingTypeOptions = () => {
   return [
     {
@@ -154,6 +169,7 @@ export default {
   getAcquisitionOptions,
   getEbayConditionOptions,
   getCategoryName,
+  getEbaySpecifics,
   toast,
   toastGood,
   toastBad,

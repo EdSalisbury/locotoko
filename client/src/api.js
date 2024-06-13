@@ -229,6 +229,11 @@ const getEbayConditions = async (token, categoryId) => {
   return await response.json();
 };
 
+const getEbaySpecifics = async (token, categoryId) => {
+  const response = await fetch(apiUrl("ebaySpecifics", categoryId), apiHeaders(token));
+  return await response.json();
+};
+
 const getAcquisitions = async (token) => {
   const response = await fetch(apiUrl("acquisitions"), apiHeaders(token));
 
@@ -302,6 +307,7 @@ export default {
   getOwner,
   updateOwner,
   getEbayCategories,
+  getEbaySpecifics,
   getTemplates,
   getTemplate,
   createTemplate,
