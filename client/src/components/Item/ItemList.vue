@@ -29,7 +29,7 @@
         class="pb-2"
         ref="itemTable"
       >
-        <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
+        <!-- <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template> -->
         <template v-slot:shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
         <template v-slot:totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
 
@@ -109,7 +109,7 @@ export default {
         },
         { name: "ebayCategoryName", title: "Category" },
         { name: "location", title: "Location", editable: true },
-        { name: "price", title: "Price" },
+        { name: "price", title: "Price", editable: true },
         { name: "shippingPrice", title: "Shipping" },
         { name: "markdownPct", title: "% off" },
         { name: "totalPrice", title: "Total" },
@@ -142,10 +142,40 @@ export default {
       const request = {
         [columnTitle]: newValue,
       };
-      await api.updateItem(this.token, item.id, request);
-
+      try {
+        await api.updateItem(this.token, item.id, request);
+        this.$toast.success("Edit Item Successful");
+      } catch (err) {
+        this.$toast.error("Edit Item Unsuccessful!</br>Reasons:</br>" + err.response, {
+          duration: 0,
+        });
+        console.error(err);
+      }
       if (item.ebayListingId) {
-        await api.updateEbayListing(this.token, item.id, { itemId: item.id });
+        try {
+          const response = await api.updateEbayListing(this.token, item.id, {
+            itemId: item.id,
+          });
+          console.log(response);
+          this.$toast.success("Edit eBay Listing Successful");
+        } catch (err) {
+          let messages = [];
+
+          if (!err.response.data.message) {
+            messages = [err.response.data.ShortMessage];
+          } else {
+            messages = err.response.data.message.map((msg) => {
+              return msg.ShortMessage;
+            });
+          }
+
+          const msgList = "<ul><li>" + messages.join("</li><li>") + "</ul></li>";
+
+          this.$toast.error("Edit eBay Listing Unsuccessful!</br>Reasons:</br>" + msgList, {
+            duration: 0,
+          });
+          console.error(err);
+        }
       }
     });
   },
@@ -154,7 +184,7 @@ export default {
       this.allItems = await api.getItems(this.token);
       this.allItems = this.allItems.map((item) => ({
         ...item,
-        price: parseFloat(item.price),
+        price: item.price.toFixed(2),
         shippingPrice: parseFloat(item.shippingPrice),
         totalPrice: parseFloat(item.totalPrice),
       }));
