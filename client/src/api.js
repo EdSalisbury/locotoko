@@ -103,6 +103,22 @@ const deleteItem = async (token, id) => {
   });
 };
 
+const endItem = async (token, id) => {
+  let item = await getItem(token, id);
+  const date = new Date();
+  item.endedAt = date.toISOString();
+
+  // Send updated item to the server
+  const response = await fetch(apiUrl("items", id), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(item), // Use the updated item object as the body
+  });
+
+  // Return the updated item or server response
+  return await response.json();
+};
+
 const getUsers = async (token) => {
   const response = await fetch(apiUrl("users"), {
     headers: {

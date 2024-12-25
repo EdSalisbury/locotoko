@@ -333,7 +333,7 @@ const fixEndedAt = async () => {
         console.log("Set endedAt to null");
         await api.updateItem(item.id, { endedAt: null });
       }
-    } catch {}
+    } catch { }
   }
   console.log("Done fixing endedAt");
 };
@@ -450,7 +450,7 @@ const updateSoldPrices = async () => {
             item.shippingPrice
           ).toFixed(2),
         });
-      } catch {}
+      } catch { }
     }
   }
 };

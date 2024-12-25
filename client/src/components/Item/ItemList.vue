@@ -73,12 +73,15 @@
                 <b-icon-printer-fill />
               </b-button>
               <b-button
-                v-if="data.value.status === 'ended' || data.value.status === 'draft'"
                 class="p-1"
-                variant="danger"
-                @click="deleteItem(data.value.id)"
+                :variant="'danger'"
+                @click="data.value.status === 'ended' || data.value.status === 'draft' 
+                        ? deleteItem(data.value.id) 
+                        : endItem(data.value.id)"
               >
-                <b-icon-trash-fill />
+                {{ data.value.status === 'ended' || data.value.status === 'draft' ? 'Delete' : 'End' }}
+              </b-button>
+              <b-icon-trash-fill />
               </b-button> </b-button-group
           ></b-button-toolbar>
         </template>
@@ -300,6 +303,19 @@ export default {
         this.allItems.splice(allIndex, 1);
       } catch (e) {
         this.$toast.error("Unable to delete item" + e.response);
+        console.error(e.response);
+      }
+    },
+    async endItem(id) {
+      try {
+        await api.endItem(this.token, id);
+        this.$toast.success("Ended item successfully");
+        const index = this.items.findIndex((item) => item.id === id);
+        this.items.splice(index, 1);
+        const allIndex = this.allItems.findIndex((item) => item.id === id);
+        this.allItems.splice(allIndex, 1);
+      } catch (e) {
+        this.$toast.error("Unable to end item" + e.response);
         console.error(e.response);
       }
     },
