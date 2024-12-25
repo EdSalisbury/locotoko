@@ -74,16 +74,16 @@
               </b-button>
               <b-button
                 class="p-1"
-                :variant="'danger'"
-                @click="data.value.status === 'ended' || data.value.status === 'draft' 
-                        ? deleteItem(data.value.id) 
-                        : endItem(data.value.id)"
+                  :variant="'danger'"
+                  @click="data.value.status === 'ended' || data.value.status === 'draft' 
+                  ? deleteItem(data.value.id) 
+                  : endItem(data.value.id)"
               >
                 {{ data.value.status === 'ended' || data.value.status === 'draft' ? 'Delete' : 'End' }}
-              </b-button>
-              <b-icon-trash-fill />
-              </b-button> </b-button-group
-          ></b-button-toolbar>
+                  <b-icon-trash-fill />
+                </b-button>
+              </b-button-group>
+            </b-button-toolbar>
         </template>
       </vue-bootstrap-table>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>

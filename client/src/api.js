@@ -317,6 +317,7 @@ export default {
   createItem,
   updateItem,
   deleteItem,
+  endItem,
   printItemLabel,
   getUsers,
   getOwners,
