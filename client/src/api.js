@@ -105,7 +105,8 @@ const deleteItem = async (token, id) => {
 
 const endItem = async (token, id) => {
   // Construct the URL with the end query parameter
-  return await fetch(apiUrl("items", id, "end=true"), {
+  const url = apiUrl("items", id) + "?end=true"
+  return await fetch(url, {
     method: "PATCH",
     ...apiHeaders(token),
   });
