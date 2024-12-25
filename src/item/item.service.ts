@@ -98,7 +98,7 @@ export class ItemService {
     private ptouch: PtouchService,
     private config: ConfigService,
     private cat: EbayCategoryService,
-  ) {}
+  ) { }
 
   async getCategories() {
     if (this.categories.length === 0) {
@@ -248,7 +248,7 @@ export class ItemService {
     }
   }
 
-  async editItemById(itemId: string, dto: EditItemDto) {
+  async editItemById(itemId: string, end: Boolean, dto: EditItemDto) {
     // get the Item by id
     const item = await this.prisma.item.findUnique({
       where: {
@@ -263,6 +263,17 @@ export class ItemService {
 
     // Fix blank image issue
     //dto.images = dto.images.filter((image) => image !== "");
+
+    if (end) {
+      return this.prisma.item.update({
+        where: {
+          id: itemId,
+        },
+        data: {
+          endedAt: new Date().toISOString()
+        },
+      });
+    }
 
     return this.prisma.item.update({
       where: {

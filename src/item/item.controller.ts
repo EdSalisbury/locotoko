@@ -19,7 +19,7 @@ import { CreateItemDto, EditItemDto } from "./dto";
 @UseGuards(JwtGuard)
 @Controller("Items")
 export class ItemController {
-  constructor(private itemService: ItemService) {}
+  constructor(private itemService: ItemService) { }
 
   @Get()
   getItems(
@@ -52,8 +52,11 @@ export class ItemController {
   }
 
   @Patch(":id")
-  editItemById(@Param("id") itemId: string, @Body() dto: EditItemDto) {
-    return this.itemService.editItemById(itemId, dto);
+  editItemById(
+    @Query("end") end: string = "false",
+    @Param("id") itemId: string,
+    @Body() dto: EditItemDto) {
+    return this.itemService.editItemById(itemId, end.toLowerCase() == "true", dto);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
