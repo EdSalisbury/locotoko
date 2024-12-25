@@ -307,6 +307,7 @@ export default {
     },
     async endItem(id) {
       try {
+        await itemUtils.endtItem(id, this);
         await api.endItem(this.token, id);
         this.$toast.success("Ended item successfully");
         const index = this.items.findIndex((item) => item.id === id);

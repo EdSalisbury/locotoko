@@ -103,9 +103,9 @@ const deleteItem = async (token, id) => {
   });
 };
 
-const endItem = async (token, id) => {
+const endEbayItem = async (token, id) => {
   // Construct the URL with the end query parameter
-  const url = apiUrl("items", id) + "?end=true"
+  const url = apiUrl("ebayListings", id) + "?end=true"
   return await fetch(url, {
     method: "PATCH",
     ...apiHeaders(token),
@@ -233,6 +233,11 @@ const updateEbayListing = async (token, id, request) => {
   return response.data;
 };
 
+const endEbayListing = async (token, request) => {
+  const response = await axios.patch(apiUrl("ebayListings", id, "?end=true"), request, apiHeaders(token));
+  return response.data;
+};
+
 const getEbayConditions = async (token, categoryId) => {
   const response = await fetch(apiUrl("ebayConditions", categoryId), apiHeaders(token));
   return await response.json();
@@ -330,6 +335,7 @@ export default {
   deleteAcquisition,
   createEbayListing,
   updateEbayListing,
+  endEbayListing,
   getEbayConditions,
   lookupProduct,
   getSoldItems,

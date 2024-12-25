@@ -26,6 +26,30 @@ const listItem = async (id, context) => {
   }
 };
 
+const endItem = async (id, context) => {
+  try {
+    await api.endEbayListing(context.token, { itemId: id });
+    context.$toast.success("End item listing Successful");
+  } catch (err) {
+    let messages = [];
+
+    if (!err.response.data.message) {
+      messages = [err.response.data.ShortMessage];
+    } else {
+      messages = err.response.data.message.map((msg) => {
+        return msg.ShortMessage;
+      });
+    }
+
+    const msgList = "<ul><li>" + messages.join("</li><li>") + "</ul></li>";
+
+    context.$toast.error("Item ending Unsuccessful!</br>Reasons:</br>" + msgList, { duration: 0 });
+    const request = {
+      ready: false,
+    };
+  }
+};
+
 const resizeImage = async (file) => {
   const maxSideSize = 1600;
 
@@ -70,6 +94,7 @@ const cropImage = async (file, ratio = 1.3333) => {
 
 export default {
   listItem,
+  endItem,
   resizeImage,
   cropImage,
 };
