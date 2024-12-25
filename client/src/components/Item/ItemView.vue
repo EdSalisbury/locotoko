@@ -111,6 +111,9 @@ export default {
   async created() {
     const itemId = this.$route.params.id;
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.item = [await api.getItem(this.token, itemId)];
   },
   methods: {

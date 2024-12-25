@@ -210,7 +210,9 @@ export default {
     const itemId = this.$route.params.id;
     const token = this.$cookie.get("token");
     this.token = token;
-
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
     this.shippingTypeOptions = util.getShippingTypeOptions();
@@ -239,7 +241,20 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
-    },
+      const oldSpecifics = this.form.specifics;
+      const newSpecifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
+      const combined = [...oldSpecifics, ...newSpecifics];
+      const merged = combined.reduce((acc, obj) => {
+        acc[obj["key"]] = { ...acc[obj["key"]], ...obj};
+        return acc;
+      }, {});
+
+      this.form.specifics = [...Object.values(merged)].sort((a, b) => {
+        const aRequired = a.required ? 1 : 0;
+        const bRequired = b.required ? 1 : 0;
+        return bRequired - aRequired;  // Sort in descending order of required
+      });
+  },
     changeShippingType(event) {
       if (parseInt(event) === 1) {
         this.form.shippingPrice = 1;
@@ -252,7 +267,7 @@ export default {
       } else if (parseInt(event) == 5) {
         this.form.shippingPrice = 19;
       } else if (parseInt(event) === 99) {
-        this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
+        this.form.shippingPrice = parseInt(5) + parseInt(this.form.weight.pounds) * 2;
       }
     },
     deleteImage(index) {

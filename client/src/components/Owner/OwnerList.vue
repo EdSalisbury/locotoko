@@ -39,6 +39,9 @@ export default {
   },
   async created() {
     const token = this.$cookie.get("token");
+    if (!token) {
+      this.$router.push({ path: "/login" });
+    }
     this.owners = await api.getOwners(token);
   },
   methods: {

@@ -53,7 +53,7 @@
           class="text-center"
           border-variant="primary"
         >
-          <b-card-text>${{ this.sold30Days }}</b-card-text>
+          <b-card-text>${{ Math.round(this.sold30Days).toLocaleString() }}</b-card-text>
         </b-card>
       </b-card-group>
     </div>
@@ -88,40 +88,6 @@
           border-variant="primary"
         >
           <LineChart v-if="loaded" :data="newDrafts" />
-        </b-card>
-      </b-card-group>
-    </div>
-    <div class="p-4">
-      <b-card-group deck>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New eBay Listing Amounts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newListingAmounts" />
-        </b-card>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New Sales Amounts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newSalesAmounts" />
-        </b-card>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New Draft Amounts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newDraftAmounts" />
         </b-card>
       </b-card-group>
     </div>
@@ -169,12 +135,18 @@ export default {
       newDraftAmounts: {
         datasets: [],
       },
+      salesByMonth: {
+        datasets: [],
+      },
     };
   },
   async created() {
     this.loaded = false;
     try {
       this.token = this.$cookie.get("token");
+      if (!this.token) {
+        this.$router.push({ path: "/login" });
+      }
       this.metrics = await api.getMetrics(this.token);
       for (let metric of this.metrics.newSalesAmounts.slice(-30)) {
         this.sold30Days += metric.y;
@@ -221,28 +193,6 @@ export default {
             borderColor: "#457B9D",
             pointStyle: false,
             data: this.metrics.newEbayListingAmounts.slice(-30),
-          },
-        ],
-      };
-      this.newSalesAmounts = {
-        datasets: [
-          {
-            label: "Sold Listing Amounts",
-            backgroundColor: "#1D3557",
-            borderColor: "#1D3557",
-            pointStyle: false,
-            data: this.metrics.newSalesAmounts.slice(-30),
-          },
-        ],
-      };
-      this.newDraftAmounts = {
-        datasets: [
-          {
-            label: "New Draft Amounts",
-            backgroundColor: "#f33",
-            borderColor: "#f33",
-            pointStyle: false,
-            data: this.metrics.newDraftAmounts.slice(-30),
           },
         ],
       };

@@ -112,7 +112,6 @@ const markdownItems = async () => {
   await api.login();
 
   let markdowns = await getMarkdowns();
-
   const items = await api.getActiveItems();
 
   for (let item of items) {
@@ -187,6 +186,7 @@ const markdownItems = async () => {
         await api.createEbayMarkdown({
           percentage: pct.toString(),
           itemIds: [item.ebayListingId],
+          endDate: new Date(Date.now()).toISOString(),
         });
         markdowns = await getMarkdowns();
       }
@@ -451,6 +451,21 @@ const updateSoldPrices = async () => {
           ).toFixed(2),
         });
       } catch {}
+    }
+  }
+};
+
+const updateLocations = async () => {
+  console.log("Updating locations... ");
+  await api.login();
+  const items = await api.getActiveItems();
+  for (const item of items) {
+    console.log(`Updating item ${item.id} with location ${item.location}`);
+    try {
+      const ebayItem = await api.getEbayListing(item.ebayListingId);
+      await api.updateEbayListing(item.id);
+    } catch (e) {
+      console.error("Unable to update location: " + e);
     }
   }
 };

@@ -5,7 +5,7 @@ import { urlencoded, json } from "express";
 import { ExpressAdapter } from "@nestjs/platform-express";
 import * as http from "http";
 import * as https from "https";
-import * as express from "express";
+import express from "express";
 
 async function bootstrap() {
   if (process.env.USE_SSL === "true") {

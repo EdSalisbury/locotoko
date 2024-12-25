@@ -78,6 +78,9 @@ export default {
   async created() {
     const templateId = this.$route.params.id;
     const token = this.$cookie.get("token");
+    if (!token) {
+      this.$router.push({ path: "/login" });
+    }
     this.template = [await api.getTemplate(token, templateId)];
   },
 };

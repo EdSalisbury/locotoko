@@ -24,5 +24,5 @@ export class MetricController {
   getMetrics() {
     return this.metricService.getMetrics();
   }
-
 }
+

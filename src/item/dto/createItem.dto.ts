@@ -32,7 +32,6 @@ export class CreateItemDto {
   @IsOptional()
   quantitySold: number;
 
-  @IsCurrency()
   @IsOptional()
   price: number;
 

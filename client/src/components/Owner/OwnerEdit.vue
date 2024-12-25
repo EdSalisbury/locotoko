@@ -36,8 +36,10 @@ export default {
     };
   },
   async created() {
-    console.log("WTF");
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     const ownerId = this.$route.params.id;
     console.log(ownerId);
     this.form = await api.getOwner(this.token, ownerId);

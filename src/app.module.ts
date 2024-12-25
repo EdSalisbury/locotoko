@@ -13,6 +13,7 @@ import { TemplateModule } from "./template/template.module";
 import { EbayListingModule } from "./ebay-listing/ebay-listing.module";
 import { EbayCategoryModule } from "./ebay-category/ebay-category.module";
 import { EbayConditionModule } from "./ebay-condition/ebay-condition.module";
+import { EbaySpecificsModule } from "./ebay-specifics/ebay-specifics.module";
 import { EbaySellerEventModule } from "./ebay-seller-event/ebay-seller-event.module";
 import { ProductModule } from "./product/product.module";
 import { AcquisitionModule } from "./acquisition/acquisition.module";
@@ -22,6 +23,8 @@ import { EbayOrderModule } from "./ebay-order/ebay-order.module";
 import { PickModule } from './pick/pick.module';
 import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
 import { MetricModule } from './metric/metric.module';
+import { InventoryModule } from './inventory/inventory.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,6 +42,7 @@ import { MetricModule } from './metric/metric.module';
     EbayListingModule,
     EbayCategoryModule,
     EbayConditionModule,
+    EbaySpecificsModule,
     EbaySellerEventModule,
     ProductModule,
     AcquisitionModule,
@@ -48,6 +52,7 @@ import { MetricModule } from './metric/metric.module';
     PickModule,
     EbayMarkdownModule,
     MetricModule,
+    InventoryModule,
   ],
 })
 export class AppModule {}

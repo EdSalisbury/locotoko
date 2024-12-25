@@ -181,6 +181,9 @@ export default {
   async created() {
     const token = this.$cookie.get("token");
     this.token = this.$cookie.get("token");
+    if (!this.token) {
+      this.$router.push({ path: "/login" });
+    }
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
     this.shippingTypeOptions = util.getShippingTypeOptions();
@@ -191,6 +194,7 @@ export default {
   methods: {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
+      this.form.specifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
     },
     changeShippingType(event) {
       if (parseInt(event) === 1) {
@@ -204,7 +208,7 @@ export default {
       } else if (parseInt(event) == 5) {
         this.form.shippingPrice = 19;
       } else if (parseInt(event) === 99) {
-        this.form.shippingPrice = parseInt(11) + parseInt(this.form.weight.pounds);
+        this.form.shippingPrice = parseInt(5) + parseInt(this.form.weight.pounds) * 2;
       }
     },
     deleteImage(index) {
@@ -250,6 +254,7 @@ export default {
         this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
         this.form.specifics = JSON.parse(this.template.specifics) || [];
 
+        console.log(JSON.parse(this.template.specifics));
         this.form.weight.pounds = this.template.shipWeightPounds || 0;
         this.form.weight.ounces = this.template.shipWeightOunces || 0;
         this.form.size.width = this.template.shipSizeWidthInches || 0;
