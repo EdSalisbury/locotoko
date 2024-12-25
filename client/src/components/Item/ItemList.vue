@@ -79,7 +79,6 @@
                   ? deleteItem(data.value.id) 
                   : endItem(data.value.id)"
               >
-                {{ data.value.status === 'ended' || data.value.status === 'draft' ? 'Delete' : 'End' }}
                   <b-icon-trash-fill />
                 </b-button>
               </b-button-group>
