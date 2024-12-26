@@ -19,7 +19,7 @@ export class EbayListingService {
     private prisma: PrismaService,
     private ebay: EbayService,
     private config: ConfigService,
-  ) {}
+  ) { }
 
   async createEbayListing(dto: CreateEbayListingDto) {
     // Get the item

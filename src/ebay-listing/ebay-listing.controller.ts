@@ -16,7 +16,7 @@ import { CreateEbayListingDto, UpdateEbayListingDto } from "./dto";
 @UseGuards(JwtGuard)
 @Controller("ebayListings")
 export class EbayListingController {
-  constructor(private ebayListingService: EbayListingService) {}
+  constructor(private ebayListingService: EbayListingService) { }
 
   @Post("")
   createEbayListing(@Body() dto: CreateEbayListingDto) {
