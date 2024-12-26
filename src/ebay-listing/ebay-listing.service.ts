@@ -166,12 +166,15 @@ export class EbayListingService {
     }
 
     if (end) {
-      const response = await this.ebay.trading.EndFixedPriceItem({
-        itemID: item.ebayListingId,
-        endingReason: "NotAvailable",
-      });
-      this.logger.log(`trading.EndFixedPriceItem(${item.ebayListingId}) response: ${JSON.stringify(response)}`);
-
+      try {
+        const response = await this.ebay.trading.EndFixedPriceItem({
+          itemID: item.ebayListingId,
+          endingReason: "NotAvailable",
+        });
+        this.logger.log(`trading.EndFixedPriceItem(${item.ebayListingId}) response: ${JSON.stringify(response)}`);
+      } catch (e) {
+        this.logger.warn(e);
+      }
       item.endedAt = new Date();
     }
 
