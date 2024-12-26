@@ -154,7 +154,6 @@ export class EbayListingService {
 
   async updateEbayListing(end: Boolean, dto: UpdateEbayListingDto) {
     // Get the item
-    this.logger.warn('This is a warning message');
     const item = await this.prisma.item.findUnique({
       where: {
         id: dto.itemId,
@@ -167,10 +166,13 @@ export class EbayListingService {
     }
 
     if (end) {
-      return await this.ebay.trading.EndFixedPriceItem({
+      const response = await this.ebay.trading.EndFixedPriceItem({
         itemID: item.ebayListingId,
         endingReason: "NotAvailable",
       });
+      this.logger.log(`trading.EndFixedPriceItem(${item.ebayListingId}) response: ${JSON.stringify(response)}`);
+
+      item.endedAt = new Date().toISOString();
     }
 
     try {
