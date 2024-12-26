@@ -26,9 +26,9 @@ const listItem = async (id, context) => {
   }
 };
 
-const endItem = async (id, context) => {
+const endItem = async (id, context, request) => {
   try {
-    await api.endEbayListing(context.token, id);
+    await api.endEbayListing(context.token, id, request);
     context.$toast.success("End item listing Successful");
   } catch (err) {
     let messages = [];
