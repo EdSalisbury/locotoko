@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
@@ -19,6 +20,7 @@ export class EbayListingService {
     private prisma: PrismaService,
     private ebay: EbayService,
     private config: ConfigService,
+    private readonly logger = new Logger()
   ) { }
 
   async createEbayListing(dto: CreateEbayListingDto) {
