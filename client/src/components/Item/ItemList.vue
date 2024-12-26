@@ -307,7 +307,7 @@ export default {
     },
     async endItem(id) {
       try {
-        await itemUtils.endtItem(id, this);
+        await itemUtils.endItem(id, this);
         await api.endItem(this.token, id);
         this.$toast.success("Ended item successfully");
         const index = this.items.findIndex((item) => item.id === id);
@@ -315,7 +315,7 @@ export default {
         const allIndex = this.allItems.findIndex((item) => item.id === id);
         this.allItems.splice(allIndex, 1);
       } catch (e) {
-        this.$toast.error("Unable to end item" + e.response);
+        this.$toast.error("Unable to end item: " + e.response);
         console.error(e.response);
       }
     },
