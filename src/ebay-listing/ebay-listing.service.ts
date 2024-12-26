@@ -16,11 +16,13 @@ import {
 
 @Injectable()
 export class EbayListingService {
+
+  private readonly logger = new Logger();
+
   constructor(
     private prisma: PrismaService,
     private ebay: EbayService,
     private config: ConfigService,
-    private readonly logger = new Logger()
   ) { }
 
   async createEbayListing(dto: CreateEbayListingDto) {
