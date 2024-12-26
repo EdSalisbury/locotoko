@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, Logger, OnModuleInit, OnApplicationBootstrap } from "@nestjs/common";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -55,4 +55,14 @@ import { InventoryModule } from './inventory/inventory.module';
     InventoryModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit, OnApplicationBootstrap {
+  private readonly logger = new Logger(AppModule.name);
+
+  onModuleInit() {
+    this.logger.log('AppModule has been initialized.');
+  }
+
+  onApplicationBootstrap() {
+    this.logger.log('Application has successfully bootstrapped.');
+  }
+}

@@ -150,6 +150,7 @@ export class EbayListingService {
 
   async updateEbayListing(end: Boolean, dto: UpdateEbayListingDto) {
     // Get the item
+    this.logger.warn('This is a warning message');
     const item = await this.prisma.item.findUnique({
       where: {
         id: dto.itemId,
