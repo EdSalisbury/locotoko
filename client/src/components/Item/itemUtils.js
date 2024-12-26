@@ -44,9 +44,6 @@ const endItem = async (id, context) => {
     const msgList = "<ul><li>" + messages.join("</li><li>") + "</ul></li>";
 
     context.$toast.error("Item ending Unsuccessful!</br>Reasons:</br>" + msgList, { duration: 0 });
-    const request = {
-      ready: false,
-    };
   }
 };
 

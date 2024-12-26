@@ -233,7 +233,7 @@ const updateEbayListing = async (token, id, request) => {
   return response.data;
 };
 
-const endEbayListing = async (token, request) => {
+const endEbayListing = async (token, id, request) => {
   const response = await axios.patch(apiUrl("ebayListings", id, "?end=true"), request, apiHeaders(token));
   return response.data;
 };
@@ -315,7 +315,7 @@ export default {
   createItem,
   updateItem,
   deleteItem,
-  endItem,
+  endEbayItem,
   printItemLabel,
   getUsers,
   getOwners,
