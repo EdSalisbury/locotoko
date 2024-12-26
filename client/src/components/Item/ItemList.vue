@@ -307,6 +307,7 @@ export default {
     },
     async endItem(id) {
       try {
+        const item = await api.getItem(this.token, id);
         await itemUtils.endItem(item.ebayListingId, this);
         await api.endItem(this.token, id);
         this.$toast.success("Ended item successfully");
