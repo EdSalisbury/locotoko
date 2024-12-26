@@ -175,7 +175,14 @@ export class EbayListingService {
       } catch (e) {
         this.logger.warn(e);
       }
-      item.endedAt = new Date();
+      return this.prisma.item.update({
+        where: {
+          id: dto.itemId,
+        },
+        data: {
+          endedAt: new Date()
+        },
+      });
     }
 
     try {
