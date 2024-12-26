@@ -172,7 +172,7 @@ export class EbayListingService {
       });
       this.logger.log(`trading.EndFixedPriceItem(${item.ebayListingId}) response: ${JSON.stringify(response)}`);
 
-      item.endedAt = new Date().toISOString();
+      item.endedAt = new Date();
     }
 
     try {
