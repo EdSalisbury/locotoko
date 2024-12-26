@@ -234,7 +234,7 @@ const updateEbayListing = async (token, id, request) => {
 };
 
 const endEbayListing = async (token, id) => {
-  const response = await axios.patch(apiUrl("ebayListings", id, "?end=true"), {}, apiHeaders(token));
+  const response = await axios.patch(apiUrl("ebayListings", id) + "?end=true", {}, apiHeaders(token));
   return response.data;
 };
 
