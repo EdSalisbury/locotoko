@@ -20,6 +20,7 @@ export class ItemService {
     ebayCategoryId: true,
     ebayListingId: true,
     ownerId: true,
+    owner: true,
     listingUserId: true,
     acquisitionId: true,
     location: true,
