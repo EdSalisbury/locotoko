@@ -14,21 +14,10 @@
           <b-button variant="primary" @click="showEnded">Show Ended</b-button>
         </b-button-group>
       </b-button-toolbar>
-      <vue-bootstrap-table
-        :columns="columns"
-        :values="items"
-        :show-filter="true"
-        :show-column-picker="false"
-        :sortable="true"
-        :paginated="true"
-        :selectable="false"
-        :multi-column-sortable="false"
-        default-order-column="updatedAt"
-        :default-order-direction="false"
-        :filter-case-sensitive="false"
-        class="pb-2"
-        ref="itemTable"
-      >
+      <vue-bootstrap-table :columns="columns" :values="items" :show-filter="true" :show-column-picker="false"
+        :sortable="true" :paginated="true" :selectable="false" :multi-column-sortable="false"
+        default-order-column="updatedAt" :default-order-direction="false" :filter-case-sensitive="false" class="pb-2"
+        ref="itemTable">
         <!-- <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template> -->
         <template v-slot:shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
         <template v-slot:totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
@@ -41,14 +30,8 @@
         <template v-slot:actions="data">
           <b-button-toolbar>
             <b-button-group class="mx-1" v-if="data.value.status === 'draft'">
-              <input
-                type="checkbox"
-                v-model="data.value.ready"
-                style="height: 34px; width: 34px"
-                class="p-1"
-                @change="ready(data.value.id, data.value.ready)"
-              /> </b-button-group
-            ><b-button-group class="mx-1">
+              <input type="checkbox" v-model="data.value.ready" style="height: 34px; width: 34px" class="p-1"
+                @change="ready(data.value.id, data.value.ready)" /> </b-button-group><b-button-group class="mx-1">
               <router-link :to="'/viewItem/' + data.value.id">
                 <b-button class="p-1" variant="primary">
                   <b-icon-eye-fill />
@@ -62,8 +45,7 @@
               </router-link>
 
               <b-button v-if="!data.value.ebayListingId" class="p-1" variant="primary" @click="listItem(data.value.id)">
-                eBay</b-button
-              >
+                eBay</b-button>
 
               <b-button class="p-1" variant="success" @click="duplicateItem(data.value.id)">
                 <b-icon-file-earmark-plus-fill />
@@ -72,17 +54,13 @@
               <b-button class="p-1" variant="primary" @click="printItemLabel(data.value.id)">
                 <b-icon-printer-fill />
               </b-button>
-              <b-button
-                class="p-1"
-                  :variant="'danger'"
-                  @click="data.value.status === 'ended' || data.value.status === 'draft' 
-                  ? deleteItem(data.value.id) 
-                  : endItem(data.value.id)"
-              >
-                  <b-icon-trash-fill />
-                </b-button>
-              </b-button-group>
-            </b-button-toolbar>
+              <b-button class="p-1" :variant="'danger'" @click="data.value.status === 'ended' || data.value.status === 'draft'
+                ? deleteItem(data.value.id)
+                : endItem(data.value.id)">
+                <b-icon-trash-fill />
+              </b-button>
+            </b-button-group>
+          </b-button-toolbar>
         </template>
       </vue-bootstrap-table>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
@@ -124,6 +102,10 @@ export default {
         {
           name: "weeksActive",
           title: "Weeks",
+        },
+        {
+          name: "owner",
+          title: "Owner",
         },
         {
           name: "updatedAt",
