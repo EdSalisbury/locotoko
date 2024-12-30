@@ -104,7 +104,7 @@ export default {
           title: "Weeks",
         },
         {
-          name: "owner.name",
+          name: "owner",
           title: "Owner",
         },
         {

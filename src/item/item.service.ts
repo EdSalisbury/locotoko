@@ -44,6 +44,11 @@ export class ItemService {
 
   categories = [];
 
+  ownerMap = (item) => ({
+    ...item,
+    owner: item.owner.name,
+  });
+
   categoryMap = (item) => ({
     ...item,
     ebayCategoryName: decodeSpecialChars(
@@ -119,7 +124,8 @@ export class ItemService {
       .map(this.totalPriceMap)
       .map(this.categoryMap)
       .map(this.locationMap)
-      .map(this.statusMap);
+      .map(this.statusMap)
+      .map(this.ownerMap);
   }
 
   async getActiveItems() {
@@ -137,7 +143,8 @@ export class ItemService {
       .map(this.totalPriceMap)
       .map(this.categoryMap)
       .map(this.locationMap)
-      .map(this.statusMap);
+      .map(this.statusMap)
+      .map(this.ownerMap);
   }
 
   async getDraftItems() {
@@ -153,7 +160,8 @@ export class ItemService {
       .map(this.totalPriceMap)
       .map(this.categoryMap)
       .map(this.locationMap)
-      .map(this.statusMap);
+      .map(this.statusMap)
+      .map(this.ownerMap);
   }
 
   async getItems() {
@@ -167,7 +175,8 @@ export class ItemService {
       .map(this.totalPriceMap)
       .map(this.categoryMap)
       .map(this.locationMap)
-      .map(this.statusMap);
+      .map(this.statusMap)
+      .map(this.ownerMap);
   }
 
   async getItemById(itemId: string) {
@@ -183,7 +192,8 @@ export class ItemService {
         .map(this.totalPriceMap)
         .map(this.categoryMap)
         .map(this.locationMap)
-        .map(this.statusMap);
+        .map(this.statusMap)
+        .map(this.ownerMap);
       return mappedItems[0];
     } catch {
       throw new NotFoundException();
