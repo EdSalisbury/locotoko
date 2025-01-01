@@ -192,8 +192,7 @@ export class ItemService {
         .map(this.totalPriceMap)
         .map(this.categoryMap)
         .map(this.locationMap)
-        .map(this.statusMap)
-        .map(this.ownerMap);
+        .map(this.statusMap);
       return mappedItems[0];
     } catch {
       throw new NotFoundException();
