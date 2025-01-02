@@ -126,6 +126,15 @@ const getOwner = async (token, id) => {
   return await response.json();
 };
 
+const createOwner = async (token, payload) => {
+  const response = await fetch(apiUrl("owners"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(payload),
+  });
+  return await response.json();
+};
+
 const getOwners = async (token) => {
   const response = await fetch(apiUrl("owners"), apiHeaders(token));
   return await response.json();
@@ -320,6 +329,7 @@ export default {
   getUsers,
   getOwners,
   getOwner,
+  createOwner,
   updateOwner,
   getEbayCategories,
   getEbaySpecifics,

@@ -44,19 +44,8 @@ export default {
       event.preventDefault();
 
       const payload = JSON.parse(JSON.stringify(this.form));
-
       payload.rate = parseFloat(payload.rate);
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/owners";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-        body: JSON.stringify(payload),
-      });
-      await response.json();
-
+      await api.createOwner(payload);
       this.$router.push({ path: "/owners" });
     },
   },
