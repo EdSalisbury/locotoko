@@ -46,7 +46,7 @@ export default {
 
       const payload = JSON.parse(JSON.stringify(this.form));
       payload.rate = parseFloat(payload.rate);
-      await api.createOwner(payload);
+      await api.createOwner(this.token, payload);
       this.$router.push({ path: "/owners" });
     },
   },
