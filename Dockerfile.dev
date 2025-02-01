@@ -1,0 +1,63 @@
+# Start from the official Node.js image
+FROM node:18
+
+# Install necessary tools and utilities
+RUN apt-get update && apt-get install -y \
+    zsh \
+    git \
+    curl \
+    wget \
+    fonts-powerline \
+    locales \
+    vim \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Generate and configure the en_US.UTF-8 locale
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+RUN locale-gen en_US.UTF-8 && \
+    echo "LANG=en_US.UTF-8" > /etc/default/locale && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
+
+# Install Oh My Zsh and your custom shell
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
+
+# Install powerlevel10k theme for Oh My Zsh
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# Set Zsh as the default shell
+RUN chsh -s $(which zsh)
+
+# Copy custom configurations
+COPY config/.zshrc /root/.zshrc
+COPY config/.p10k.zsh /root/.p10k.zsh
+
+# Ensure the copied files are owned by the root user
+RUN chown root:root /root/.zshrc /root/.p10k.zsh
+
+# Install Node.js global tools (if needed)
+RUN npm install -g nodemon eslint prettier
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Create the symlink for node_modules
+RUN ln -s /node_modules /usr/src/app/node_modules
+
+# Copy only package.json and yarn.lock first for dependency installation
+COPY package.json yarn.lock ./
+
+# Install dependencies using Yarn (add --check-files so that it doesn't complain about the existing node_modules directory)
+# RUN yarn install --check-files
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the development port
+EXPOSE 3000
+
+# Keep the container running
+CMD ["tail", "-f", "/dev/null"]

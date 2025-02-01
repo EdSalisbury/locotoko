@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { EbayService } from "../ebay/ebay.service";
 import { PrismaService } from "../prisma/prisma.service";
-import { decodeSpecialCharsInObject } from "src/util";
+import { decodeSpecialCharsInObject } from "../util";
 @Injectable()
 export class EbayOrderService {
-  constructor(private ebay: EbayService, private prisma: PrismaService) {}
+  constructor(private ebay: EbayService, private prisma: PrismaService) { }
 
   transactionMap = (transaction) => ({
     title: transaction.Item.Title,
@@ -81,14 +81,14 @@ export class EbayOrderService {
 
     try {
       await this.ebay.OAuth2.refreshToken()
-    const response = await this.ebay.trading.GetOrders(request);
+      const response = await this.ebay.trading.GetOrders(request);
 
-    
-    orders.push(...response.OrderArray.Order);
-    maxPages = response.PaginationResult.TotalNumberOfPages;
-  } catch(e) {
-    console.log("%o", e);
-  }
+
+      orders.push(...response.OrderArray.Order);
+      maxPages = response.PaginationResult.TotalNumberOfPages;
+    } catch (e) {
+      console.log("%o", e);
+    }
     if (maxPages > 1) {
       while (pageNumber < maxPages) {
         pageNumber++;

@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthDto, LoginDto } from "./dto";
 import * as argon from "argon2";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import { Prisma } from '@prisma/client';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 
@@ -12,7 +12,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
-  ) {}
+  ) { }
 
   async login(dto: LoginDto) {
     // find the user by email
@@ -38,6 +38,12 @@ export class AuthService {
   }
 
   async register(dto: AuthDto) {
+    // Disallow registration in production
+    const env = this.config.get('NODE_ENV');
+    if (env === "production") {
+      throw new ForbiddenException("Registration not allowed at this time");
+    }
+
     // Generate the password hash
     const hash = await argon.hash(dto.password);
 
@@ -54,7 +60,7 @@ export class AuthService {
       // send back the token for the user
       return this.signToken(user.id, user.email);
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === "P2002") {
           throw new ForbiddenException("Email address already in use");
         }

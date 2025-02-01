@@ -1,0 +1,10 @@
+sync:
+  defaults:
+    mode: "one-way-safe"  # Ensures only local changes are pushed to container
+    ignore:
+      vcs: true  # Ignore .git directories
+      paths:
+        - "node_modules"  # Prevents syncing dependencies (Docker handles this)
+  locotoko-sync:
+    alpha: "D:/dev/locotoko"  # Use Windows-compatible path
+    beta: "docker://locotoko-dev/usr/src/app"  # Sync to running container

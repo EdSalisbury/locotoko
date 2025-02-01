@@ -4,13 +4,11 @@ import { AuthDto, LoginDto } from "./dto";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post("register")
   register(@Body() dto: AuthDto) {
-    // Disabling for now
-    //return this.authService.register(dto);
-    return { error: "Registration not allowed at this time" };
+    return this.authService.register(dto);
   }
 
   @HttpCode(HttpStatus.OK)

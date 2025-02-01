@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   dev-db:
     image: postgres:13
@@ -38,10 +37,30 @@ services:
     image: edsalisbury/locotoko:latest
     ports:
       - 80:3333
+    environment:
+      NODE_ENV: production
     networks:
       - locotoko
     env_file: .env.prod
-
+  # Development container
+  locotoko-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: locotoko-dev             # Use your custom dev image
+    container_name: locotoko-dev
+    working_dir: /usr/src/app
+    command: tail -f /dev/null      # Keep the container running idle
+    volumes:
+      - locotoko-code:/usr/src/app       # Persistent volume for code
+      - locotoko-node_modules:/node_modules   # Separate volume for node_modules
+    ports:
+      - "3333:3333"
+      - "8080:8080"
+    environment:
+      NODE_ENV: development
+    networks:
+      - locotoko
   ebay:
     image: edsalisbury/locotoko:latest
     working_dir: /app/ebay
@@ -49,3 +68,7 @@ services:
     env_file: .env.prod
 networks:
   locotoko:
+
+volumes:
+  locotoko-code:         # Persistent volume for syncing code
+  locotoko-node_modules:

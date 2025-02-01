@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { EbayService } from "src/ebay/ebay.service";
+import { EbayService } from "../ebay/ebay.service";
 
 @Injectable()
 export class EbayItemTransactionService {
-  constructor(private ebay: EbayService, private config: ConfigService) {}
+  constructor(private ebay: EbayService, private config: ConfigService) { }
 
   async getItemTransactions(itemId: string) {
     if (itemId === "") {
