@@ -31,6 +31,17 @@
 
         <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
         <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
+        <b-container fluid class="section">
+          <b-row>
+            <b-col cols="11">
+              <h1>Prompt</h1>
+              <b-form-textarea v-model="form.prompt" rows="2" max-rows="10" />
+            </b-col>
+            <b-col>
+              <b-button @click="generatePrompt" variant="primary" style="margin-top: 10px">Generate</b-button>
+            </b-col>
+          </b-row>
+        </b-container>
         <TextInput
           label="Title"
           v-model="form.title"
@@ -202,6 +213,7 @@ export default {
         },
         images: [],
         specifics: [],
+        prompt: "",
       },
     };
   },
@@ -239,6 +251,34 @@ export default {
     this.$set(this.form.images, newImages);
   },
   methods: {
+async generatePrompt() {
+      try {
+        const payload = {
+          prompt: this.form.prompt,
+        };
+
+          // 🔥 Ensure specifics is an array of { key, value }
+        payload.specifics = this.form.specifics.map(specific => ({
+          key: specific.key,
+          value: specific.value,
+        }));
+
+        // Call the API (modify endpoint accordingly)
+        const response = await api.generateListing(this.token, payload);
+
+        // Update form values with the response
+        if (response) {
+          this.form.title = response.title || this.form.title;
+          this.form.description = response.description || this.form.description;
+          this.form.specifics = response.specifics || this.form.specifics;
+        }
+
+        this.$toast.success("Generated listing successfully!");
+      } catch (error) {
+        this.$toast.error("Failed to generate listing: " + (error.response?.data?.message || error.message));
+        console.error(error);
+      }
+    },
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
       const oldSpecifics = this.form.specifics;
