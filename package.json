@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.41.2",
+  "version": "0.41.3",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -20,7 +20,7 @@
     "db:restart:test": "dotenv -e .env.test -- yarn db:stop:test && yarn db:start:test",
     "db:dev:import": "scp 192.168.1.42:/mnt/data01/backups/locotoko/latest.tgz /tmp && mkdir -p /tmp/sql && tar zxvf /tmp/latest.tgz -C /tmp/sql && docker exec -i locotoko-dev-db-1 psql -U postgres locotoko < `ls -1 /tmp/sql/mnt/data01/backups/locotoko/*.sql`",
     "prebuild": "rimraf dist",
-    "deploy:prod": "yarn version && VERSION=$(grep '\"version\"' package.json | awk -F \\\" '{print $4}') && cd client && yarn version --no-git-tag-version --new-version $VERSION && cd .. && git add client/package.json && git commit -m 'Updated version to $VERSION' && git tag $VERSION && git push origin && git push origin $VERSION && docker build -t edsalisbury/locotoko:$VERSION . && docker tag edsalisbury/locotoko:$VERSION edsalisbury/locotoko:latest && docker push edsalisbury/locotoko:$VERSION && docker push edsalisbury/locotoko:latest && ssh 192.168.1.42 /home/ed/locotoko/restart.sh",
+    "deploy:prod": "zsh deploy.sh",
     "build:prod": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
