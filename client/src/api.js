@@ -318,6 +318,15 @@ const getMetrics = async (token) => {
   return await response.json();
 }
 
+const generateListing = async (token, payload) => {
+  const response = await fetch(apiUrl("openai"), {
+    method: "POST",
+    ...apiHeaders(token),
+    body: JSON.stringify(payload),
+  });
+  return await response.json();
+}
+
 export default {
   login,
   getItem,
@@ -356,4 +365,5 @@ export default {
   getPicks,
   getItems,
   getMetrics,
+  generateListing,
 };

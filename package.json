@@ -58,6 +58,7 @@
     "ebay-api": "8",
     "ipp": "^2.0.1",
     "node-ptouch": "^0.0.4",
+    "openai": "^4.82.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "qrcode": "^1.5.0",

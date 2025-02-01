@@ -24,6 +24,7 @@ import { PickModule } from './pick/pick.module';
 import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
 import { MetricModule } from './metric/metric.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { OpenaiModule } from './openai/openai.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { InventoryModule } from './inventory/inventory.module';
     EbayMarkdownModule,
     MetricModule,
     InventoryModule,
+    OpenaiModule,
   ],
 })
 export class AppModule implements OnModuleInit, OnApplicationBootstrap {
