@@ -35,6 +35,6 @@ docker push edsalisbury/locotoko:"$VERSION"
 docker push edsalisbury/locotoko:latest
 
 # Restart the server via SSH
-ssh 192.168.1.42 -- "/home/ed/locotoko/restart.sh"
+ssh 192.168.1.42 locotoko/restart.sh
 
 echo "🚀 Deployment successful: Version $VERSION"

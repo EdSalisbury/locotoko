@@ -218,6 +218,8 @@ export default {
           value: specific.value,
         }));
 
+        console.log(payload);
+
         // Call the API (modify endpoint accordingly)
         const response = await api.generateListing(this.token, payload);
 
@@ -228,6 +230,8 @@ export default {
           this.form.specifics = response.specifics || this.form.specifics;
         }
 
+        console.log(response);
+        
         this.$toast.success("Generated listing successfully!");
       } catch (error) {
         this.$toast.error("Failed to generate listing: " + (error.response?.data?.message || error.message));

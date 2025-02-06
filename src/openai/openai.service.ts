@@ -16,27 +16,61 @@ export class OpenaiService {
     }
 
     async generateListing(prompt: string, existingSpecifics: { key: string; value: string }[]) {
-        // 🔥 Convert existing specifics array into an object
+        // 🔥 Ensure existingSpecifics is always an array
+        if (!Array.isArray(existingSpecifics)) {
+            existingSpecifics = [];
+        }
+
+        // 🔥 Normalize specifics, ensuring no empty keys or undefined values
+        existingSpecifics = existingSpecifics
+            .filter(s => s.key && typeof s.key === "string") // Remove empty entries
+            .map(s => ({
+                key: s.key.trim(), // Trim whitespace
+                value: s.value ? String(s.value).trim() : "N/A", // Default empty values to "N/A"
+            }));
+
+        // 🔥 Convert array to an object for easier handling
         const existingSpecificsObj = existingSpecifics.reduce((acc, item) => {
             acc[item.key] = item.value;
             return acc;
         }, {} as Record<string, string>);
 
+        // 🔥 Format specifics as a readable string for OpenAI
         const specificsText = Object.entries(existingSpecificsObj)
             .map(([key, value]) => `${key}: ${value}`)
             .join(", ");
 
+        console.log("🟢 Sending to OpenAI:", { prompt, specificsText });
+
+        // 🔥 OpenAI System & User Prompts
         const systemPrompt = `You are an expert eBay listing generator. Follow these global rules: ${this.listingRules}.`;
 
         const userPrompt = `Generate an eBay listing based on the following details:
-  - Prompt: ${prompt}
-  - Existing Specifics: ${specificsText}
+        - Prompt: ${prompt}
+        - Existing Specifics: ${specificsText}
 
-  Return a JSON object with:
-  - title (string)
-  - description (string)
-  - specifics (object, key-value pairs)`;
+        For the description, ensure that:
+        - Use bulleted lists (with emojis instead of other symbols).
+        - Use newlines after every bullet.
 
+        For the specifics, ensure that:
+        - All specifics are fully filled in (do NOT leave anything undefined).
+        - If a specific is missing, infer a reasonable default value.
+        - Correct any incorrect specifics (e.g., "Model" should match the correct calculator model).
+        - Maintain an array structure where each specific has a { "key": "Some Key", "value": "Some Value" } pair.
+        - Ensure that no key is a number or an object.
+
+        Return a JSON object with:
+        {
+          "title": "Generated Title",
+          "description": "Generated Description",
+          "specifics": [
+            { "key": "Brand", "value": "Texas Instruments" },
+            { "key": "Model", "value": "TI-84 Plus Silver Edition" }
+          ]
+        }`;
+
+        // 🔥 Call OpenAI API
         const response = await this.openai.chat.completions.create({
             model: "gpt-4-turbo",
             messages: [
@@ -47,28 +81,37 @@ export class OpenaiService {
         });
 
         try {
+            // 🔥 Parse OpenAI's Response
             const result = JSON.parse(response.choices[0]?.message?.content || "{}");
 
-            // Ensure specifics exist and is an object
-            if (!result.specifics || typeof result.specifics !== "object") {
-                result.specifics = {};
+            console.log("🟢 OpenAI Response:", result);
+
+            // 🔥 Ensure the response contains valid specifics
+            if (!result.specifics || !Array.isArray(result.specifics)) {
+                console.error("❌ Invalid specifics format received:", result.specifics);
+                result.specifics = [];
             }
 
-            // Merge OpenAI specifics with existing ones
-            const mergedSpecifics = { ...existingSpecificsObj, ...result.specifics };
+            // 🔥 Merge OpenAI-generated specifics with existing ones
+            const mergedSpecifics = {
+                ...existingSpecificsObj, ...Object.fromEntries(
+                    result.specifics.map(s => [s.key, s.value || "N/A"])
+                )
+            };
 
-            // Convert merged specifics back into an array of { key, value } pairs
+            // 🔥 Convert merged specifics back into an array format
             result.specifics = Object.entries(mergedSpecifics).map(([key, value]) => ({
-                key,
-                value: String(value), // Ensure value is always a string
+                key: String(key).trim(),
+                value: String(value).trim() || "N/A",
             }));
+
+            console.log("🟢 Final specifics sent to frontend:", result.specifics);
 
             return result;
         } catch (error) {
+            console.error("❌ Failed to parse OpenAI response:", response.choices[0]?.message?.content);
             throw new Error("Failed to parse OpenAI response");
         }
     }
-
-
 
 }
