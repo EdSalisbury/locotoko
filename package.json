@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.41.21",
+  "version": "0.42.0",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -55,7 +55,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "cross-env": "^7.0.3",
-    "ebay-api": "8",
+    "ebay-api": "9",
     "ipp": "^2.0.1",
     "node-ptouch": "^0.0.4",
     "openai": "^4.82.0",
