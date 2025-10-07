@@ -63,5 +63,6 @@
   },
   "lint-staged": {
     "*.{js,jsx,vue}": "vue-cli-service lint"
-  }
+  },
+  "packageManager": "yarn@3.6.4"
 }
