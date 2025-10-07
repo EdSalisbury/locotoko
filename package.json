@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.43.1",
+  "version": "0.43.2",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -111,5 +111,6 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
