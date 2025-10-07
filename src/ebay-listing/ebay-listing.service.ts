@@ -13,61 +13,6 @@ import {
   encodeSpecialCharsInObject,
   decodeSpecialCharsInObject,
 } from "../util";
-import { promises as fs } from "fs";
-import * as path from "path";
-
-function nowStamp() {
-  return new Date().toISOString().replace(/[:.]/g, "-");
-}
-
-async function dumpXml(tag: string, xml?: string) {
-  if (!xml) return;
-  try {
-    const dir = path.join(process.cwd(), "debug-ebay-xml");
-    await fs.mkdir(dir, { recursive: true });
-    const name = `${new Date().toISOString().replace(/[:.]/g, "-")}_${tag}.xml`;
-    const file = path.join(dir, name);
-    await fs.writeFile(file, xml, "utf8");
-    console.error(`[eBay XML] saved to: ${file}`);
-  } catch (err) {
-    // fall back to console if fs fails
-    console.error("[eBay XML] could not save, dumping below:\n", xml);
-  }
-}
-
-function sanitizeForXml(input: string) {
-  if (typeof input !== "string") return input;
-  // Remove disallowed XML 1.0 code points
-  return input.replace(
-    /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g,
-    ""
-  );
-}
-
-/** Recursively sanitize all string leaf values in an object. */
-function sanitizeObjectForXml<T>(obj: T): T {
-  if (obj == null) return obj;
-  if (typeof obj === "string") return sanitizeForXml(obj) as unknown as T;
-  if (Array.isArray(obj)) return obj.map(sanitizeObjectForXml) as unknown as T;
-  if (typeof obj === "object") {
-    const out: any = Array.isArray(obj) ? [] : {};
-    for (const [k, v] of Object.entries(obj as any)) {
-      out[k] = sanitizeObjectForXml(v);
-    }
-    return out;
-  }
-  return obj;
-}
-
-/** Persist the raw XML to a debug file and return the path. */
-async function persistXmlDebug(xml: string, tag: string, itemId?: string) {
-  const dir = path.join(process.cwd(), "debug-ebay-xml");
-  await fs.mkdir(dir, { recursive: true });
-  const fname = `${nowStamp()}_${tag}${itemId ? "_" + itemId : ""}.xml`;
-  const file = path.join(dir, fname);
-  await fs.writeFile(file, xml, "utf8");
-  return file;
-}
 
 @Injectable()
 export class EbayListingService {
@@ -92,9 +37,6 @@ export class EbayListingService {
     if (!item) {
       throw new NotFoundException();
     }
-
-    await this.ebay.OAuth2.refreshToken();
-    //this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
 
     try {
       let imageUrls = [];
@@ -177,7 +119,7 @@ export class EbayListingService {
         },
       };
 
-      request = encodeSpecialCharsInObject(request);
+      //request = encodeSpecialCharsInObject(request);
       console.log(request)
       const response = await this.ebay.trading.AddItem(request);
       const ebayListingId = response.ItemID;
@@ -321,7 +263,6 @@ export class EbayListingService {
           },
         },
       };
-      request = encodeSpecialCharsInObject(request);
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
