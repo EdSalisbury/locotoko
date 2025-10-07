@@ -87,7 +87,13 @@ export class EbayOrderService {
       orders.push(...response.OrderArray.Order);
       maxPages = response.PaginationResult.TotalNumberOfPages;
     } catch (e) {
-      console.log("%o", e);
+      //console.log("%o", e);
+      console.error("Error when trying to get the orders.")
+      console.error(`message: ${e.message}`)
+      console.error(`code: ${e.code}`)
+      console.error(`url: ${e.config.url}`)
+      console.error(`method: ${e.config.method}`)
+      console.error(`payload: ${e.config.data}`)
     }
     if (maxPages > 1) {
       while (pageNumber < maxPages) {
