@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.42.15",
+  "version": "0.43.5",
   "private": true,
   "scripts": {
     "start": "dotenv -e ../.env.dev vue-cli-service serve",
@@ -63,6 +63,5 @@
   },
   "lint-staged": {
     "*.{js,jsx,vue}": "vue-cli-service lint"
-  },
-  "packageManager": "yarn@3.6.4"
+  }
 }
