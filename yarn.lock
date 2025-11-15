@@ -1084,7 +1084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^6.2.1":
+"@prisma/client@npm:6.2.1":
   version: 6.2.1
   resolution: "@prisma/client@npm:6.2.1"
   peerDependencies:
@@ -2258,7 +2258,7 @@ __metadata:
     "@nestjs/schematics": ^8.0.0
     "@nestjs/serve-static": ^2.2.2
     "@nestjs/testing": ^8.0.0
-    "@prisma/client": ^6.2.1
+    "@prisma/client": 6.2.1
     "@types/express": ^4.17.13
     "@types/jest": 27.4.1
     "@types/node": ^16.0.0
@@ -2284,7 +2284,7 @@ __metadata:
     passport: ^0.5.2
     passport-jwt: ^4.0.0
     prettier: ^2.3.2
-    prisma: ^6.2.1
+    prisma: 6.2.1
     qrcode: ^1.5.0
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
@@ -6805,7 +6805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^6.2.1":
+"prisma@npm:6.2.1":
   version: 6.2.1
   resolution: "prisma@npm:6.2.1"
   dependencies:

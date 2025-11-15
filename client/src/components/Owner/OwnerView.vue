@@ -137,7 +137,10 @@ export default {
     var monthlyRevenue = [];
 
     this.items.forEach((item) => {
-      this.total += item.soldPrice;
+      const soldPrice = parseFloat(item.soldPrice) || 0;
+      const shippingPrice = parseFloat(item.shippingPrice) || 0;
+      const netSale = soldPrice - shippingPrice;
+      this.total += netSale;
       const soldDate = new Date(item.soldAt);
       //const month = soldDate.toLocaleString("default", { month: "long" });
       //const year = soldDate.getFullYear();
@@ -152,8 +155,8 @@ export default {
         monthlyItems[key] = [];
       }
       monthlyItems[key].push(item);
-      monthlyTotals[key] += item.soldPrice;
-      const revenue = item.soldPrice - (1 - rate) * item.soldPrice;
+      monthlyTotals[key] += netSale;
+      const revenue = netSale - (1 - rate) * netSale;
       monthlyRevenue[key] += revenue;
       this.totalRevenue += revenue;
     });
