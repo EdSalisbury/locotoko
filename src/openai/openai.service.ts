@@ -24,10 +24,13 @@ export class OpenaiService {
         // 🔥 Normalize specifics, ensuring no empty keys or undefined values
         existingSpecifics = existingSpecifics
             .filter(s => s.key && typeof s.key === "string") // Remove empty entries
-            .map(s => ({
-                key: s.key.trim(), // Trim whitespace
-                value: s.value ? String(s.value).trim() : "N/A", // Default empty values to "N/A"
-            }));
+            .map(s => {
+                const trimmedKey = s.key.trim();
+                return {
+                    key: trimmedKey, // Trim whitespace
+                    value: this.normalizeSpecificValue(trimmedKey, s.value), // Default empty values safely
+                };
+            });
 
         // 🔥 Convert array to an object for easier handling
         const existingSpecificsObj = existingSpecifics.reduce((acc, item) => {
@@ -95,15 +98,21 @@ export class OpenaiService {
             // 🔥 Merge OpenAI-generated specifics with existing ones
             const mergedSpecifics = {
                 ...existingSpecificsObj, ...Object.fromEntries(
-                    result.specifics.map(s => [s.key, s.value || "N/A"])
+                    result.specifics.map(s => {
+                        const key = String(s.key).trim();
+                        return [key, this.normalizeSpecificValue(key, s.value)];
+                    })
                 )
             };
 
             // 🔥 Convert merged specifics back into an array format
-            result.specifics = Object.entries(mergedSpecifics).map(([key, value]) => ({
-                key: String(key).trim(),
-                value: String(value).trim() || "N/A",
-            }));
+            result.specifics = Object.entries(mergedSpecifics).map(([key, value]) => {
+                const trimmedKey = String(key).trim();
+                return {
+                    key: trimmedKey,
+                    value: this.normalizeSpecificValue(trimmedKey, value),
+                };
+            });
 
             console.log("🟢 Final specifics sent to frontend:", result.specifics);
 
@@ -112,6 +121,20 @@ export class OpenaiService {
             console.error("❌ Failed to parse OpenAI response:", response.choices[0]?.message?.content);
             throw new Error("Failed to parse OpenAI response");
         }
+    }
+
+    private normalizeSpecificValue(key: string, value?: unknown): string {
+        const trimmedValue = value ? String(value).trim() : "";
+        if (trimmedValue) {
+            return trimmedValue;
+        }
+
+        // eBay rejects "N/A" for Device Charging Range, so leave it blank
+        if (key === "Device Charging Range") {
+            return "";
+        }
+
+        return "N/A";
     }
 
 }
