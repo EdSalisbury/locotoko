@@ -155,6 +155,7 @@ export default {
     return {
       users: [],
       owners: [],
+      defaultOwnerId: "",
       templates: [],
       template: undefined,
       templateOptions: [],
@@ -203,6 +204,14 @@ export default {
     this.shippingTypeOptions = util.getShippingTypeOptions();
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
+    const defaultOwner =
+      this.owners.find((owner) => owner.text === "The Hoard") ?? this.owners[0];
+    if (defaultOwner) {
+      this.defaultOwnerId = defaultOwner.value;
+      if (!this.form.ownerId && this.defaultOwnerId) {
+        this.form.ownerId = this.defaultOwnerId;
+      }
+    }
     this.acquisitions = await util.getAcquisitionOptions(token);
   },
   methods: {
@@ -358,8 +367,8 @@ export default {
       this.payload.shippingType = parseInt(this.payload.shippingType);
       this.payload.shippingPrice = Number(this.payload.shippingPrice).toFixed(2);
 
-      if (!this.payload.ownerId) {
-        this.payload.ownerId = "0";
+      if (!this.payload.ownerId && this.defaultOwnerId) {
+        this.payload.ownerId = this.defaultOwnerId;
       }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
