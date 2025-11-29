@@ -156,6 +156,7 @@ export default {
       users: [],
       owners: [],
       defaultOwnerId: "",
+      imageSortKeys: [],
       templates: [],
       template: undefined,
       templateOptions: [],
@@ -296,16 +297,27 @@ export default {
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
+      this.imageSortKeys.splice(index, 1);
     },
     moveImageLeft(index) {
-      const tmp = this.form.images[index - 1];
-      this.$set(this.form.images, index - 1, this.form.images[index]);
-      this.$set(this.form.images, index, tmp);
+      if (index === 0) {
+        return;
+      }
+      this.swapImages(index, index - 1);
     },
     moveImageRight(index) {
-      const tmp = this.form.images[index + 1];
-      this.$set(this.form.images, index + 1, this.form.images[index]);
-      this.$set(this.form.images, index, tmp);
+      if (index >= this.form.images.length - 1) {
+        return;
+      }
+      this.swapImages(index, index + 1);
+    },
+    swapImages(a, b) {
+      const tmp = this.form.images[a];
+      this.$set(this.form.images, a, this.form.images[b]);
+      this.$set(this.form.images, b, tmp);
+      const tmpKey = this.imageSortKeys[a];
+      this.$set(this.imageSortKeys, a, this.imageSortKeys[b]);
+      this.$set(this.imageSortKeys, b, tmpKey);
     },
     changeSpecifics() {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
@@ -371,8 +383,28 @@ export default {
         }
       }
     },
-    photoTaken(value) {
-      this.form.images.push(value);
+    photoTaken(payload) {
+      const { data, sortKey } = this.normalizeImagePayload(payload);
+      const insertIndex = this.imageSortKeys.findIndex((key) => key.localeCompare(sortKey) > 0);
+      if (insertIndex === -1) {
+        this.imageSortKeys.push(sortKey);
+        this.form.images.push(data);
+      } else {
+        this.imageSortKeys.splice(insertIndex, 0, sortKey);
+        this.form.images.splice(insertIndex, 0, data);
+      }
+    },
+    normalizeImagePayload(payload) {
+      if (typeof payload === "string") {
+        return {
+          data: payload,
+          sortKey: `camera-${Date.now()}`,
+        };
+      }
+      return {
+        data: payload.data,
+        sortKey: payload.name || `camera-${Date.now()}`,
+      };
     },
     async onSubmit(event) {
       event.preventDefault();

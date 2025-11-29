@@ -123,7 +123,10 @@ export default {
       }
       canvas = this.resizeImage(canvas);
 
-      this.$emit("photoTaken", canvas.toDataURL("image/jpeg", 0.7));
+      this.$emit("photoTaken", {
+        data: canvas.toDataURL("image/jpeg", 0.7),
+        name: `camera-${Date.now()}`,
+      });
     },
     cropImage(image, ratio = 1.3333) {
       const canvas = document.createElement("canvas");
@@ -187,15 +190,13 @@ export default {
     async addImages(event) {
       event.preventDefault();
       let files = [...event.target.files];
-      files.sort((a, b) => {
-        if (a.lastModified !== b.lastModified) {
-          return a.lastModified - b.lastModified;
-        }
-        return a.name.localeCompare(b.name);
-      });
+      files.sort((a, b) => a.name.localeCompare(b.name));
       for (const file of files) {
         const image = await itemUtils.resizeImage(file);
-        this.$emit("photoTaken", image);
+        this.$emit("photoTaken", {
+          data: image,
+          name: file.name,
+        });
       }
     },
   },
