@@ -214,6 +214,20 @@ export default {
     }
     this.acquisitions = await util.getAcquisitionOptions(token);
   },
+  watch: {
+    "form.weight": {
+      handler() {
+        this.updateCalculatedShipping();
+      },
+      deep: true,
+    },
+    "form.size": {
+      handler() {
+        this.updateCalculatedShipping();
+      },
+      deep: true,
+    },
+  },
   methods: {
     async generatePrompt() {
       try {
@@ -263,8 +277,22 @@ export default {
       } else if (parseInt(event) == 5) {
         this.form.shippingPrice = 19;
       } else if (parseInt(event) === 99) {
-        this.form.shippingPrice = parseInt(5) + parseInt(this.form.weight.pounds) * 2;
+        this.updateCalculatedShipping();
       }
+    },
+    updateCalculatedShipping() {
+      if (parseInt(this.form.shippingType) !== 99) {
+        return;
+      }
+      const pounds = parseInt(this.form.weight.pounds) || 0;
+      const length = parseInt(this.form.size.length) || 0;
+      const width = parseInt(this.form.size.width) || 0;
+      const height = parseInt(this.form.size.height) || 0;
+
+      // Rough dimensional weight calculation to better approximate postage
+      const dimensionalWeight = Math.ceil((length * width * height) / 166) || 0;
+      const billableWeight = Math.max(pounds, dimensionalWeight);
+      this.form.shippingPrice = 5 + billableWeight * 2;
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
