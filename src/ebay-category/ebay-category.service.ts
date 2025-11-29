@@ -11,7 +11,10 @@ export class EbayCategoryService {
       detailLevel: "ReturnAll",
       viewAllNodes: true,
     });
-    for (const category of data.CategoryArray.Category) {
+    const categories = Array.isArray(data.CategoryArray.Category)
+      ? data.CategoryArray.Category
+      : [data.CategoryArray.Category];
+    for (const category of categories) {
       await this.prisma.ebayCategory.upsert({
         where: {
           id: category.CategoryID,
