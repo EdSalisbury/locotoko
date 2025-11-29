@@ -186,11 +186,17 @@ export default {
     },
     async addImages(event) {
       event.preventDefault();
-      const files = [...event.target.files];
-      files.forEach(async (file) => {
+      let files = [...event.target.files];
+      files.sort((a, b) => {
+        if (a.lastModified !== b.lastModified) {
+          return a.lastModified - b.lastModified;
+        }
+        return a.name.localeCompare(b.name);
+      });
+      for (const file of files) {
         const image = await itemUtils.resizeImage(file);
         this.$emit("photoTaken", image);
-      });
+      }
     },
   },
 };

@@ -352,10 +352,17 @@ async generatePrompt() {
     },
     async addImages(event) {
       event.preventDefault();
-      const files = [...event.target.files];
-      files.forEach(async (file) => {
-        this.form.images.push(await itemUtils.resizeImage(file));
+      let files = [...event.target.files];
+      files.sort((a, b) => {
+        if (a.lastModified !== b.lastModified) {
+          return a.lastModified - b.lastModified;
+        }
+        return a.name.localeCompare(b.name);
       });
+      for (const file of files) {
+        const resized = await itemUtils.resizeImage(file);
+        this.form.images.push(resized);
+      }
     },
     changeSpecifics() {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
