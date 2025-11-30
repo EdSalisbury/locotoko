@@ -156,6 +156,7 @@ export default {
       users: [],
       owners: [],
       defaultOwnerId: "",
+      shippingDiscount: 0.8, // Approximate eBay shipping discount
       imageSortKeys: [],
       templates: [],
       template: undefined,
@@ -292,8 +293,12 @@ export default {
 
       // Rough dimensional weight calculation to better approximate postage
       const dimensionalWeight = Math.ceil((length * width * height) / 166) || 0;
-      const billableWeight = Math.max(pounds, dimensionalWeight);
-      this.form.shippingPrice = 5 + billableWeight * 2;
+      const billableWeight = Math.max(1, Math.max(pounds, dimensionalWeight));
+      const baseRate = 5;
+      const perPoundRate = 2;
+      const rawPrice = baseRate + perPoundRate * billableWeight;
+      const discounted = rawPrice * this.shippingDiscount;
+      this.form.shippingPrice = Number(Math.max(discounted, 4).toFixed(2));
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
