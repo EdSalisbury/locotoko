@@ -73,6 +73,8 @@ import api from "../../api";
 import itemUtils from "./itemUtils";
 import VueBootstrapTable from "vue2-bootstrap-table2";
 
+const MIN_PRICE_THRESHOLD = parseFloat(process.env.VUE_APP_MIN_PRICE || "9.99");
+
 export default {
   components: {
     VueBootstrapTable: VueBootstrapTable,
@@ -226,8 +228,10 @@ export default {
         if (item.title.length > 80) {
           errors.push(`Title too long (${item.title.length} chars)`);
         }
-        if (parseFloat(item.price) < 9.99) {
-          errors.push(`Original price is under $9.99 ($${parseFloat(item.price).toFixed(2)})`);
+        if (parseFloat(item.price) < MIN_PRICE_THRESHOLD) {
+          errors.push(
+            `Original price is under $${MIN_PRICE_THRESHOLD.toFixed(2)} ($${parseFloat(item.price).toFixed(2)})`
+          );
         }
         if (item.ebayConditionId === 0 && ebayConditions.length > 0) {
           errors.push("Condition not specified");

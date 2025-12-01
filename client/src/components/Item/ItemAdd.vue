@@ -299,7 +299,7 @@ export default {
       const perPoundRate = 2;
       const rawPrice = baseRate + perPoundRate * billableWeight;
       const discounted = rawPrice * this.shippingDiscount;
-      this.form.shippingPrice = Number(Math.max(discounted, 4).toFixed(2));
+      this.form.shippingPrice = Number(discounted.toFixed(2));
     },
     deleteImage(index) {
       this.form.images.splice(index, 1);
