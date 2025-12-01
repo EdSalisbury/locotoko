@@ -179,7 +179,7 @@ export default {
         templateId: "",
         acquisitionId: "",
         shippingPrice: 0,
-        shippingType: 0,
+        shippingType: 99,
         weight: {
           pounds: 0,
           ounces: 0,
@@ -215,6 +215,7 @@ export default {
       }
     }
     this.acquisitions = await util.getAcquisitionOptions(token);
+    this.updateCalculatedShipping();
   },
   watch: {
     "form.weight": {
