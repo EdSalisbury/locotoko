@@ -13,10 +13,36 @@ export class ProductService {
     private config: ConfigService,
   ) {}
 
+  private async getTmdbDetails(title: string, year?: string) {
+    const apiKey = this.config.get<string>("TMDB_API_KEY");
+    if (!apiKey || !title) {
+      return null;
+    }
+    const params = new URLSearchParams({
+      api_key: apiKey,
+      query: title,
+      include_adult: "false",
+      language: "en-US",
+      ...(year ? { year } : {}),
+    });
+    const url = `https://api.themoviedb.org/3/search/movie?${params.toString()}`;
+    const response = await axios.get(url);
+    if (!response.data?.results?.length) {
+      return null;
+    }
+    const movie = response.data.results[0];
+    const detailUrl = `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}&language=en-US`;
+    const detailResponse = await axios.get(detailUrl);
+    return detailResponse.data;
+  }
+
   async getMusicProduct(upc: string) {
     const url = "https://musicbrainz.org/ws/2/release/?query=barcode:" + upc;
     const response = await axios.get(url, {
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Locotoko/1.0 (contact@locotoko.com)",
+      },
     });
     return response.data;
   }
@@ -62,10 +88,16 @@ export class ProductService {
     details["UPC"] = upc;
     details["EAN"] = upc;
 
-    const musicProduct = await this.getMusicProduct(upc);
+    let musicProduct: any = null;
+    try {
+      musicProduct = await this.getMusicProduct(upc);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      console.warn("MusicBrainz lookup failed", message);
+    }
 
     try {
-      if (musicProduct.releases.length > 0) {
+      if (musicProduct?.releases?.length > 0) {
         const release = musicProduct.releases[0];
         details["Release Title"] = release.title;
         details["Artist"] = release["artist-credit"][0].name;
@@ -87,6 +119,29 @@ export class ProductService {
       if (found) {
         details["Release Title"] = details["Release Title"] || found[1];
         details["Release Year"] = details["Release Year"] || found[3];
+      }
+
+      const tmdb = await this.getTmdbDetails(
+        details["Release Title"] || details["Title"],
+        details["Release Year"],
+      );
+      if (tmdb) {
+        details["Overview"] = tmdb.overview;
+        if (tmdb.runtime) {
+          details["Runtime (Minutes)"] = tmdb.runtime;
+        }
+        if (tmdb.release_date) {
+          details["Release Date"] = tmdb.release_date;
+          details["Release Year"] =
+            details["Release Year"] ||
+            tmdb.release_date.split("-")[0];
+        }
+        if (Array.isArray(tmdb.genres) && tmdb.genres.length) {
+          details["Genres"] = tmdb.genres.map((g) => g.name).join(", ");
+        }
+        if (tmdb.original_language) {
+          details["Language"] = tmdb.original_language;
+        }
       }
     } catch {}
 
