@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsBoolean,
+  IsInt,
 } from "class-validator";
 
 export class EditItemDto {
@@ -29,6 +30,10 @@ export class EditItemDto {
   @IsNumber()
   @IsOptional()
   ebayConditionId: number;
+
+  @IsOptional()
+  @IsInt()
+  ebayCardConditionValueId?: number;
 
   @IsNumber()
   @IsNotEmpty()

@@ -40,6 +40,13 @@
                 @input="changeSpecifics"
               />
             </b-col>
+            <b-col v-if="parseInt(form.ebayConditionId) === 4000" xs="3" class="m-0 pl-0 pr-2">
+              <SelectInput
+                label="Card Condition"
+                v-model="form.ebayCardConditionValueId"
+                :options="ebayCardConditionOptions"
+              />
+            </b-col>
             <b-col xs="3" class="m-0 pl-0 pr-2">
               <TextInput label="Quantity" v-model="form.quantity" />
             </b-col>
@@ -164,6 +171,7 @@ export default {
       templateOptions: [],
       shippingTypeOptions: [],
       conditions: [],
+      ebayCardConditionOptions: [],
       acquisitions: [],
       form: {
         title: "",
@@ -175,6 +183,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
+        ebayCardConditionValueId: "",
         location: "",
         ownerId: "",
         templateId: "",
@@ -216,6 +225,12 @@ export default {
       }
     }
     this.acquisitions = await util.getAcquisitionOptions(token);
+    this.ebayCardConditionOptions = [
+      { value: "400010", text: "Mint/Unplayed" },
+      { value: "400015", text: "Lightly Played" },
+      { value: "400016", text: "Moderately Played" },
+      { value: "400017", text: "Heavily Played" },
+    ];
     this.updateCalculatedShipping();
   },
   watch: {
@@ -269,6 +284,7 @@ export default {
     async changeCategory(event) {
       this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
       this.form.specifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
+      this.ensureCardConditionSelection();
     },
     changeShippingType(event) {
       if (parseInt(event) === 1) {
@@ -327,6 +343,15 @@ export default {
       this.$set(this.imageSortKeys, a, this.imageSortKeys[b]);
       this.$set(this.imageSortKeys, b, tmpKey);
     },
+    ensureCardConditionSelection() {
+      if (parseInt(this.form.ebayConditionId) === 4000) {
+        if (!this.form.ebayCardConditionValueId && this.ebayCardConditionOptions.length) {
+          this.form.ebayCardConditionValueId = this.ebayCardConditionOptions[0].value;
+        }
+      } else {
+        this.form.ebayCardConditionValueId = "";
+      }
+    },
     changeSpecifics() {
       const conditionName = this.conditions?.find((cond) => cond.value == this.form.ebayConditionId)?.text || "";
       if (this.template?.title) {
@@ -345,6 +370,7 @@ export default {
         description = description.replaceAll("${Condition}", conditionName || "");
         this.form.description = description;
       }
+      this.ensureCardConditionSelection();
     },
     changeTemplate(event) {
       if (event === "0") {
@@ -354,6 +380,7 @@ export default {
         this.form.specifics = [];
         this.form.shippingType = "99";
         this.changeShippingType(this.form.shippingType);
+        this.form.ebayCardConditionValueId = "";
       } else {
         this.template = this.templates.find((template) => template.id === event);
         this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
@@ -369,6 +396,7 @@ export default {
         this.form.shippingType = String(this.template.shippingType ?? 99);
         this.changeShippingType(this.form.shippingType);
         this.changeSpecifics();
+        this.ensureCardConditionSelection();
       }
     },
     async lookupProduct(upc) {
@@ -470,6 +498,13 @@ export default {
 
       if (!this.payload.ownerId && this.defaultOwnerId) {
         this.payload.ownerId = this.defaultOwnerId;
+      }
+
+      const cardConditionValue = parseInt(this.form.ebayCardConditionValueId);
+      if (!Number.isNaN(cardConditionValue)) {
+        this.payload.ebayCardConditionValueId = cardConditionValue;
+      } else {
+        delete this.payload.ebayCardConditionValueId;
       }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);

@@ -18,6 +18,7 @@ export class ItemService {
     id: true,
     title: true,
     ebayCategoryId: true,
+    ebayCardConditionValueId: true,
     ebayListingId: true,
     ownerId: true,
     owner: true,

@@ -107,6 +107,13 @@
                       @input="changeSpecifics"
                     />
                   </b-col>
+                  <b-col v-if="parseInt(form.ebayConditionId) === 4000" class="m-0 pl-0">
+                    <SelectInput
+                      label="Card Condition"
+                      v-model="form.ebayCardConditionValueId"
+                      :options="ebayCardConditionOptions"
+                    />
+                  </b-col>
                 </b-row>
                 <b-row class="m-0 pt-2">
                   <b-col class="m-0 p-0">
@@ -188,6 +195,7 @@ export default {
       templateOptions: [],
       shippingTypeOptions: [],
       conditions: [],
+      ebayCardConditionOptions: [],
       acquisitions: [],
       form: {
         title: "",
@@ -197,6 +205,7 @@ export default {
         listingUserId: this.$cookie.get("userId"),
         ebayCategoryId: 0,
         ebayConditionId: 0,
+        ebayCardConditionValueId: "",
         shippingCost: 0.0,
         shippingType: "99",
         soldAt: "",
@@ -234,6 +243,12 @@ export default {
     this.users = await util.getUserOptions(token);
     this.owners = await util.getOwnerOptions(token);
     this.acquisitions = await util.getAcquisitionOptions(token);
+    this.ebayCardConditionOptions = [
+      { value: "400010", text: "Mint/Unplayed" },
+      { value: "400015", text: "Lightly Played" },
+      { value: "400016", text: "Moderately Played" },
+      { value: "400017", text: "Heavily Played" },
+    ];
 
     this.template = this.templates.filter((template) => template.id === this.form.templateId)[0];
 
@@ -241,11 +256,16 @@ export default {
     // Remove the ID from the title
     this.form.title = this.form.title.slice(0, -5);
     this.form.shippingType = String(this.form.shippingType ?? 99);
+    this.form.ebayCardConditionValueId = this.form.ebayCardConditionValueId
+      ? String(this.form.ebayCardConditionValueId)
+      : "";
     this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {
       this.form.templateId = "";
     }
+
+    this.ensureCardConditionSelection();
 
     const newImages = [];
     this.form.images.forEach(async (file) => {
@@ -314,7 +334,8 @@ async generatePrompt() {
         const bRequired = b.required ? 1 : 0;
         return bRequired - aRequired;  // Sort in descending order of required
       });
-  },
+      this.ensureCardConditionSelection();
+    },
     changeShippingType(event) {
       if (parseInt(event) === 1) {
         this.form.shippingPrice = 1;
@@ -371,6 +392,15 @@ async generatePrompt() {
       this.$set(this.imageSortKeys, a, this.imageSortKeys[b]);
       this.$set(this.imageSortKeys, b, tmpKey);
     },
+    ensureCardConditionSelection() {
+      if (parseInt(this.form.ebayConditionId) === 4000) {
+        if (!this.form.ebayCardConditionValueId && this.ebayCardConditionOptions.length) {
+          this.form.ebayCardConditionValueId = this.ebayCardConditionOptions[0].value;
+        }
+      } else {
+        this.form.ebayCardConditionValueId = "";
+      }
+    },
     async addImages(event) {
       event.preventDefault();
       let files = [...event.target.files];
@@ -413,6 +443,7 @@ async generatePrompt() {
         description = description.replaceAll("${Condition}", conditionName || "");
         this.form.description = description;
       }
+      this.ensureCardConditionSelection();
     },
     async lookupProduct(upc) {
       if (upc.toString().length == 12) {
@@ -478,6 +509,7 @@ async generatePrompt() {
         this.conditions = [];
         this.specifics = [];
         this.form.specifics = [];
+        this.ensureCardConditionSelection();
       } else if (event !== this.form.oldTemplateId) {
         this.template = this.templates.filter((template) => template.id === event)[0];
         this.form.ebayCategoryId = this.template.ebayCategoryId;
@@ -490,6 +522,7 @@ async generatePrompt() {
         this.form.location = this.template.location || "";
         this.form.shippingType = String(this.template.shippingType ?? 99);
         this.changeShippingType(this.form.shippingType);
+        this.ensureCardConditionSelection();
       }
     },
     async onSubmit(event) {
@@ -538,6 +571,13 @@ async generatePrompt() {
       const token = this.$cookie.get("token");
 
       const itemId = this.$route.params.id.toString();
+
+      const cardConditionValue = parseInt(this.form.ebayCardConditionValueId);
+      if (!Number.isNaN(cardConditionValue)) {
+        this.payload.ebayCardConditionValueId = cardConditionValue;
+      } else {
+        delete this.payload.ebayCardConditionValueId;
+      }
 
       this.payload.specifics = JSON.stringify(this.payload.specifics);
 

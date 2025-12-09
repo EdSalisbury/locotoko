@@ -30,6 +30,7 @@ model Item {
   description String?
   ebayCategory EbayCategory @relation("itemEbayCategory", fields: [ebayCategoryId], references: [id])
   ebayCategoryId Int
+  ebayCardConditionValueId Int?
   ebayListingId String @default("")
   price Decimal @db.Money
   currentPrice Decimal? @db.Money @default(0.00)

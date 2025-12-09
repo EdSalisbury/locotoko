@@ -55,6 +55,15 @@ export class EbayListingService {
           Title: item.title + "-" + item.id.slice(-4),
           SKU: item.location,
           ConditionID: item.ebayConditionId,
+          ...(item.ebayConditionId === 4000 &&
+            item.ebayCardConditionValueId && {
+              ConditionDescriptors: {
+                ConditionDescriptor: {
+                  Name: "40001",
+                  Value: item.ebayCardConditionValueId.toString(),
+                },
+              },
+            }),
           Description: {
             __cdata: item.description.replaceAll("\n", "<br />\n"),
           },
@@ -200,6 +209,15 @@ export class EbayListingService {
           Title: item.title + "-" + item.id.slice(-4),
           SKU: item.location,
           ConditionID: item.ebayConditionId,
+          ...(item.ebayConditionId === 4000 &&
+            item.ebayCardConditionValueId && {
+              ConditionDescriptors: {
+                ConditionDescriptor: {
+                  Name: "40001",
+                  Value: item.ebayCardConditionValueId.toString(),
+                },
+              },
+            }),
           ItemSpecifics: this.getSpecificArray(item.specifics),
           Description: {
             __cdata: item.description.replaceAll("\n", "<br />\n"),
