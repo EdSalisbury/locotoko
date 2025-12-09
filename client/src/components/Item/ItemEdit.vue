@@ -163,6 +163,7 @@ import DateInput from "@/components/DateInput";
 
 import api from "@/api";
 import util from "@/util";
+import axios from "axios";
 
 export default {
   components: {
@@ -270,8 +271,9 @@ export default {
   methods: {
 async generatePrompt() {
       try {
+        const enrichedPrompt = await this.enrichPromptWithScryfall(this.form.prompt);
         const payload = {
-          prompt: this.form.prompt,
+          prompt: enrichedPrompt,
         };
 
           // 🔥 Ensure specifics is an array of { key, value }
@@ -425,6 +427,36 @@ async generatePrompt() {
           this.$toast.error("Unable to find item with UPC " + upc);
           this.form.upc = "";
         }
+      }
+    },
+    async enrichPromptWithScryfall(prompt) {
+      if (!prompt) {
+        return prompt;
+      }
+
+      const match = prompt.match(/^MTG\s*-\s*(.*?)\s*-\s*(.*?)/i);
+      if (!match) {
+        return prompt;
+      }
+
+      const cardName = match[1].trim();
+      const setName = match[2].trim();
+
+      try {
+        const response = await axios.get(
+          `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`,
+        );
+        const card = response.data;
+
+        if (setName && card.set_name && !card.set_name.toLowerCase().includes(setName.toLowerCase())) {
+          console.warn(`Set name mismatch: expected ${setName}, got ${card.set_name}`);
+          return prompt;
+        }
+
+        return `${prompt}\n\nScryfall results:\n${JSON.stringify(card, null, 2)}`;
+      } catch (err) {
+        console.warn("Failed to fetch from Scryfall:", err.message || err);
+        return prompt;
       }
     },
     photoTaken(payload) {
