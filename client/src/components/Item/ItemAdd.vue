@@ -180,7 +180,7 @@ export default {
         templateId: "",
         acquisitionId: "",
         shippingPrice: 0,
-        shippingType: 99,
+        shippingType: "99",
         weight: {
           pounds: 0,
           ounces: 0,
@@ -352,6 +352,8 @@ export default {
         this.form.ebayCategoryId = 0;
         this.conditions = [];
         this.form.specifics = [];
+        this.form.shippingType = "99";
+        this.changeShippingType(this.form.shippingType);
       } else {
         this.template = this.templates.find((template) => template.id === event);
         this.form.ebayCategoryId = this.template.ebayCategoryId || 0;
@@ -364,6 +366,8 @@ export default {
         this.form.size.height = this.template.shipSizeHeightInches || 0;
         this.form.size.length = this.template.shipSizeDepthInches || 0;
         this.form.location = this.template.location || "";
+        this.form.shippingType = String(this.template.shippingType ?? 99);
+        this.changeShippingType(this.form.shippingType);
         this.changeSpecifics();
       }
     },

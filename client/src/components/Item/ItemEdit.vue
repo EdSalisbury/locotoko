@@ -198,7 +198,7 @@ export default {
         ebayCategoryId: 0,
         ebayConditionId: 0,
         shippingCost: 0.0,
-        shippingType: 0,
+        shippingType: "99",
         soldAt: "",
         endedAt: "",
         ownerId: "",
@@ -240,6 +240,7 @@ export default {
     this.form = await api.getItem(token, itemId);
     // Remove the ID from the title
     this.form.title = this.form.title.slice(0, -5);
+    this.form.shippingType = String(this.form.shippingType ?? 99);
     this.form.oldTemplateId = this.form.templateId;
     // Handle no template issue more gracefully
     if (this.form.templateId === "0") {
@@ -487,6 +488,8 @@ async generatePrompt() {
         this.form.size.height = this.template.shipSizeHeightInches || 0;
         this.form.size.length = this.template.shipSizeDepthInches || 0;
         this.form.location = this.template.location || "";
+        this.form.shippingType = String(this.template.shippingType ?? 99);
+        this.changeShippingType(this.form.shippingType);
       }
     },
     async onSubmit(event) {

@@ -20,6 +20,15 @@
             </b-col>
             <b-col xs="6" class="m-0 pl-0 pr-0"> <TextInput v-model="form.location" label="Location" /></b-col>
           </b-row>
+          <b-row class="m-0 pt-2">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
+              <SelectInput
+                label="Shipping Type"
+                v-model="form.shippingType"
+                :options="shippingTypeOptions"
+              />
+            </b-col>
+          </b-row>
         </b-container>
 
         <b-button type="submit" variant="primary">Add</b-button>
@@ -33,17 +42,21 @@ import api from "@/api";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import SelectInput from "@/components/SelectInput";
 import TextInput from "@/components/TextInput";
+import util from "@/util";
 
 export default {
   components: {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
+    SelectInput,
     TextInput,
   },
   data() {
     return {
+      shippingTypeOptions: [],
       form: {
         name: "",
         ebayCategoryId: 0,
@@ -51,6 +64,7 @@ export default {
         title: "",
         description: "",
         location: "",
+        shippingType: "99",
         weight: {
           pounds: 0,
           ounces: 0,
@@ -70,6 +84,7 @@ export default {
       this.$router.push({ path: "/login" });
     }
     const ebayCategories = await api.getEbayCategories(this.token);
+    this.shippingTypeOptions = util.getShippingTypeOptions();
 
     this.ebayCategories = ebayCategories.map((ebayCategory) => ({
       value: ebayCategory.id,
@@ -89,6 +104,7 @@ export default {
       payload.shipSizeHeightInches = parseInt(payload.size.height);
       payload.shipSizeDepthInches = parseInt(payload.size.length);
 
+      payload.shippingType = parseInt(payload.shippingType);
       payload.specifics = JSON.stringify(this.form.specifics);
       await api.createTemplate(this.token, payload);
 

@@ -33,6 +33,10 @@ export default {
         "description",
         "location",
         {
+          key: "shippingType",
+          label: "Shipping Type",
+        },
+        {
           key: "weightPounds",
           label: "Weight Pounds",
         },

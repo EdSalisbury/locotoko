@@ -20,6 +20,11 @@
             </b-col>
             <b-col xs="6" class="m-0 pl-0 pr-0"> <TextInput v-model="form.location" label="Location" /></b-col>
           </b-row>
+          <b-row class="m-0 pt-2">
+            <b-col xs="6" class="m-0 pl-0 pr-2">
+              <SelectInput label="Shipping Type" v-model="form.shippingType" :options="shippingTypeOptions" />
+            </b-col>
+          </b-row>
         </b-container>
         <b-button type="submit" variant="primary">Update</b-button>
       </b-form>
@@ -33,17 +38,21 @@ import api from "@/api";
 import EbayCategoryChooser from "@/components/EbayCategoryChooser";
 import SpecificInput from "@/components/SpecificInput";
 import ShippingInput from "@/components/ShippingInput";
+import SelectInput from "@/components/SelectInput";
 import TextInput from "@/components/TextInput";
+import util from "@/util";
 
 export default {
   components: {
     EbayCategoryChooser,
     SpecificInput,
     ShippingInput,
+    SelectInput,
     TextInput,
   },
   data() {
     return {
+      shippingTypeOptions: [],
       form: {
         name: "",
         ebayCategoryId: 0,
@@ -60,6 +69,7 @@ export default {
         title: "",
         description: "",
         location: "",
+        shippingType: "99",
       },
     };
   },
@@ -70,6 +80,8 @@ export default {
     }
     const templateId = this.$route.params.id;
     this.form = await api.getTemplate(this.token, templateId);
+    this.form.shippingType = String(this.form.shippingType ?? 99);
+    this.shippingTypeOptions = util.getShippingTypeOptions();
   },
   methods: {
     async onSubmit(event) {
@@ -84,6 +96,7 @@ export default {
       payload.shipSizeHeightInches = parseInt(payload.size.height);
       payload.shipSizeDepthInches = parseInt(payload.size.length);
 
+      payload.shippingType = parseInt(payload.shippingType);
       payload.specifics = JSON.stringify(this.form.specifics);
 
       const templateId = this.$route.params.id;

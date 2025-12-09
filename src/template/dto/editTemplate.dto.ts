@@ -14,6 +14,10 @@ export class EditTemplateDto {
 
   @IsNumber()
   @IsOptional()
+  shippingType: number;
+
+  @IsNumber()
+  @IsOptional()
   weightPounds: number;
 
   @IsNumber()

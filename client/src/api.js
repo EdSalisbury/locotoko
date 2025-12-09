@@ -203,6 +203,7 @@ const getTemplate = async (token, id) => {
   template.specifics = parseSpecifics(template.specifics);
   template.weight = buildWeight(template.shipWeightPounds, template.shipWeightOunces);
   template.size = buildSize(template.shipSizeWidthInches, template.shipSizeHeightInches, template.shipSizeDepthInches);
+  template.shippingType = template.shippingType ?? 99;
 
   return template;
 };
