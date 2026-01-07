@@ -3,6 +3,17 @@ import { AppModule } from "../src/app.module";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { EbayService } from "../src/ebay/ebay.service";
 
+const EBAY_SKU_MAX_LENGTH = 50;
+
+function buildEbaySku(itemId: string, location: string | null, acquisitionName: string | null): string {
+  const loc = location || '';
+  const acq = acquisitionName || '';
+  const fixedLength = itemId.length + 2 + loc.length;
+  const remainingSpace = EBAY_SKU_MAX_LENGTH - fixedLength;
+  const truncatedAcq = remainingSpace > 0 ? acq.slice(0, remainingSpace) : '';
+  return `${itemId}|${loc}|${truncatedAcq}`;
+}
+
 /**
  * One-time script to update all active eBay listings with the new SKU format:
  * <item_id>|<location>|<acquisition_name>
@@ -35,7 +46,7 @@ async function main() {
   let errorCount = 0;
 
   for (const item of items) {
-    const newSku = `${item.id}|${item.location || ""}|${item.acquisition?.name || ""}`;
+    const newSku = buildEbaySku(item.id, item.location, item.acquisition?.name ?? null);
 
     try {
       console.log(`Updating item ${item.id} (${item.title}) - SKU: ${newSku}`);
