@@ -26,10 +26,13 @@ export class EbayListingService {
   ) { }
 
   async createEbayListing(dto: CreateEbayListingDto) {
-    // Get the item
+    // Get the item with acquisition for SKU generation
     const item = await this.prisma.item.findUnique({
       where: {
         id: dto.itemId,
+      },
+      include: {
+        acquisition: true,
       },
     });
 
@@ -53,7 +56,7 @@ export class EbayListingService {
       let request = {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
-          SKU: item.location,
+          SKU: `${item.id}|${item.location || ''}|${item.acquisition?.name || ''}`,
           ConditionID: item.ebayConditionId,
           ...(item.ebayConditionId === 4000 &&
             item.ebayCardConditionValueId && {
@@ -142,15 +145,13 @@ export class EbayListingService {
       // });
 
       // Update item with eBay listing ID
-      item.ebayListingId = ebayListingId.toString();
-      item.listedAt = new Date();
-
       return this.prisma.item.update({
         where: {
           id: item.id,
         },
         data: {
-          ...item,
+          ebayListingId: ebayListingId.toString(),
+          listedAt: new Date(),
         },
       });
     } catch (e) {
@@ -161,10 +162,13 @@ export class EbayListingService {
   }
 
   async updateEbayListing(end: Boolean, dto: UpdateEbayListingDto) {
-    // Get the item
+    // Get the item with acquisition for SKU generation
     const item = await this.prisma.item.findUnique({
       where: {
         id: dto.itemId,
+      },
+      include: {
+        acquisition: true,
       },
     });
 
@@ -207,7 +211,7 @@ export class EbayListingService {
         Item: {
           ItemID: item.ebayListingId,
           Title: item.title + "-" + item.id.slice(-4),
-          SKU: item.location,
+          SKU: `${item.id}|${item.location || ''}|${item.acquisition?.name || ''}`,
           ConditionID: item.ebayConditionId,
           ...(item.ebayConditionId === 4000 &&
             item.ebayCardConditionValueId && {
