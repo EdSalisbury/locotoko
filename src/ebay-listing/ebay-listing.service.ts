@@ -16,14 +16,11 @@ import {
 
 const EBAY_SKU_MAX_LENGTH = 50;
 
-function buildEbaySku(itemId: string, location: string | null, acquisitionName: string | null): string {
+function buildEbaySku(location: string | null, acquisitionName: string | null): string {
   const loc = location || '';
   const acq = acquisitionName || '';
-  // itemId + 2 pipes + location = fixed portion
-  const fixedLength = itemId.length + 2 + loc.length;
-  const remainingSpace = EBAY_SKU_MAX_LENGTH - fixedLength;
-  const truncatedAcq = remainingSpace > 0 ? acq.slice(0, remainingSpace) : '';
-  return `${itemId}|${loc}|${truncatedAcq}`;
+  const sku = `${loc}|${acq}`;
+  return sku.slice(0, EBAY_SKU_MAX_LENGTH);
 }
 
 @Injectable()
@@ -68,7 +65,7 @@ export class EbayListingService {
       let request = {
         Item: {
           Title: item.title + "-" + item.id.slice(-4),
-          SKU: buildEbaySku(item.id, item.location, item.acquisition?.name ?? null),
+          SKU: buildEbaySku(item.location, item.acquisition?.name ?? null),
           ConditionID: item.ebayConditionId,
           ...(item.ebayConditionId === 4000 &&
             item.ebayCardConditionValueId && {
@@ -223,7 +220,7 @@ export class EbayListingService {
         Item: {
           ItemID: item.ebayListingId,
           Title: item.title + "-" + item.id.slice(-4),
-          SKU: buildEbaySku(item.id, item.location, item.acquisition?.name ?? null),
+          SKU: buildEbaySku(item.location, item.acquisition?.name ?? null),
           ConditionID: item.ebayConditionId,
           ...(item.ebayConditionId === 4000 &&
             item.ebayCardConditionValueId && {
