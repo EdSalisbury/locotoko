@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.49.4",
+  "version": "0.50.0",
   "description": "Inventory Manager for online listings",
   "author": "Ed Salisbury",
   "repository": "https://github.com/EdSalisbury/locotoko",
@@ -43,6 +43,7 @@
     "docker:shell:dev": "docker exec -it locotoko-dev zsh"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "@nestjs/common": "^8.4.5",
     "@nestjs/core": "^8.4.5",
     "@nestjs/jwt": "^8.0.1",
@@ -58,7 +59,6 @@
     "ebay-api": "9",
     "ipp": "^2.0.1",
     "node-ptouch": "^0.0.4",
-    "openai": "^4.82.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "qrcode": "^1.5.0",
