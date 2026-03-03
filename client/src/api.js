@@ -320,7 +320,7 @@ const getMetrics = async (token) => {
 }
 
 const generateListing = async (token, payload) => {
-  const response = await fetch(apiUrl("openai"), {
+  const response = await fetch(apiUrl("anthropic"), {
     method: "POST",
     ...apiHeaders(token),
     body: JSON.stringify(payload),

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 
 import { PrismaService } from "../prisma/prisma.service";
@@ -211,7 +212,11 @@ export class ItemService {
 
     const base_url = this.config.get("VUE_APP_API_BASE_URL");
     const url = `${base_url}/viewItem/${item.id}`;
-    this.ptouch.printItemLabel(url, item.id, item.title);
+    try {
+      await this.ptouch.printItemLabel(url, item.id, item.title);
+    } catch (e) {
+      throw new ServiceUnavailableException("Unable to connect to printer");
+    }
   }
 
   async createItem(dto: CreateItemDto) {
