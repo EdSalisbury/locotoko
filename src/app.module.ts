@@ -25,6 +25,7 @@ import { EbayMarkdownModule } from './ebay-markdown/ebay-markdown.module';
 import { MetricModule } from './metric/metric.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AnthropicModule } from './anthropic/anthropic.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AnthropicModule } from './anthropic/anthropic.module';
     MetricModule,
     InventoryModule,
     AnthropicModule,
+    SettingsModule,
   ],
 })
 export class AppModule implements OnModuleInit, OnApplicationBootstrap {

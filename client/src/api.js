@@ -319,6 +319,11 @@ const getMetrics = async (token) => {
   return await response.json();
 }
 
+const getSettings = async (token) => {
+  const response = await fetch(apiUrl("settings"), apiHeaders(token));
+  return await response.json();
+};
+
 const generateListing = async (token, payload) => {
   const response = await fetch(apiUrl("anthropic"), {
     method: "POST",
@@ -366,5 +371,6 @@ export default {
   getPicks,
   getItems,
   getMetrics,
+  getSettings,
   generateListing,
 };

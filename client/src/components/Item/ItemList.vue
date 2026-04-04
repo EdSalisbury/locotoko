@@ -73,8 +73,6 @@ import api from "../../api";
 import itemUtils from "./itemUtils";
 import VueBootstrapTable from "vue2-bootstrap-table2";
 
-const MIN_PRICE_THRESHOLD = parseFloat(process.env.VUE_APP_MIN_PRICE || "9.99");
-
 export default {
   components: {
     VueBootstrapTable: VueBootstrapTable,
@@ -84,6 +82,7 @@ export default {
       items: [],
       categories: [],
       token: "",
+      minPrice: 0,
       columns: [
         {
           name: "title",
@@ -123,6 +122,8 @@ export default {
     if (!this.token) {
       this.$router.push({ path: "/login" });
     }
+    const settings = await api.getSettings(this.token);
+    this.minPrice = settings.minPrice;
     await this.getItems();
     this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
       const request = {
@@ -228,9 +229,9 @@ export default {
         if (item.title.length > 80) {
           errors.push(`Title too long (${item.title.length} chars)`);
         }
-        if (parseFloat(item.price) < MIN_PRICE_THRESHOLD) {
+        if (parseFloat(item.price) < this.minPrice) {
           errors.push(
-            `Original price is under $${MIN_PRICE_THRESHOLD.toFixed(2)} ($${parseFloat(item.price).toFixed(2)})`
+            `Original price is under $${this.minPrice.toFixed(2)} ($${parseFloat(item.price).toFixed(2)})`
           );
         }
         if (item.ebayConditionId === 0 && ebayConditions.length > 0) {
