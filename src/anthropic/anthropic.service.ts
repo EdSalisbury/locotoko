@@ -13,7 +13,7 @@ export class AnthropicService {
             apiKey: this.configService.get<string>("ANTHROPIC_API_KEY"),
         });
 
-        this.claudeModel = this.configService.get<string>("CLAUDE_MODEL") || "claude-3-5-sonnet-20241022";
+        this.claudeModel = this.configService.get<string>("CLAUDE_MODEL") || "claude-3-5-haiku-20241022";
         this.listingRules = this.configService.get<string>("LISTING_RULES") || "";
 
         console.log(`✅ AnthropicService initialized with model: ${this.claudeModel}`);
@@ -92,7 +92,14 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
         try {
             // 🔥 Parse Claude's Response
             const textContent = response.content.find(block => block.type === "text");
-            const responseText = textContent?.type === "text" ? textContent.text : "{}";
+            let responseText = textContent?.type === "text" ? textContent.text : "{}";
+
+            // 🔥 Extract JSON from markdown code blocks if present
+            const jsonMatch = responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/);
+            if (jsonMatch) {
+                responseText = jsonMatch[1];
+            }
+
             const result = JSON.parse(responseText);
 
             console.log("🟢 Claude Response:", result);
