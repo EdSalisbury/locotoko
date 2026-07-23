@@ -1,6 +1,8 @@
 FROM node:18-alpine AS client
 
 WORKDIR /build
+COPY .yarn .yarn
+COPY .yarnrc.yml .yarnrc.yml
 ADD client .
 RUN yarn
 RUN yarn build
