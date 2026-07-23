@@ -6,13 +6,17 @@ import Anthropic from "@anthropic-ai/sdk";
 export class AnthropicService {
     private anthropic: Anthropic;
     private listingRules: string;
+    private claudeModel: string;
 
     constructor(private readonly configService: ConfigService) {
         this.anthropic = new Anthropic({
             apiKey: this.configService.get<string>("ANTHROPIC_API_KEY"),
         });
 
+        this.claudeModel = this.configService.get<string>("CLAUDE_MODEL") || "claude-3-5-sonnet-20241022";
         this.listingRules = this.configService.get<string>("LISTING_RULES") || "";
+
+        console.log(`✅ AnthropicService initialized with model: ${this.claudeModel}`);
     }
 
     async generateListing(prompt: string, existingSpecifics: { key: string; value: string }[]) {
@@ -77,7 +81,7 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
 
         // 🔥 Call Claude API
         const response = await this.anthropic.messages.create({
-            model: "claude-sonnet-4-20250514",
+            model: this.claudeModel,
             max_tokens: 4096,
             system: systemPrompt,
             messages: [
