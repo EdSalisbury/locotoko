@@ -34,16 +34,16 @@ export class EbayConditionService {
         }
       );
 
-      if (response.data?.categoryPolicies?.[0]?.itemConditions) {
+      if (response.data?.itemConditionPolicies?.[0]?.itemConditions) {
         const conditions: ItemCondition[] =
-          response.data.categoryPolicies[0].itemConditions;
+          response.data.itemConditionPolicies[0].itemConditions;
         return JSON.stringify(conditions.map((c) => ({
-          id: c.conditionId,
-          name: c.conditionDescription,
-          description: c.conditionHelpText,
+          ID: c.conditionId,
+          DisplayName: c.conditionDescription,
         })));
       }
 
+      console.warn("⚠️  No conditions found in response for category:", categoryId);
       return "[]";
     } catch (error) {
       console.error("❌ eBay getItemConditionPolicies Error:", {
@@ -51,7 +51,7 @@ export class EbayConditionService {
         errorMessage: error?.message,
         errorResponse: error?.response?.data || error?.data,
         errorStatus: error?.response?.status,
-        errorStack: error?.stack,
+        fullResponse: JSON.stringify(error?.response, null, 2),
       });
       throw error;
     }
