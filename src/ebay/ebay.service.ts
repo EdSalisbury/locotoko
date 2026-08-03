@@ -26,4 +26,8 @@ export class EbayService extends ebayApi {
     const url = this.OAuth2.generateAuthUrl();
     return url;
   }
+
+  getAccessToken(): string {
+    return this.OAuth2.getCredentials()?.access_token;
+  }
 }

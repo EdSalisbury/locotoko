@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { ConfigService } from "@nestjs/config";
+import { EbayService } from "../ebay/ebay.service";
 import axios from "axios";
 import { decodeSpecialChars } from "../util";
 
@@ -22,11 +22,11 @@ interface CategorySubtree {
 export class EbayCategoryService {
   private ebayApiBaseUrl = "https://api.ebay.com";
 
-  constructor(private prisma: PrismaService, private config: ConfigService) {}
+  constructor(private prisma: PrismaService, private ebay: EbayService) {}
 
   async refreshCategories() {
     try {
-      const accessToken = await this.getAccessToken();
+      const accessToken = this.ebay.getAccessToken();
       const categoryTreeId = await this.getCategoryTreeId(accessToken);
       const subtree = await this.getCategorySubtree(
         accessToken,
@@ -154,39 +154,6 @@ export class EbayCategoryService {
     }
   }
 
-  private async getAccessToken(): Promise<string> {
-    const clientId = this.config.get("EBAY_CLIENT_ID");
-    const clientSecret = this.config.get("EBAY_CLIENT_SECRET");
-
-    if (!clientId || !clientSecret) {
-      throw new Error("Missing EBAY_CLIENT_ID or EBAY_CLIENT_SECRET");
-    }
-
-    try {
-      const response = await axios.post(
-        `${this.ebayApiBaseUrl}/identity/v1/oauth2/token`,
-        "grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope",
-        {
-          auth: {
-            username: clientId,
-            password: clientSecret,
-          },
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-
-      return response.data.access_token;
-    } catch (error) {
-      console.error("❌ Failed to get eBay OAuth token:", {
-        errorMessage: error?.message,
-        errorStatus: error?.response?.status,
-      });
-      throw error;
-    }
-  }
-  
   async getCategories() {
     const categories = await this.prisma.ebayCategory.findMany();
     return categories
