@@ -27,7 +27,19 @@ export class EbayService extends ebayApi {
     return url;
   }
 
-  getAccessToken(): string {
-    return this.OAuth2.getCredentials()?.access_token;
+  async getAccessToken(): Promise<string> {
+    try {
+      await this.OAuth2.refreshToken();
+    } catch (error) {
+      console.log("Token refresh skipped (may already be valid)");
+    }
+
+    const credentials = this.OAuth2.getCredentials();
+
+    if (!credentials?.access_token) {
+      throw new Error("No eBay access token configured");
+    }
+
+    return credentials.access_token;
   }
 }

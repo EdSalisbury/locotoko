@@ -20,7 +20,7 @@ export class EbayConditionService {
     }
 
     try {
-      const accessToken = this.ebay.getAccessToken();
+      const accessToken = await this.ebay.getAccessToken();
       const response = await axios.get(
         `${this.ebayApiBaseUrl}/sell/metadata/v1/marketplace/EBAY_US/get_item_condition_policies`,
         {

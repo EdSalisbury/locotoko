@@ -26,7 +26,7 @@ export class EbayCategoryService {
 
   async refreshCategories() {
     try {
-      const accessToken = this.ebay.getAccessToken();
+      const accessToken = await this.ebay.getAccessToken();
       const categoryTreeId = await this.getCategoryTreeId(accessToken);
       const subtree = await this.getCategorySubtree(
         accessToken,
