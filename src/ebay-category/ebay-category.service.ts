@@ -7,32 +7,42 @@ export class EbayCategoryService {
   constructor(private prisma: PrismaService, private ebay: EbayService) {}
 
   async refreshCategories() {
-    const data = await this.ebay.trading.GetCategories({
-      detailLevel: "ReturnAll",
-      viewAllNodes: true,
-    });
-    const categories = Array.isArray(data.CategoryArray.Category)
-      ? data.CategoryArray.Category
-      : [data.CategoryArray.Category];
-    for (const category of categories) {
-      await this.prisma.ebayCategory.upsert({
-        where: {
-          id: category.CategoryID,
-        },
-        update: {
-          name: category.CategoryName.toString(),
-          parentId: category.CategoryParentID,
-          leaf: category.LeafCategory,
-          level: category.CategoryLevel,
-        },
-        create: {
-          name: category.CategoryName.toString(),
-          id: category.CategoryID,
-          parentId: category.CategoryParentID,
-          leaf: category.LeafCategory,
-          level: category.CategoryLevel,
-        },
+    try {
+      const data = await this.ebay.trading.GetCategories({
+        detailLevel: "ReturnAll",
+        viewAllNodes: true,
       });
+      const categories = Array.isArray(data.CategoryArray.Category)
+        ? data.CategoryArray.Category
+        : [data.CategoryArray.Category];
+      for (const category of categories) {
+        await this.prisma.ebayCategory.upsert({
+          where: {
+            id: category.CategoryID,
+          },
+          update: {
+            name: category.CategoryName.toString(),
+            parentId: category.CategoryParentID,
+            leaf: category.LeafCategory,
+            level: category.CategoryLevel,
+          },
+          create: {
+            name: category.CategoryName.toString(),
+            id: category.CategoryID,
+            parentId: category.CategoryParentID,
+            leaf: category.LeafCategory,
+            level: category.CategoryLevel,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("❌ eBay GetCategories Error:", {
+        errorMessage: error?.message,
+        errorResponse: error?.response || error?.data,
+        errorStack: error?.stack,
+        fullError: JSON.stringify(error, null, 2),
+      });
+      throw error;
     }
   }
   
