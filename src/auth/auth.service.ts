@@ -1,6 +1,6 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { AuthDto, LoginDto } from "./dto";
+import { AuthDto, ChangePasswordDto, LoginDto } from "./dto";
 import * as argon from "argon2";
 import { Prisma } from '@prisma/client';
 import { JwtService } from "@nestjs/jwt";
@@ -67,6 +67,31 @@ export class AuthService {
       }
       throw error;
     }
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) throw new NotFoundException("User not found");
+
+    // compare current password
+    const pwMatches = await argon.verify(user.hash, dto.currentPassword);
+
+    if (!pwMatches) {
+      throw new ForbiddenException("Current password is incorrect");
+    }
+
+    // generate the new password hash
+    const hash = await argon.hash(dto.newPassword);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { hash },
+    });
+
+    return { message: "Password updated successfully" };
   }
 
   async signToken(
