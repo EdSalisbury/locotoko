@@ -13,6 +13,7 @@
         </b-navbar-nav>
         <b-navbar-nav v-if="this.$cookie.get('token')" class="ml-auto">
           <b-nav-item disabled>{{ this.$cookie.get("email") }}</b-nav-item>
+          <b-nav-item to="/changePassword">Change Password</b-nav-item>
           <b-nav-item to="/logout">Logout</b-nav-item>
         </b-navbar-nav>
         <b-navbar-nav v-else class="ml-auto">

@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import LoginForm from "@/components/LoginForm";
 import LogoutForm from "@/components/LogoutForm";
 import RegisterForm from "@/components/RegisterForm";
+import ChangePasswordForm from "@/components/ChangePasswordForm";
 import HomePage from "@/components/HomePage";
 import { ItemAdd, ItemEdit, ItemView, ItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "../components/Template";
@@ -32,6 +33,11 @@ const routes = [
     path: "/register",
     name: "register",
     component: RegisterForm,
+  },
+  {
+    path: "/changePassword",
+    name: "change password",
+    component: ChangePasswordForm,
   },
   {
     path: "/viewItem/:id",
