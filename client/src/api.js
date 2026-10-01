@@ -112,6 +112,19 @@ const endEbayItem = async (token, id) => {
   });
 };
 
+const changePassword = async (token, body) => {
+  const response = await fetch(apiUrl("auth", "", "change-password"), {
+    method: "PATCH",
+    ...apiHeaders(token),
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to change password");
+  }
+  return data;
+};
+
 const getUsers = async (token) => {
   const response = await fetch(apiUrl("users"), {
     headers: {
@@ -330,6 +343,7 @@ const generateListing = async (token, payload) => {
 
 export default {
   login,
+  changePassword,
   getItem,
   createItem,
   updateItem,
