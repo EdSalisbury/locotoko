@@ -5,6 +5,11 @@ import * as argon from "argon2";
 import { Prisma } from '@prisma/client';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { BruteForceService } from "./brute-force.service";
+
+// Deliberate delay on every wrong password, win or lose on the lockout check -
+// slows brute force even before the lockout threshold hits.
+const FAILED_LOGIN_DELAY_MS = 1000;
 
 @Injectable({})
 export class AuthService {
@@ -12,9 +17,10 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private bruteForce: BruteForceService,
   ) { }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, address: string) {
     // find the user by email
     const user = await this.prisma.user.findUnique({
       where: {
@@ -23,15 +29,23 @@ export class AuthService {
     });
 
     // if user does not exist, throw exception
-    if (!user) throw new ForbiddenException("Incorrect email or password");
+    if (!user) {
+      this.bruteForce.recordFailure(address);
+      await this.delay();
+      throw new ForbiddenException("Incorrect email or password");
+    }
 
     // compare password
     const pwMatches = await argon.verify(user.hash, dto.password);
 
     // if password is incorrect, throw exception
     if (!pwMatches) {
+      this.bruteForce.recordFailure(address);
+      await this.delay();
       throw new ForbiddenException("Incorrect email or password");
     }
+
+    this.bruteForce.recordSuccess(address);
 
     // send back the token for the user
     return this.signToken(user.id, user.email);
@@ -69,7 +83,7 @@ export class AuthService {
     }
   }
 
-  async changePassword(userId: string, dto: ChangePasswordDto) {
+  async changePassword(userId: string, dto: ChangePasswordDto, address: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -80,6 +94,8 @@ export class AuthService {
     const pwMatches = await argon.verify(user.hash, dto.currentPassword);
 
     if (!pwMatches) {
+      this.bruteForce.recordFailure(address);
+      await this.delay();
       throw new ForbiddenException("Current password is incorrect");
     }
 
@@ -91,7 +107,13 @@ export class AuthService {
       data: { hash },
     });
 
+    this.bruteForce.recordSuccess(address);
+
     return { message: "Password updated successfully" };
+  }
+
+  private delay(ms: number = FAILED_LOGIN_DELAY_MS): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async signToken(
