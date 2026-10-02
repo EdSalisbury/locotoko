@@ -44,11 +44,11 @@ export class EditItemDto {
   @IsOptional()
   quantitySold: number;
 
-  @IsCurrency()
+  @IsCurrency({ digits_after_decimal: [0, 1, 2] })
   @IsOptional()
   price: number;
 
-  @IsCurrency()
+  @IsCurrency({ digits_after_decimal: [0, 1, 2] })
   @IsOptional()
   shippingPrice: number;
 
@@ -56,11 +56,11 @@ export class EditItemDto {
   @IsOptional()
   shippingType: number;
 
-  @IsCurrency()
+  @IsCurrency({ digits_after_decimal: [0, 1, 2] })
   @IsOptional()
   soldPrice: number;
 
-  @IsCurrency()
+  @IsCurrency({ digits_after_decimal: [0, 1, 2] })
   @IsOptional()
   currentPrice: number;
 
