@@ -52,10 +52,15 @@ export class AuthService {
   }
 
   async register(dto: AuthDto) {
-    // Disallow registration in production
-    const env = this.config.get('NODE_ENV');
-    if (env === "production") {
-      throw new ForbiddenException("Registration not allowed at this time");
+    // Registration is blocked by default and only opens on an explicit opt-in
+    // (ALLOW_REGISTRATION=true in .env.dev). This used to check
+    // NODE_ENV === "production" to block, which is backwards: neither .env.dev
+    // nor .env.prod actually sets NODE_ENV, so that check silently allowed
+    // registration everywhere, including the live production server. Defaulting
+    // to blocked (fail-safe) instead of blocked-only-when-a-specific-string-matches
+    // (fail-open) means a missing/misconfigured env var can no longer reopen this.
+    if (this.config.get("ALLOW_REGISTRATION") !== "true") {
+      throw new ForbiddenException("Registration is not available");
     }
 
     // Generate the password hash
