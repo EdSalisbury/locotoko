@@ -2,6 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Anthropic from "@anthropic-ai/sdk";
 
+// Max characters eBay accepts for a specific's value
+const MAX_SPECIFIC_LENGTH: Record<string, number> = {
+    "Features": 65,
+};
+
 @Injectable()
 export class AnthropicService {
     private anthropic: Anthropic;
@@ -143,7 +148,7 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
     private normalizeSpecificValue(key: string, value?: unknown): string {
         const trimmedValue = value ? String(value).trim() : "";
         if (trimmedValue) {
-            return trimmedValue;
+            return this.capLength(key, trimmedValue);
         }
 
         // eBay rejects "N/A" for these fields, so leave them blank
@@ -152,6 +157,24 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
         }
 
         return "N/A";
+    }
+
+    // eBay rejects values over these limits, so drop whole comma-separated items until it fits
+    private capLength(key: string, value: string): string {
+        const maxLength = MAX_SPECIFIC_LENGTH[key];
+        if (!maxLength || value.length <= maxLength) {
+            return value;
+        }
+
+        const kept: string[] = [];
+        for (const item of value.split(",").map(s => s.trim())) {
+            const candidate = [...kept, item].join(", ");
+            if (candidate.length > maxLength) {
+                break;
+            }
+            kept.push(item);
+        }
+        return kept.join(", ");
     }
 
 }
