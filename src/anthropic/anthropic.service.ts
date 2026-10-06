@@ -146,8 +146,8 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
             return trimmedValue;
         }
 
-        // eBay rejects "N/A" for Device Charging Range, so leave it blank
-        if (key === "Device Charging Range") {
+        // eBay rejects "N/A" for these fields, so leave them blank
+        if (key === "Device Charging Range" || key === "Durability Guarantee") {
             return "";
         }
 
