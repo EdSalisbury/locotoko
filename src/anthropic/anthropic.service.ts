@@ -147,7 +147,7 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
         }
 
         // eBay rejects "N/A" for these fields, so leave them blank
-        if (key === "Device Charging Range" || key === "Durability Guarantee") {
+        if (key === "Device Charging Range" || key === "Durability Guarantee" || key === "FCC ID") {
             return "";
         }
 
