@@ -257,7 +257,11 @@ const listItem = async () => {
       console.log("Item listed successfully");
       return;
     } catch (e) {
-      console.error("ERROR: " + e.response.data.LongMessage);
+      const detail = e.response?.data ?? e.message;
+      console.error(
+        `ERROR listing ${item.id} (${item.title}): status ${e.response?.status ?? "none"}`,
+        JSON.stringify(detail),
+      );
       const request = {
         ready: false,
       };
