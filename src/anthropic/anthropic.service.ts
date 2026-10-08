@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Anthropic from "@anthropic-ai/sdk";
-
-// Max characters eBay accepts for a specific's value
-const MAX_SPECIFIC_LENGTH: Record<string, number> = {
-    "Features": 65,
-};
+import { normalizeSpecificValue } from "./specifics-normalizer";
 
 @Injectable()
 export class AnthropicService {
@@ -37,7 +33,7 @@ export class AnthropicService {
                 const trimmedKey = s.key.trim();
                 return {
                     key: trimmedKey, // Trim whitespace
-                    value: this.normalizeSpecificValue(trimmedKey, s.value), // Default empty values safely
+                    value: normalizeSpecificValue(trimmedKey, s.value), // Default empty values safely
                 };
             });
 
@@ -120,7 +116,7 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
                 ...existingSpecificsObj, ...Object.fromEntries(
                     result.specifics.map(s => {
                         const key = String(s.key).trim();
-                        return [key, this.normalizeSpecificValue(key, s.value)];
+                        return [key, normalizeSpecificValue(key, s.value)];
                     })
                 )
             };
@@ -130,7 +126,7 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
                 const trimmedKey = String(key).trim();
                 return {
                     key: trimmedKey,
-                    value: this.normalizeSpecificValue(trimmedKey, value),
+                    value: normalizeSpecificValue(trimmedKey, value),
                 };
             });
 
@@ -143,38 +139,6 @@ IMPORTANT: You must respond with ONLY valid JSON. No markdown, no code blocks, n
             console.error("❌ Failed to parse Claude response:", responseText);
             throw new Error("Failed to parse Claude response");
         }
-    }
-
-    private normalizeSpecificValue(key: string, value?: unknown): string {
-        const trimmedValue = value ? String(value).trim() : "";
-        if (trimmedValue) {
-            return this.capLength(key, trimmedValue);
-        }
-
-        // eBay rejects "N/A" for these fields, so leave them blank
-        if (key === "Device Charging Range" || key === "Durability Guarantee" || key === "FCC ID") {
-            return "";
-        }
-
-        return "N/A";
-    }
-
-    // eBay rejects values over these limits, so drop whole comma-separated items until it fits
-    private capLength(key: string, value: string): string {
-        const maxLength = MAX_SPECIFIC_LENGTH[key];
-        if (!maxLength || value.length <= maxLength) {
-            return value;
-        }
-
-        const kept: string[] = [];
-        for (const item of value.split(",").map(s => s.trim())) {
-            const candidate = [...kept, item].join(", ");
-            if (candidate.length > maxLength) {
-                break;
-            }
-            kept.push(item);
-        }
-        return kept.join(", ");
     }
 
 }
