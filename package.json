@@ -30,7 +30,7 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
-        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+        "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
         "pretest:e2e": "yarn db:restart:test",
         "test:e2e": "dotenv -e .env.test -- jest --watch --no-cache --config ./test/jest-e2e.json",
         "ebay:prod": "dotenv -e .env.prod node ebay/index.js",
@@ -89,7 +89,6 @@
         "ts-jest": "^27.0.3",
         "ts-loader": "^9.2.3",
         "ts-node": "^10.0.0",
-        "tsconfig-paths": "^3.10.1",
         "typescript": "^5.7.3"
     },
     "jest": {
