@@ -13,15 +13,7 @@ import {
   encodeSpecialCharsInObject,
   decodeSpecialCharsInObject,
 } from "../util";
-
-const EBAY_SKU_MAX_LENGTH = 50;
-
-function buildEbaySku(location: string | null, acquisitionName: string | null): string {
-  const loc = location || '';
-  const acq = acquisitionName || '';
-  const sku = `${loc}|${acq}`;
-  return sku.slice(0, EBAY_SKU_MAX_LENGTH);
-}
+import { buildEbaySku } from "./build-ebay-sku";
 
 @Injectable()
 export class EbayListingService {
