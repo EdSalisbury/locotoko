@@ -15,6 +15,11 @@ import {
 } from "../util";
 import { buildEbaySku } from "./build-ebay-sku";
 import { buildShippingPackageDetails } from "./build-shipping-package-details";
+import {
+  findShippingProblems,
+  toClientErrors,
+  ebayErrorToClientErrors,
+} from "./listing-problems";
 
 @Injectable()
 export class EbayListingService {
@@ -41,6 +46,12 @@ export class EbayListingService {
     // Throw if the owner doesn't exist
     if (!item) {
       throw new NotFoundException();
+    }
+
+    // Refuse before uploading anything, with a message the user can act on.
+    const problems = findShippingProblems(item);
+    if (problems.length > 0) {
+      throw new BadRequestException(toClientErrors(problems));
     }
 
     try {
@@ -136,7 +147,7 @@ export class EbayListingService {
     } catch (e) {
       console.error(e);
       console.log(JSON.stringify(e.meta));
-      throw new BadRequestException(e.meta.Errors);
+      throw new BadRequestException(ebayErrorToClientErrors(e));
     }
   }
 
@@ -174,6 +185,12 @@ export class EbayListingService {
           endedAt: new Date()
         },
       });
+    }
+
+    // Refuse before uploading anything, with a message the user can act on.
+    const problems = findShippingProblems(item);
+    if (problems.length > 0) {
+      throw new BadRequestException(toClientErrors(problems));
     }
 
     try {
@@ -244,7 +261,7 @@ export class EbayListingService {
       return await this.ebay.trading.ReviseItem(request);
     } catch (e) {
       console.error(e);
-      throw new BadRequestException(e.meta.Errors);
+      throw new BadRequestException(ebayErrorToClientErrors(e));
     }
   }
 
