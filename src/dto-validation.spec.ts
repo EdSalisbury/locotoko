@@ -104,10 +104,9 @@ describe("@IsEmail()", () => {
   ]);
 });
 
-// CVE-2019-18413: before 0.14, validating something that isn't an instance of a
-// decorated class (e.g. a plain object) passed with no checks at all, a
-// validation bypass. 0.14+ rejects it by default (forbidUnknownValues: true).
-describe("validation bypass (CVE-2019-18413) is closed", () => {
+// class-validator 0.14+ rejects values that aren't instances of a decorated
+// class (forbidUnknownValues defaults to true). Keep it that way.
+describe("unknown values are rejected", () => {
   it("rejects a plain object instead of silently passing it", async () => {
     const errors = await validate({ email: "not-an-email", password: 123 } as object);
     expect(errors.length).toBeGreaterThan(0);
