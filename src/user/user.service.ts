@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { EditUserDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
+import { PUBLIC_USER_FIELDS } from "./public-user-fields";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
   getUsers() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({ select: PUBLIC_USER_FIELDS });
   }
 
   async editUser(
