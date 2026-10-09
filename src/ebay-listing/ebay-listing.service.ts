@@ -14,6 +14,7 @@ import {
   decodeSpecialCharsInObject,
 } from "../util";
 import { buildEbaySku } from "./build-ebay-sku";
+import { buildShippingPackageDetails } from "./build-shipping-package-details";
 
 @Injectable()
 export class EbayListingService {
@@ -105,30 +106,7 @@ export class EbayListingService {
               ShippingProfileID: shippingPolicy,
             },
           },
-          ShippingPackageDetails: {
-            ShippingIrregular: false,
-            ShippingPackage: "PackageThickEnvelope",
-            PackageDepth: {
-              "@_unit": "inches",
-              "#value": item.shipSizeDepthInches,
-            },
-            PackageLength: {
-              "@_unit": "inches",
-              "#value": item.shipSizeHeightInches,
-            },
-            PackageWidth: {
-              "@_unit": "inches",
-              "#value": item.shipSizeWidthInches,
-            },
-            WeightMajor: {
-              "#value": item.shipWeightPounds,
-              "@_unit": "lbs",
-            },
-            WeightMinor: {
-              "#value": item.shipWeightOunces,
-              "@_unit": "oz",
-            },
-          },
+          ShippingPackageDetails: buildShippingPackageDetails(item),
         },
       };
 
@@ -260,30 +238,7 @@ export class EbayListingService {
               ShippingProfileID: shippingPolicy,
             },
           },
-          ShippingPackageDetails: {
-            ShippingIrregular: false,
-            ShippingPackage: "PackageThickEnvelope",
-            PackageDepth: {
-              "@_unit": "inches",
-              "#value": item.shipSizeDepthInches,
-            },
-            PackageLength: {
-              "@_unit": "inches",
-              "#value": item.shipSizeHeightInches,
-            },
-            PackageWidth: {
-              "@_unit": "inches",
-              "#value": item.shipSizeWidthInches,
-            },
-            WeightMajor: {
-              "#value": item.shipWeightPounds,
-              "@_unit": "lbs",
-            },
-            WeightMinor: {
-              "#value": item.shipWeightOunces,
-              "@_unit": "oz",
-            },
-          },
+          ShippingPackageDetails: buildShippingPackageDetails(item),
         },
       };
       return await this.ebay.trading.ReviseItem(request);
