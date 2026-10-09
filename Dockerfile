@@ -1,4 +1,4 @@
-FROM node:20-alpine AS client
+FROM node:24-alpine AS client
 
 WORKDIR /build
 COPY .yarn .yarn
@@ -7,7 +7,7 @@ ADD client .
 RUN yarn
 RUN yarn build
 
-FROM node:20-alpine
+FROM node:24-alpine
 WORKDIR /app
 
 COPY . .
