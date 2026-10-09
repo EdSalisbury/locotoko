@@ -107,5 +107,9 @@
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"
     },
-    "packageManager": "yarn@1.22.22"
+    "packageManager": "yarn@1.22.22",
+    "volta": {
+        "node": "24.21.0",
+        "yarn": "1.22.22"
+    }
 }
