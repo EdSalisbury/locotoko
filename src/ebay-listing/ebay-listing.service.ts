@@ -15,6 +15,7 @@ import {
 } from "../util";
 import { buildEbaySku } from "./build-ebay-sku";
 import { buildShippingPackageDetails } from "./build-shipping-package-details";
+import { parseImageDataUrl } from "./parse-image-data-url";
 import {
   findShippingProblems,
   toClientErrors,
@@ -298,27 +299,23 @@ export class EbayListingService {
     return listings;
   }
 
+  // Uploads one stored photo to eBay Picture Services through the Media API
+  // (createImageFromFile) and returns the EPS URL to put in the listing's
+  // PictureURL. Replaces the Trading API's UploadSiteHostedPictures, which
+  // eBay decommissions by 2026-10-26. Needs the sell.inventory OAuth scope.
   async uploadImage(image: string) {
-    // Strip off metadata
-    var img = Buffer.from(image.split(",")[1], "base64");
+    const { bytes, contentType, filename } = parseImageDataUrl(image);
 
     await this.ebay.OAuth2.refreshToken();
 
-    const response = await this.ebay.trading.UploadSiteHostedPictures(
-      { ExtensionInDays: 1, useIaf: true },
-      {
-        hook: (xml: string) => {
-          const form = new FormData();
-          form.append("XML Payload", xml, "payload.xml");
-          form.append("dummy", img);
-          return {
-            body: form,
-            headers: form.getHeaders(),
-          };
-        },
-      },
-    );
-    return response.SiteHostedPictureDetails.FullURL;
+    const form = new FormData();
+    form.append("image", bytes, { filename, contentType });
+
+    const response = await this.ebay.commerce.media.createImageFromFile(form);
+    if (!response?.imageUrl) {
+      throw new Error("eBay accepted the photo upload but returned no image URL");
+    }
+    return response.imageUrl;
   }
 
   getSpecificArray(specifics: string) {
