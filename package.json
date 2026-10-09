@@ -51,7 +51,7 @@
         "argon2": "^0.28.5",
         "axios": "^0.27.2",
         "class-transformer": "^0.5.1",
-        "class-validator": "^0.13.2",
+        "class-validator": "^0.15.1",
         "ebay-api": "^10",
         "ipp": "^2.0.1",
         "node-ptouch": "^0.0.4",
