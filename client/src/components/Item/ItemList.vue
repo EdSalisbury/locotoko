@@ -245,6 +245,23 @@ export default {
         if (item.images.length > 12) {
           errors.push(`Too many photos (${item.images.length})`);
         }
+        // Same shipping rules the server enforces before listing
+        // (src/ebay-listing/listing-problems.ts).
+        const pounds = item.shipWeightPounds || 0;
+        const ounces = item.shipWeightOunces || 0;
+        if (pounds * 16 + ounces <= 0) {
+          errors.push(`Shipping weight is missing (${pounds} lb ${ounces} oz)`);
+        }
+        const dimensions = [
+          ["shipSizeDepthInches", "length"],
+          ["shipSizeWidthInches", "width"],
+          ["shipSizeHeightInches", "height"],
+        ];
+        for (const [field, label] of dimensions) {
+          if (!(item[field] > 0)) {
+            errors.push(`Package ${label} is missing`);
+          }
+        }
 
         if (errors.length > 0) {
           this.$toast.error("Unable to ready item!<br />Reasons:<br />" + errors.join("<br />"), { duration: 0 });
