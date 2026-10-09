@@ -47,26 +47,6 @@ export class ProductService {
     return response.data;
   }
 
-  async getEbayItemsByProduct(upc: string) {
-    const request = {
-      productId: {
-        "#value": upc,
-        "@_type": "UPC",
-      },
-      paginationInput: {
-        entriesPerPage: 5,
-      },
-    };
-
-    //const token = await this.ebay.OAuth2.getApplicationAccessToken();
-    //this.ebay.OAuth2.setCredentials(token);
-    const product = await this.ebay.finding.findItemsByProduct(request);
-    // this.ebay.OAuth2.setCredentials(this.config.get("EBAY_AUTH_TOKEN"));
-
-    const decodedProduct = decodeSpecialCharsInObject(product);
-    return decodedProduct.searchResult.item;
-  }
-
   async getEbayProduct(upc: string) {
     const request = {
       ProductID: {
@@ -141,26 +121,6 @@ export class ProductService {
         }
         if (tmdb.original_language) {
           details["Language"] = tmdb.original_language;
-        }
-      }
-    } catch {}
-
-    try {
-      const items = await this.getEbayItemsByProduct(upc);
-      for (const item of items) {
-        const itemDetails = await this.ebayListing.getEbayListing(item.itemId);
-        if (
-          itemDetails &&
-          itemDetails.Item &&
-          itemDetails.Item.ItemSpecifics &&
-          itemDetails.Item.ItemSpecifics.NameValueList
-        ) {
-          for (const nameValue of itemDetails.Item.ItemSpecifics
-            .NameValueList) {
-            if (!details.hasOwnProperty(nameValue.Name)) {
-              details[nameValue.Name] = nameValue.Value;
-            }
-          }
         }
       }
     } catch {}
