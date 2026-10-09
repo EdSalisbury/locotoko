@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "esModuleInterop": true,
     "removeComments": true,
@@ -11,9 +11,12 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "rootDir": ".",
     "incremental": true,
     "skipLibCheck": true,
+    "isolatedModules": true,
+    "strict": false,
+    "types": ["node", "jest"],
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
