@@ -62,6 +62,10 @@
                          "last 2 versions",
                          "not dead"
                      ],
+    "resolutions":  {
+                        "vue-html2pdf/html2pdf.js":  "^0.14.0",
+                        "vue2-bootstrap-table2/axios":  "^1.20.0"
+                    },
     "gitHooks":  {
                      "pre-commit":  "lint-staged"
                  },
