@@ -5,12 +5,12 @@
       <div class="camera-frame">
         <video v-show="cameraEnabled" id="camera" ref="camera" class="camera camera-offset" autoplay />
         <b-img v-if="!cameraEnabled" blank blank-color="black" class="camera" />
-        <b-button v-show="cameraEnabled" @click="takePhoto" variant="info" class="camera-shutter">
-          <b-icon-camera-fill />
+        <b-button v-show="cameraEnabled" variant="info" class="camera-shutter" @click="takePhoto">
+          <i class="bi bi-camera-fill" />
         </b-button>
-        <b-button @click="toggleCamera" variant="info" class="camera-toggle">
-          <b-icon-camera-video-off-fill v-if="cameraEnabled" />
-          <b-icon-camera-video-fill v-else />
+        <b-button variant="info" class="camera-toggle" @click="toggleCamera">
+          <i v-if="cameraEnabled" class="bi bi-camera-video-off-fill" />
+          <i v-else class="bi bi-camera-video-fill" />
         </b-button>
       </div>
     </div>
@@ -29,16 +29,18 @@
         </b-col>
       </b-row>
       <label for="file-upload" class="file-upload" style="margin-top: 10px">
-        <b-icon-cloud-upload-fill />
+        <i class="bi bi-cloud-upload-fill" />
         Upload Images
       </label>
-      <input id="file-upload" type="file" accept="image/*" multiple="true" v-on:change="addImages" />
+      <input id="file-upload" type="file" accept="image/*" multiple="true" @change="addImages" />
     </b-container>
   </div>
 </template>
 <script>
 import itemUtils from "@/components/Item/itemUtils";
+
 export default {
+  emits: ["photoTaken"],
   data() {
     return {
       cameraEnabled: false,
@@ -57,6 +59,14 @@ export default {
       ],
       brightnessBoost: false,
     };
+  },
+  // Leaving the page turns the camera off and removes the ` shortcut, which
+  // otherwise kept running after the component was gone.
+  beforeUnmount() {
+    if (this.cameraEnabled) {
+      this.stopCameraStream();
+      this.cameraEnabled = false;
+    }
   },
   methods: {
     toggleCamera() {
@@ -97,7 +107,7 @@ export default {
       }
     },
     stopCameraStream() {
-      const tracks = this.$refs.camera.srcObject.getTracks();
+      const tracks = this.$refs.camera?.srcObject?.getTracks() ?? [];
       tracks.forEach((track) => {
         track.stop();
       });

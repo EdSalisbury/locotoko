@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid class="p-0" id="packing-slip">
+  <b-container id="packing-slip" fluid class="p-0">
     <b-row fluid>
       <b-col fluid class="text">
         thebluedragonshoard.com<br />
@@ -17,7 +17,7 @@
     </b-row>
 
     <b-row class="m-0 p-0">
-      <b-col xs="6" class="m-0 pl-0 pr-2 address">
+      <b-col xs="6" class="m-0 ps-0 pe-2 address">
         <h1>Ship To:</h1>
         {{ order.address.Name }}<br />
         {{ order.address.Street1 }}<br />
@@ -26,13 +26,13 @@
         {{ order.address.StateOrProvince }}
         {{ order.address.PostalCode }}
       </b-col>
-      <b-col xs="6" class="m-0 pl-0 pr-2 address" style="text-align: right">
+      <b-col xs="6" class="m-0 ps-0 pe-2 address" style="text-align: right">
         <h1>Order ID: {{ order.id }}</h1>
         <h1>Shipped Date: {{ new Date(Date.now()).toLocaleString().split(",")[0] }}</h1>
       </b-col>
     </b-row>
 
-    <b-table :items="order.items" :fields="fields" striped bordered style="margin-top: 10px" id="itemTable">
+    <b-table id="itemTable" :items="order.items" :fields="fields" striped bordered style="margin-top: 10px">
       <template #cell(price)="data"> ${{ data.item.price.toFixed(2) }} </template>
       <template #cell(extended)="data"> ${{ (data.item.quantity * data.item.price).toFixed(2) }} </template>
 
@@ -63,7 +63,7 @@
 <script>
 export default {
   props: {
-    order: Object,
+    order: { type: Object, required: true },
   },
   data() {
     return {

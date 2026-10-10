@@ -1,30 +1,40 @@
 <template>
   <b-container fluid class="section">
     <h1>Specifics</h1>
-    <b-row class="section-row" v-for="(item, index) in specifics" :key="index">
-      <b-col xs="auto" class="section-col">
-        <b-form-input type="text" v-model="item.key" placeholder="Key" @input="input" :readonly="item.required"/>
+    <b-row v-for="(item, index) in specifics" :key="index" class="section-row">
+      <b-col class="section-col">
+        <b-form-input v-model="item.key" type="text" placeholder="Key" :readonly="item.required" @update:model-value="changed" />
       </b-col>
-      <b-col xs="auto" class="section-col">
-        <b-form-input type="text" v-model="item.value" placeholder="Value" @input="input" :formatter="formatValue" />
+      <b-col class="section-col">
+        <b-form-input
+          v-model="item.value"
+          type="text"
+          placeholder="Value"
+          :formatter="formatValue"
+          @update:model-value="changed"
+        />
       </b-col>
-      <b-col xs="1" class="section-col" >
-        <b-button class="p-1 m-1" variant="danger" @click="deleteItem(index)" v-if="item.required !== true"><b-icon-dash /></b-button>
+      <b-col cols="1" class="section-col">
+        <b-button v-if="item.required !== true" class="p-1 m-1" variant="danger" @click="deleteItem(index)">
+          <i class="bi bi-dash" />
+        </b-button>
       </b-col>
     </b-row>
-    <b-button class="p-1 m-1" variant="primary" @click="addItem"><b-icon-plus /></b-button>
+    <b-button class="p-1 m-1" variant="primary" @click="addItem"><i class="bi bi-plus" /></b-button>
   </b-container>
 </template>
 <script>
+// Edits the specifics array it's given ({ key, value, required? }[]) in
+// place, as before, and emits update:modelValue after each change so parents
+// can react (e.g. re-render a template title).
 export default {
   props: {
-    value: {
-      required: true,
-    },
+    modelValue: { type: Array, required: true },
   },
+  emits: ["update:modelValue"],
   computed: {
     specifics() {
-      return this.value;
+      return this.modelValue;
     },
   },
   methods: {
@@ -34,8 +44,8 @@ export default {
     deleteItem(index) {
       this.specifics.splice(index, 1);
     },
-    input() {
-      this.$emit("input", this.specifics);
+    changed() {
+      this.$emit("update:modelValue", this.specifics);
     },
     formatValue(value) {
       return String(value).substring(0, 50);

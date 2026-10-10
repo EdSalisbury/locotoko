@@ -6,15 +6,15 @@
         <b-container fluid class="m-0 p-0">
           <b-row class="m-2 p-0">
             <b-col class="m-0 p-0">
-              <TextInput label="Name" v-model="form.name" required />
+              <TextInput v-model="form.name" label="Name" required />
             </b-col>
           </b-row>
           <b-row class="m-2 p-0">
-            <b-col class="m-0 p-0"> <TextInput label="Price" v-model="form.price" required /> </b-col
+            <b-col class="m-0 p-0"> <TextInput v-model="form.price" label="Price" required /> </b-col
           ></b-row>
           <b-row class="m-2 p-0">
             <b-col class="m-0 p-0">
-              <DateInput label="Date" v-model="form.date" required />
+              <DateInput v-model="form.date" label="Date" required />
             </b-col>
           </b-row>
         </b-container>

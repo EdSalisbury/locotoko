@@ -1,10 +1,13 @@
+<template>
+  <div />
+</template>
+
 <script>
 export default {
-  async created() {
-    this.$cookie.set("token", "", { expires: 0 });
-    this.$cookie.set("userId", "", { expires: 0 });
-    this.$cookie.set("email", "", { expires: 0 });
-
+  created() {
+    this.$cookie.delete("token");
+    this.$cookie.delete("userId");
+    this.$cookie.delete("email");
     this.$router.push({ path: "/" });
   },
 };

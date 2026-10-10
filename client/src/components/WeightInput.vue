@@ -1,30 +1,28 @@
 <template>
   <b-container>
     <b-row>
-      <b-col xs="6">
-        <FormInput label="Pounds" v-model="weight.pounds" />
+      <b-col>
+        <FormInput v-model="weight.pounds" label="Pounds" />
       </b-col>
       <b-col>
-        <FormInput label="Ounces" v-model="weight.ounces" />
+        <FormInput v-model="weight.ounces" label="Ounces" />
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
-import FormInput from "@/components/FormInput";
+import FormInput from "@/components/FormInput.vue";
 
+// Edits the fields of the weight object it's given ({ pounds, ounces }) in
+// place, as before.
 export default {
-  components: {
-    FormInput,
-  },
+  components: { FormInput },
   props: {
-    value: {
-      required: true,
-    },
+    modelValue: { type: Object, required: true },
   },
   computed: {
     weight() {
-      return this.value;
+      return this.modelValue;
     },
   },
 };

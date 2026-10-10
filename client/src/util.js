@@ -104,32 +104,6 @@ const getCategoryName = async (token, ebayCategoryId) => {
   return CATEGORIES.find((category) => category.id === ebayCategoryId)?.name;
 };
 
-const toast = (title, body, context) => {
-  context.$bvToast.toast(body, {
-    title: title,
-    variant: "info",
-    solid: true,
-  });
-};
-
-const toastGood = (title, body, context) => {
-  context.$bvToast.toast(body, {
-    html: true,
-    title: title,
-    variant: "success",
-    solid: true,
-  });
-};
-
-const toastBad = (title, body, context) => {
-  context.$bvToast.toast(body, {
-    title: title,
-    variant: "danger",
-    solid: true,
-    noAutoHide: true,
-  });
-};
-
 const readFileAsync = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -170,9 +144,6 @@ export default {
   getEbayConditionOptions,
   getCategoryName,
   getEbaySpecifics,
-  toast,
-  toastGood,
-  toastBad,
   readFileAsync,
   dataURLtoFile,
   encodeSpecialChars,

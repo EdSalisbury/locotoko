@@ -11,53 +11,41 @@
             {{ Number(data.item.costPerItem).toFixed(2) }}
           </template>
         </b-table>
-        <vue-bootstrap-table
-          :columns="columns"
-          :values="items"
-          :show-filter="false"
-          :show-column-picker="false"
-          :sortable="true"
-          :paginated="false"
-          :selectable="false"
-          :multi-column-sortable="false"
-          :filter-case-sensitive="false"
-          class="pb-2"
-          ref="itemTable"
-        >
-          <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
-          <template v-slot:ebayListingId="data">
-            <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
+        <DataTable :columns="columns" :values="items" :show-filter="false" class="pb-2">
+          <template #price="data"> ${{ Number(data.value.price).toFixed(2) }} </template>
+          <template #ebayListingId="data">
+            <a :href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
               {{ data.value.ebayListingId }}
             </a>
           </template>
-          <template v-slot:actions="data">
+          <template #actions="data">
             <b-button-toolbar>
               <b-button-group class="mx-1">
                 <router-link :to="'/viewItem/' + data.value.id">
                   <b-button class="p-1" variant="primary">
-                    <b-icon-eye-fill />
+                    <i class="bi bi-eye-fill" />
                   </b-button>
                 </router-link>
 
                 <router-link :to="'/editItem/' + data.value.id">
                   <b-button class="p-1" variant="primary">
-                    <b-icon-pencil-fill />
+                    <i class="bi bi-pencil-fill" />
                   </b-button>
                 </router-link>
               </b-button-group>
             </b-button-toolbar>
           </template>
-        </vue-bootstrap-table>
+        </DataTable>
       </b-card-body>
     </b-card>
     <b-card>
       <b-card-header class="p-0 m-0">
         <b-row style="background: #ccc; padding: 5px; margin: 0px">
-          <b-col class="text-left"><b>Total:</b> ${{ this.total.toFixed(2) }}</b-col>
+          <b-col class="text-start"><b>Total:</b> ${{ total.toFixed(2) }}</b-col>
           <b-col class="text-center">
-            <b>Total Sold:</b> ${{ this.soldTotal.toFixed(2) }} ({{ this.profit.toFixed(2) }})
+            <b>Total Sold:</b> ${{ soldTotal.toFixed(2) }} ({{ profit.toFixed(2) }})
           </b-col>
-          <b-col class="text-right"> <b>Total Unsold:</b> ${{ this.unsoldTotal.toFixed(2) }} </b-col>
+          <b-col class="text-end"> <b>Total Unsold:</b> ${{ unsoldTotal.toFixed(2) }} </b-col>
         </b-row>
       </b-card-header>
     </b-card>
@@ -66,12 +54,10 @@
 
 <script>
 import api from "@/api";
-import VueBootstrapTable from "vue2-bootstrap-table2";
+import DataTable from "@/components/DataTable.vue";
 
 export default {
-  components: {
-    VueBootstrapTable: VueBootstrapTable,
-  },
+  components: { DataTable },
   data() {
     return {
       acquisition: [{}],
@@ -108,8 +94,8 @@ export default {
 
     const allItems = await api.getItems(token);
     this.items = allItems.filter((item) => item.acquisitionId === acquisitionId);
-    this.$set(this.acquisition[0], "totalItems", this.items.length);
-    this.$set(this.acquisition[0], "costPerItem", this.acquisition[0].price / this.items.length);
+    this.acquisition[0].totalItems = this.items.length;
+    this.acquisition[0].costPerItem = this.acquisition[0].price / this.items.length;
     this.items.forEach((item) => {
       if (item.soldPrice) {
         this.total += item.soldPrice;

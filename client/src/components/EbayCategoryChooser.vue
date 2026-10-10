@@ -2,20 +2,15 @@
   <b-container fluid class="section">
     <h1>eBay Category</h1>
     <b-row class="section-row">
-      <b-col
-        class="section-col"
-        xs="auto"
-        v-for="(level, index) in levels"
-        :key="'ebayCategoryCol-' + index + '-' + keyIndex"
-      >
+      <b-col v-for="(level, index) in levels" :key="'ebayCategoryCol-' + index + '-' + keyIndex" class="section-col">
         <b-form-select
           v-if="index === 0 || (levels[index - 1] > 0 && getCategories(levels[index - 1]).length > 0)"
-          :key="'ebayCategory-' + index + '-' + keyIndex"
           :id="'ebayCategory-' + index"
+          :key="'ebayCategory-' + index + '-' + keyIndex"
           v-model="levels[index]"
           :options="getCategories(levels[index - 1])"
-          @change="resetCategories(index)"
           :required="true"
+          @update:model-value="selected(index)"
         />
       </b-col>
     </b-row>
@@ -29,10 +24,9 @@ const optionsMap = (item) => ({ value: item.id, text: item.name });
 
 export default {
   props: {
-    value: {
-      required: true,
-    },
+    modelValue: { type: [Number, String], required: true },
   },
+  emits: ["update:modelValue"],
   data() {
     return {
       ebayCategories: [],
@@ -45,52 +39,50 @@ export default {
     const token = this.$cookie.get("token");
     this.ebayCategories = await api.getEbayCategories(token);
 
-    if (this.value > 0) {
-      this.levels = [];
-      let level = this.value;
+    const value = Number(this.modelValue);
+    if (value > 0) {
+      const levels = [];
+      let level = value;
       while (level > 0) {
-        this.levels.unshift(level);
-        const cat = this.ebayCategories.filter((cat) => cat.id === level)[0];
+        levels.unshift(level);
+        const cat = this.ebayCategories.find((c) => c.id === level);
         level = cat.parentId;
         if (cat.parentId === cat.id) {
           level = 0;
         }
       }
-
-      for (let i = this.levels.length; i < this.maxLevels; i++) {
-        this.levels[i] = 0;
+      for (let i = levels.length; i < this.maxLevels; i++) {
+        levels[i] = 0;
       }
+      this.levels = levels;
     } else {
       this.resetCategories(0);
     }
   },
   methods: {
     resetCategories(level) {
-      let newLevels = this.levels;
+      const newLevels = [...this.levels];
       for (let i = level + 1; i < this.maxLevels; i++) {
         newLevels[i] = 0;
       }
       this.levels = newLevels;
       this.keyIndex++;
     },
+    // A select changed: clear the levels below it, and if the chosen category
+    // has no subcategories it's the final choice, so report it to the parent.
+    // (This used to happen inside getCategories during render.)
+    selected(index) {
+      this.resetCategories(index);
+      const chosen = this.levels[index];
+      if (chosen > 0 && this.getCategories(chosen).length === 0) {
+        this.$emit("update:modelValue", chosen);
+      }
+    },
     getCategories(parentId = 0) {
       if (!parentId) {
         return this.ebayCategories.filter((cat) => cat.level === 1).map(optionsMap);
       }
-      const cats = this.ebayCategories
-        .filter((cat) => cat.parentId === parentId && cat.id !== parentId)
-        .map(optionsMap);
-      if (cats.length === 0) {
-        let lastLevel = -1;
-        for (let level of this.levels) {
-          if (level === 0) {
-            this.$emit("input", lastLevel);
-            return [];
-          }
-          lastLevel = level;
-        }
-      }
-      return cats;
+      return this.ebayCategories.filter((cat) => cat.parentId === parentId && cat.id !== parentId).map(optionsMap);
     },
   },
 };

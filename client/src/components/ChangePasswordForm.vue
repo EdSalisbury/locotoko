@@ -2,23 +2,23 @@
   <b-card>
     <b-card-title>Change Password</b-card-title>
     <b-card-body>
-      <b-alert :show="!!error" variant="danger">{{ error }}</b-alert>
-      <b-alert :show="!!success" variant="success">{{ success }}</b-alert>
+      <b-alert :model-value="!!error" variant="danger">{{ error }}</b-alert>
+      <b-alert :model-value="!!success" variant="success">{{ success }}</b-alert>
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
             <b-col class="m-0 p-0">
-              <TextInput label="Current Password" v-model="form.currentPassword" password required />
+              <TextInput v-model="form.currentPassword" label="Current Password" password required />
             </b-col>
           </b-row>
           <b-row class="p-0" style="margin: 10px 0 10px 0">
             <b-col class="m-0 p-0">
-              <TextInput label="New Password" v-model="form.newPassword" password required :minLength="8" />
+              <TextInput v-model="form.newPassword" label="New Password" password required :min-length="8" />
             </b-col>
           </b-row>
           <b-row class="p-0" style="margin: 10px 0 10px 0">
             <b-col class="m-0 p-0">
-              <TextInput label="Confirm New Password" v-model="form.confirmNewPassword" password required />
+              <TextInput v-model="form.confirmNewPassword" label="Confirm New Password" password required />
             </b-col>
           </b-row>
         </b-container>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/TextInput.vue";
 import api from "@/api";
 
 export default {

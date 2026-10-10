@@ -1,33 +1,31 @@
 <template>
   <b-container>
     <b-row>
-      <b-col xs="6">
-        <FormInput label="Width" v-model="size.width" />
+      <b-col>
+        <FormInput v-model="size.width" label="Width" />
       </b-col>
       <b-col>
-        <FormInput label="Height" v-model="size.height" />
+        <FormInput v-model="size.height" label="Height" />
       </b-col>
       <b-col>
-        <FormInput label="Length" v-model="size.length" />
+        <FormInput v-model="size.length" label="Length" />
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
-import FormInput from "@/components/FormInput";
+import FormInput from "@/components/FormInput.vue";
 
+// Edits the fields of the size object it's given ({ width, height, length })
+// in place, as before.
 export default {
-  components: {
-    FormInput,
-  },
+  components: { FormInput },
   props: {
-    value: {
-      required: true,
-    },
+    modelValue: { type: Object, required: true },
   },
   computed: {
     size() {
-      return this.value;
+      return this.modelValue;
     },
   },
 };

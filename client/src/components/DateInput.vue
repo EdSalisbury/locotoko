@@ -1,26 +1,28 @@
 <template>
   <b-container fluid class="section m-0">
     <h1>{{ label }}</h1>
-    <b-form-datepicker v-model="localValue" :required="required" :reset-button="true" />
+    <!-- bootstrap-vue-next has no datepicker; the browser's native date input
+         replaces b-form-datepicker. Clearing the field resets it, as the old
+         reset button did. -->
+    <b-form-input v-model="localValue" type="date" :required="required" />
   </b-container>
 </template>
 <script>
 export default {
   props: {
-    label: String,
-    value: String,
-    required: {
-      type: Boolean,
-      default: false,
-    },
+    label: { type: String, default: "" },
+    // Accepts "YYYY-MM-DD" or a full ISO timestamp from the API.
+    modelValue: { type: String, default: "" },
+    required: { type: Boolean, default: false },
   },
+  emits: ["update:modelValue"],
   computed: {
     localValue: {
       get() {
-        return this.value;
+        return this.modelValue ? String(this.modelValue).slice(0, 10) : "";
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value || "");
       },
     },
   },

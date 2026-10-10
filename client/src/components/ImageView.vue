@@ -1,115 +1,60 @@
 <template>
   <b-container fluid class="section">
     <h1>Images</h1>
-    <b-row class="row">
-      <b-col class="col" v-for="(image, index) in localImages.slice(0, 4)" :key="'col_' + index">
-        <b-img :id="'thumb_' + index" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <modal :name="'img_' + index" width="800px" height="auto" style="text-align: center">
-          <b-img fluid thumbnail :src="localImages[index]" />
-        </modal>
-        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index)">
-          <b-icon-trash-fill />
-        </b-button>
-        <b-button
-          class="leftButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index > 0"
-          @click="moveImageLeft(index)"
-        >
-          <b-icon-arrow-left-square-fill />
-        </b-button>
-        <b-button
-          class="rightButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index < images.length - 1"
-          @click="moveImageRight(index)"
-        >
-          <b-icon-arrow-right-square-fill />
-        </b-button>
-      </b-col> </b-row
-    ><b-row class="row">
-      <b-col class="col" v-for="(image, index) in localImages.slice(4, 8)" :key="'col_' + index">
-        <b-img :id="'thumb_' + index + 4" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <modal :name="'img_' + index + 4" width="800px" height="auto" style="text-align: center">
-          <b-img fluid thumbnail :src="localImages[index + 4]" />
-        </modal>
-        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index + 4)">
-          <b-icon-trash-fill />
-        </b-button>
-        <b-button
-          class="leftButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index + 4 > 0"
-          @click="moveImageLeft(index + 4)"
-        >
-          <b-icon-arrow-left-square-fill />
-        </b-button>
-        <b-button
-          class="rightButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index + 4 < images.length - 1"
-          @click="moveImageRight(index + 4)"
-        >
-          <b-icon-arrow-right-square-fill />
-        </b-button>
+    <b-row v-for="row in 3" :key="'row_' + row" class="row">
+      <b-col v-for="index in rowIndexes(row)" :key="'col_' + index" class="col">
+        <b-img thumbnail :src="localImages[index]" class="thumbnail rounded" @click="preview(index)" />
+        <template v-if="edit && localImages[index] !== NO_IMAGE">
+          <b-button class="deleteButton" @click="$emit('deleteImage', index)">
+            <i class="bi bi-trash-fill" />
+          </b-button>
+          <b-button v-if="index > 0" class="leftButton" @click="$emit('moveImageLeft', index)">
+            <i class="bi bi-arrow-left-square-fill" />
+          </b-button>
+          <b-button v-if="index < images.length - 1" class="rightButton" @click="$emit('moveImageRight', index)">
+            <i class="bi bi-arrow-right-square-fill" />
+          </b-button>
+        </template>
       </b-col>
     </b-row>
-    <b-row class="row">
-      <b-col class="col" v-for="(image, index) in localImages.slice(8, 12)" :key="'col_' + index">
-        <b-img :id="'thumb_' + index + 8" thumbnail :src="image" class="thumbnail rounded" @click="preview" />
-        <modal :name="'img_' + index + 8" width="800px" height="auto" style="text-align: center">
-          <b-img fluid thumbnail :src="localImages[index + 8]" />
-        </modal>
-        <b-button class="deleteButton" v-show="edit" v-if="image !== '/noImage.png'" @click="deleteImage(index + 8)">
-          <b-icon-trash-fill class="icon" />
-        </b-button>
-        <b-button
-          class="leftButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index + 8 > 0"
-          @click="moveImageLeft(index + 8)"
-        >
-          <b-icon-arrow-left-square-fill />
-        </b-button>
-        <b-button
-          class="rightButton"
-          v-show="edit"
-          v-if="image !== '/noImage.png' && index + 8 < images.length - 1"
-          @click="moveImageRight(index + 8)"
-        >
-          <b-icon-arrow-right-square-fill />
-        </b-button>
-      </b-col>
-    </b-row>
+
+    <!-- One preview modal for all thumbnails (replaces one vue-js-modal per image). -->
+    <b-modal v-model="previewOpen" size="xl" no-footer centered body-class="text-center">
+      <b-img fluid thumbnail :src="previewSrc" />
+    </b-modal>
   </b-container>
 </template>
 
 <script>
+const NO_IMAGE = "/noImage.png";
+
 export default {
   props: {
-    images: Array,
-    edit: Boolean,
+    images: { type: Array, default: () => [] },
+    edit: { type: Boolean, default: false },
+  },
+  emits: ["deleteImage", "moveImageLeft", "moveImageRight"],
+  data() {
+    return {
+      NO_IMAGE,
+      previewOpen: false,
+      previewSrc: "",
+    };
   },
   computed: {
+    // Always 12 slots (3 rows of 4); empty ones show the placeholder image.
     localImages() {
-      const newImages = Array.from({ ...this.images, length: 12 });
-      return newImages.map((image) => (image ? image : "/noImage.png"));
+      return Array.from({ length: 12 }, (_, i) => this.images?.[i] || NO_IMAGE);
     },
   },
   methods: {
-    preview(event) {
-      const modalId = "img_" + event.target.id.split("_")[1];
-      //this.$bvModal.show(modalId);
-      this.$modal.show(modalId);
+    rowIndexes(row) {
+      const start = (row - 1) * 4;
+      return [start, start + 1, start + 2, start + 3];
     },
-    deleteImage(index) {
-      this.$emit("deleteImage", index);
-    },
-    moveImageLeft(index) {
-      this.$emit("moveImageLeft", index);
-    },
-    moveImageRight(index) {
-      this.$emit("moveImageRight", index);
+    preview(index) {
+      this.previewSrc = this.localImages[index];
+      this.previewOpen = true;
     },
   },
 };
@@ -121,12 +66,7 @@ export default {
   z-index: -1;
   margin: 0;
   padding: 0;
-}
-.frame {
-  background: #ccc;
-  border: 1px solid black;
-  margin: 0;
-  padding: 5px;
+  cursor: pointer;
 }
 .deleteButton {
   position: absolute;
@@ -150,9 +90,9 @@ export default {
   margin: 0;
   padding: 0;
 }
-
 .col {
   margin: 0;
   padding: 5px;
+  position: relative;
 }
 </style>
