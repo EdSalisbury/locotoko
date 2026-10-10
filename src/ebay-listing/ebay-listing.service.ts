@@ -16,6 +16,7 @@ import {
 import { buildEbaySku } from "./build-ebay-sku";
 import { buildShippingPackageDetails } from "./build-shipping-package-details";
 import { parseImageDataUrl } from "./parse-image-data-url";
+import { buildProductListingDetails } from "./build-product-listing-details";
 import {
   findShippingProblems,
   toClientErrors,
@@ -102,10 +103,7 @@ export class EbayListingService {
             PictureURL: imageUrls,
           },
           ListingDuration: "GTC",
-          ProductListingDetails: {
-            UPC: item.upc,
-            ISBN: item.upc,
-          },
+          ProductListingDetails: buildProductListingDetails(item.upc),
           ListingType: "FixedPriceItem",
           SellerProfiles: {
             SellerPaymentProfile: {
@@ -240,10 +238,7 @@ export class EbayListingService {
             PictureURL: imageUrls,
           },
           ListingDuration: "GTC",
-          ProductListingDetails: {
-            UPC: item.upc,
-            ISBN: item.upc,
-          },
+          ProductListingDetails: buildProductListingDetails(item.upc),
           ListingType: "FixedPriceItem",
           SellerProfiles: {
             SellerPaymentProfile: {
