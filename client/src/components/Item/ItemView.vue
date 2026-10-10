@@ -7,7 +7,7 @@
           <ImageView :images="data.item.images" />
         </template>
         <template #cell(ebayListingId)="data">
-          <a v-bind:href="'https://www.ebay.com/itm/' + data.item.ebayListingId" target="_blank">
+          <a :href="'https://www.ebay.com/itm/' + data.item.ebayListingId" target="_blank">
             {{ data.item.ebayListingId }}
           </a>
         </template>
@@ -18,20 +18,20 @@
           </div>
         </template>
         <template #cell(specifics)="data">
-          <div v-for="(item, index) in data.item.specifics" :key="'specific_' + index">
-            {{ item.key }}: {{ item.value }}
+          <div v-for="(specific, index) in data.item.specifics" :key="'specific_' + index">
+            {{ specific.key }}: {{ specific.value }}
           </div>
         </template>
         <template #cell(actions)="data">
           <router-link :to="'/editItem/' + data.item.id">
             <b-button class="p-1 m-1" variant="primary">
-              <b-icon-pencil-fill />
+              <i class="bi bi-pencil-fill" />
             </b-button>
           </router-link>
           <b-button class="p-1 m-1" variant="primary" @click="listItem(data.item.id)"> eBay</b-button>
 
           <b-button class="p-1 m-1" variant="danger" @click="deleteItem(data.item.id)">
-            <b-icon-trash-fill />
+            <i class="bi bi-trash-fill" />
           </b-button>
         </template>
       </b-table>
@@ -120,17 +120,16 @@ export default {
     async listItem(id) {
       await itemUtils.listItem(id, this);
     },
+    // Used a URL built from an env variable that isn't set in production, and
+    // then updated a list this page doesn't have. Now goes through the API and
+    // returns to the item list.
     async deleteItem(id) {
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/items/" + id;
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-      });
-      if (response.status == 204) {
-        this.items = this.items.filter((item) => item.id !== id);
+      const response = await api.deleteItem(this.token, id);
+      if (response.ok) {
+        this.$toast.success("Deleted item successfully");
+        this.$router.push({ path: "/items" });
       } else {
+        this.$toast.error("Unable to delete item");
         console.error(response);
       }
     },

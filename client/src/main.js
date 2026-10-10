@@ -1,27 +1,22 @@
-import Vue from "vue";
-import VueToast from "vue-toast-notification";
-import VModal from "vue-js-modal";
-import "vue-toast-notification/dist/theme-sugar.css";
+import { createApp } from "vue";
+import { createBootstrap } from "bootstrap-vue-next";
+import ToastPlugin from "vue-toast-notification";
 import App from "./App.vue";
 import router from "./router";
-import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
+import cookies from "./cookies";
 
-// Import Bootstrap and BootstrapVue CSS files (order is important)
+// Bootstrap and bootstrap-vue-next CSS (order matters), then icons and app styles.
 import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
-import VueCookie from "vue-cookie";
+import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "vue-toast-notification/dist/theme-sugar.css";
 import "@/assets/global.scss";
 
-Vue.config.productionTip = false;
+const app = createApp(App);
 
-Vue.use(VueCookie);
-Vue.use(BootstrapVue);
-Vue.use(BootstrapVueIcons);
-Vue.use(VModal);
+app.use(createBootstrap());
+app.use(router);
+app.use(cookies);
+app.use(ToastPlugin, { position: "top-right", duration: 5000 });
 
-Vue.use(VueToast, { position: "top-right", duration: 5000 });
-
-new Vue({
-  router,
-  render: (h) => h(App),
-}).$mount("#app");
+app.mount("#app");

@@ -7,21 +7,19 @@
 <script>
 export default {
   props: {
-    label: String,
-    value: [Number, String],
-    options: Array,
-    required: {
-      type: Boolean,
-      default: false,
-    },
+    label: { type: String, default: "" },
+    modelValue: { type: [Number, String], default: "" },
+    options: { type: Array, default: () => [] },
+    required: { type: Boolean, default: false },
   },
+  emits: ["update:modelValue"],
   computed: {
     localValue: {
       get() {
-        return this.value;
+        return this.modelValue;
       },
       set(value) {
-        this.$emit("input", value);
+        this.$emit("update:modelValue", value);
       },
     },
   },

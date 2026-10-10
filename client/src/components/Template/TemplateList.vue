@@ -13,14 +13,14 @@
         <template #cell(actions)="data">
           <router-link :to="'/editTemplate/' + data.item.id">
             <b-button class="p-1 m-1" variant="primary">
-              <b-icon-pencil-fill />
+              <i class="bi bi-pencil-fill" />
             </b-button>
           </router-link>
           <b-button class="p-1 m-1" variant="success" @click="duplicateTemplate(data.item.id)">
-            <b-icon-file-earmark-plus-fill />
+            <i class="bi bi-file-earmark-plus-fill" />
           </b-button>
           <b-button class="p-1 m-1" variant="danger" @click="deleteTemplate(data.item.id)">
-            <b-icon-trash-fill />
+            <i class="bi bi-trash-fill" />
           </b-button>
         </template>
       </b-table>

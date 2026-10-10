@@ -2,16 +2,17 @@
   <b-card>
     <b-card-title>Login</b-card-title>
     <b-card-body>
+      <b-alert :model-value="!!error" variant="danger">{{ error }}</b-alert>
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
             <b-col class="m-0 p-0">
-              <TextInput label="Email" v-model="form.email" required />
+              <TextInput v-model="form.email" label="Email" required />
             </b-col>
           </b-row>
           <b-row class="p-0" style="margin: 10px 0 10px 0">
             <b-col class="m-0 p-0">
-              <TextInput label="Password" v-model="form.password" password required />
+              <TextInput v-model="form.password" label="Password" password required />
             </b-col>
           </b-row>
         </b-container>
@@ -23,48 +24,35 @@
 </template>
 
 <script>
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/TextInput.vue";
 import api from "@/api";
 
 export default {
-  components: {
-    TextInput,
-  },
+  components: { TextInput },
   data() {
     return {
-      form: {
-        email: "",
-        password: "",
-      },
+      form: { email: "", password: "" },
+      error: "",
     };
   },
   methods: {
     async onSubmit(event) {
       event.preventDefault();
+      this.error = "";
       const data = await api.login(this.form);
 
-      //const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/auth/login";
-      // const url =
-      //   window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/api/v1/auth/login";
-      // console.log(url);
-      // const response = await fetch(url, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(this.form),
-      // });
-      // const data = await response.json();
-      const token = data.access_token;
-      this.$cookie.set("token", token, {
-        expires: "24h",
-      });
-      this.$cookie.set("userId", data.id, {
-        expires: "24h",
-      });
-      this.$cookie.set("email", data.email, {
-        expires: "24h",
-      });
+      // A failed login (wrong password, lockout, server error) returns an
+      // error body with no token. Storing that used to leave cookies holding
+      // "undefined", which looked logged in but made every request fail.
+      if (!data?.access_token) {
+        const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+        this.error = message || "Login failed";
+        return;
+      }
+
+      this.$cookie.set("token", data.access_token, { expires: "24h" });
+      this.$cookie.set("userId", data.id, { expires: "24h" });
+      this.$cookie.set("email", data.email, { expires: "24h" });
       this.$router.push({ path: "/" });
     },
   },

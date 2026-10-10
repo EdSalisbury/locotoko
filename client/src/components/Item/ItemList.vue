@@ -14,33 +14,39 @@
           <b-button variant="primary" @click="showEnded">Show Ended</b-button>
         </b-button-group>
       </b-button-toolbar>
-      <vue-bootstrap-table :columns="columns" :values="items" :show-filter="true" :show-column-picker="false"
-        :sortable="true" :paginated="true" :selectable="false" :multi-column-sortable="false"
-        default-order-column="updatedAt" :default-order-direction="false" :filter-case-sensitive="false" class="pb-2"
-        ref="itemTable">
-        <!-- <template v-slot:price="data"> ${{ Number(data.value.price).toFixed(2) }} </template> -->
-        <template v-slot:shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
-        <template v-slot:totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
+      <DataTable
+        :columns="columns"
+        :values="items"
+        :paginated="true"
+        default-order-column="updatedAt"
+        :default-order-direction="false"
+        class="pb-2"
+        @cell-data-modified="cellEdited"
+      >
+        <!-- <template #price="data"> ${{ Number(data.value.price).toFixed(2) }} </template> -->
+        <template #shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
+        <template #totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
 
-        <template v-slot:ebayListingId="data">
-          <a v-bind:href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
+        <template #ebayListingId="data">
+          <a :href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
             {{ data.value.ebayListingId }}
           </a>
         </template>
-        <template v-slot:actions="data">
+        <template #actions="data">
           <b-button-toolbar>
-            <b-button-group class="mx-1" v-if="data.value.status === 'draft'">
-              <input type="checkbox" v-model="data.value.ready" style="height: 34px; width: 34px" class="p-1"
+            <b-button-group v-if="data.value.status === 'draft'" class="mx-1">
+              <input
+v-model="data.value.ready" type="checkbox" style="height: 34px; width: 34px" class="p-1"
                 @change="ready(data.value.id, data.value.ready)" /> </b-button-group><b-button-group class="mx-1">
               <router-link :to="'/viewItem/' + data.value.id">
                 <b-button class="p-1" variant="primary">
-                  <b-icon-eye-fill />
+                  <i class="bi bi-eye-fill" />
                 </b-button>
               </router-link>
 
               <router-link :to="'/editItem/' + data.value.id">
                 <b-button class="p-1" variant="primary">
-                  <b-icon-pencil-fill />
+                  <i class="bi bi-pencil-fill" />
                 </b-button>
               </router-link>
 
@@ -48,40 +54,40 @@
                 eBay</b-button>
 
               <b-button class="p-1" variant="success" @click="duplicateItem(data.value.id)">
-                <b-icon-file-earmark-plus-fill />
+                <i class="bi bi-file-earmark-plus-fill" />
               </b-button>
 
               <b-button class="p-1" variant="primary" @click="printItemLabel(data.value.id)">
-                <b-icon-printer-fill />
+                <i class="bi bi-printer-fill" />
               </b-button>
-              <b-button class="p-1" :variant="'danger'" @click="data.value.status === 'ended' || data.value.status === 'draft'
+              <b-button
+class="p-1" :variant="'danger'" @click="data.value.status === 'ended' || data.value.status === 'draft'
                 ? deleteItem(data.value.id)
                 : endItem(data.value.id)">
-                <b-icon-trash-fill />
+                <i class="bi bi-trash-fill" />
               </b-button>
             </b-button-group>
           </b-button-toolbar>
         </template>
-      </vue-bootstrap-table>
+      </DataTable>
       <router-link to="/addItem"><b-button variant="primary">Add Item</b-button></router-link>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
-import api from "../../api";
+import api from "@/api";
 import itemUtils from "./itemUtils";
-import VueBootstrapTable from "vue2-bootstrap-table2";
+import DataTable from "@/components/DataTable.vue";
 
-const MIN_PRICE_THRESHOLD = parseFloat(process.env.VUE_APP_MIN_PRICE || "9.99");
+const MIN_PRICE_THRESHOLD = parseFloat(import.meta.env.VUE_APP_MIN_PRICE || "9.99");
 
 export default {
-  components: {
-    VueBootstrapTable: VueBootstrapTable,
-  },
+  components: { DataTable },
   data() {
     return {
       items: [],
+      allItems: [],
       categories: [],
       token: "",
       columns: [
@@ -124,7 +130,12 @@ export default {
       this.$router.push({ path: "/login" });
     }
     await this.getItems();
-    this.$on("cellDataModifiedEvent", async (originalValue, newValue, columnTitle, item) => {
+  },
+  methods: {
+    // An inline edit in the table (Location or Price): save it, and if the
+    // item is listed, revise the eBay listing too. Was a $on listener, which
+    // Vue 3 removed; the table now emits cellDataModified.
+    async cellEdited(originalValue, newValue, columnTitle, item) {
       const request = {
         [columnTitle]: newValue,
       };
@@ -163,9 +174,7 @@ export default {
           console.error(err);
         }
       }
-    });
-  },
-  methods: {
+    },
     async getItems() {
       this.allItems = await api.getItems(this.token);
       this.allItems = this.allItems.map((item) => ({
@@ -180,14 +189,27 @@ export default {
       const newItem = await api.getItem(this.token, itemId);
 
       newItem.price = parseFloat(newItem.price);
-      newItem.shippingprice = parseFloat(newItem.shippingPrice);
+      newItem.shippingPrice = parseFloat(newItem.shippingPrice);
       newItem.totalPrice = parseFloat(newItem.totalPrice);
 
+      // Merge the fresh data into the row in both lists. (The old $set call
+      // here was missing an argument, so rows never actually refreshed.) The
+      // single-item endpoint doesn't return the owner's name, so keep the
+      // row's, and keep the list's two-decimal price format.
+      const merge = (row) => ({
+        ...row,
+        ...newItem,
+        owner: row.owner,
+        price: Number(newItem.price).toFixed(2),
+      });
       const index = this.items.findIndex((item) => item.id === newItem.id);
-      this.$set(this.items[index], newItem);
-
+      if (index >= 0) {
+        this.items[index] = merge(this.items[index]);
+      }
       const allIndex = this.allItems.findIndex((item) => item.id === newItem.id);
-      this.$set(this.allItems[allIndex], newItem);
+      if (allIndex >= 0) {
+        this.allItems[allIndex] = merge(this.allItems[allIndex]);
+      }
     },
     async duplicateItem(id) {
       const item = await api.getItem(this.token, id);

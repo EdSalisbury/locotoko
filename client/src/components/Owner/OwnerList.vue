@@ -14,11 +14,11 @@
         <template #cell(actions)="data">
           <router-link :to="'/editOwner/' + data.item.id">
             <b-button class="p-1 m-1" variant="primary">
-              <b-icon-pencil-fill />
+              <i class="bi bi-pencil-fill" />
             </b-button>
           </router-link>
           <b-button class="p-1 m-1" variant="danger" @click="deleteOwner(data.item.id)">
-            <b-icon-trash-fill />
+            <i class="bi bi-trash-fill" />
           </b-button>
         </template>
       </b-table>
@@ -45,15 +45,10 @@ export default {
     this.owners = await api.getOwners(token);
   },
   methods: {
+    // Used a URL built from an env variable that isn't set in production.
     async deleteOwner(id) {
-      const url = process.env.VUE_APP_API_BASE_URL + "/api/v1/owners/" + id;
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + this.$cookie.get("token"),
-        },
-      });
-      if (response.status == 204) {
+      const response = await api.deleteOwner(this.$cookie.get("token"), id);
+      if (response.ok) {
         this.owners = this.owners.filter((owner) => owner.id !== id);
       } else {
         console.error(response);

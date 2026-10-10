@@ -1,96 +1,35 @@
 <template>
   <div>
-    <div class="p-4">
-      <b-card-group deck>
+    <!-- Bootstrap 5 removed card decks; a row of equal-width columns gives
+         the same side-by-side cards. -->
+    <b-row class="p-4 g-3" cols="1" cols-md="5">
+      <b-col v-for="card in metricCards" :key="card.header">
         <b-card
           header-bg-variant="primary"
           header-text-variant="white"
-          text-variant="primary"
-          header="Items Listed Today"
-          class="text-center"
+          body-text-variant="primary"
+          :header="card.header"
+          class="text-center h-100"
           border-variant="primary"
         >
-          <b-card-text>{{ this.metrics.listedToday }}</b-card-text>
+          <b-card-text>{{ card.value }}</b-card-text>
         </b-card>
-
+      </b-col>
+    </b-row>
+    <b-row class="p-4 g-3" cols="1" cols-md="3">
+      <b-col v-for="chart in charts" :key="chart.header">
         <b-card
           header-bg-variant="primary"
           header-text-variant="white"
-          text-variant="primary"
-          header="Current Drafts"
-          class="text-center"
+          body-text-variant="primary"
+          :header="chart.header"
+          class="text-center h-100"
           border-variant="primary"
         >
-          <b-card-text>{{ this.metrics.currentDrafts }}</b-card-text>
+          <LineChart v-if="loaded" :data="chart.data" />
         </b-card>
-
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="Drafts Created Today"
-          class="text-center"
-          border-variant="primary"
-        >
-          <b-card-text>{{ this.metrics.createdToday }}</b-card-text>
-        </b-card>
-
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="Items Sold Today"
-          class="text-center"
-          border-variant="primary"
-        >
-          <b-card-text>{{ this.metrics.soldToday }}</b-card-text>
-        </b-card>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="Sales (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <b-card-text>${{ Math.round(this.sold30Days).toLocaleString() }}</b-card-text>
-        </b-card>
-      </b-card-group>
-    </div>
-    <div class="p-4">
-      <b-card-group deck>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New eBay Listings (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newListings" />
-        </b-card>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New Sales (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newSales" />
-        </b-card>
-        <b-card
-          header-bg-variant="primary"
-          header-text-variant="white"
-          text-variant="primary"
-          header="New Drafts (30 days)"
-          class="text-center"
-          border-variant="primary"
-        >
-          <LineChart v-if="loaded" :data="newDrafts" />
-        </b-card>
-      </b-card-group>
-    </div>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -139,6 +78,24 @@ export default {
         datasets: [],
       },
     };
+  },
+  computed: {
+    metricCards() {
+      return [
+        { header: "Items Listed Today", value: this.metrics.listedToday },
+        { header: "Current Drafts", value: this.metrics.currentDrafts },
+        { header: "Drafts Created Today", value: this.metrics.createdToday },
+        { header: "Items Sold Today", value: this.metrics.soldToday },
+        { header: "Sales (30 days)", value: `$${Math.round(this.sold30Days).toLocaleString()}` },
+      ];
+    },
+    charts() {
+      return [
+        { header: "New eBay Listings (30 days)", data: this.newListings },
+        { header: "New Sales (30 days)", data: this.newSales },
+        { header: "New Drafts (30 days)", data: this.newDrafts },
+      ];
+    },
   },
   async created() {
     this.loaded = false;

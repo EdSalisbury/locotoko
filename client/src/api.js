@@ -1,8 +1,8 @@
 import { default as axios } from "axios";
 
 const baseUrl = () => {
-  if (process.env.VUE_APP_API_BASE_URL) {
-    return process.env.VUE_APP_API_BASE_URL;
+  if (import.meta.env.VUE_APP_API_BASE_URL) {
+    return import.meta.env.VUE_APP_API_BASE_URL;
   }
   return window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
 };
@@ -29,6 +29,17 @@ const itemMap = (item) => ({
 const login = async (body) => {
   const url = baseUrl() + "/api/v1/auth/login";
   const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await response.json();
+};
+
+const register = async (body) => {
+  const response = await fetch(apiUrl("auth", "", "register"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -160,6 +171,13 @@ const updateOwner = async (token, id, payload) => {
     body: JSON.stringify(payload),
   });
   return await response.json();
+};
+
+const deleteOwner = async (token, id) => {
+  return await fetch(apiUrl("owners", id), {
+    method: "DELETE",
+    ...apiHeaders(token),
+  });
 };
 
 const getEbayCategories = async (token) => {
@@ -343,6 +361,7 @@ const generateListing = async (token, payload) => {
 
 export default {
   login,
+  register,
   changePassword,
   getItem,
   createItem,
@@ -355,6 +374,7 @@ export default {
   getOwner,
   createOwner,
   updateOwner,
+  deleteOwner,
   getEbayCategories,
   getEbaySpecifics,
   getTemplates,

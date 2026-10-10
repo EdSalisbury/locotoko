@@ -2,33 +2,18 @@
   <b-card>
     <b-card-title>Pick List</b-card-title>
     <b-card-body>
-      <b-button @click="printWindow()" variant="primary" class="m-2">Print</b-button>
-      <vue-bootstrap-table
-        :columns="columns"
-        :values="data"
-        :show-filter="false"
-        :show-column-picker="false"
-        :sortable="true"
-        :paginated="false"
-        :page-size="999"
-        :selectable="false"
-        :multi-column-sortable="false"
-        :filter-case-sensitive="false"
-        class="pb-2"
-      >
-      </vue-bootstrap-table>
+      <b-button variant="primary" class="m-2" @click="printWindow()">Print</b-button>
+      <DataTable :columns="columns" :values="data" :show-filter="false" class="pb-2" />
     </b-card-body>
   </b-card>
 </template>
 
 <script>
-import api from "../../api";
-import VueBootstrapTable from "vue2-bootstrap-table2";
+import api from "@/api";
+import DataTable from "@/components/DataTable.vue";
 
 export default {
-  components: {
-    VueBootstrapTable: VueBootstrapTable,
-  },
+  components: { DataTable },
   data() {
     return {
       data: [],
@@ -39,11 +24,6 @@ export default {
       ],
     };
   },
-  methods: {
-    printWindow: function () {
-      window.print();
-    },
-  },
   async created() {
     this.token = this.$cookie.get("token");
     if (!this.token) {
@@ -51,6 +31,11 @@ export default {
     }
     this.data = await api.getPicks(this.token);
     this.data.sort((a, b) => (a.location > b.location ? 1 : -1));
+  },
+  methods: {
+    printWindow() {
+      window.print();
+    },
   },
 };
 </script>

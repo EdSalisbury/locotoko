@@ -5,61 +5,61 @@
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
-            <b-col xs="6" class="m-0 pl-0 pr-2">
+            <b-col xs="6" class="m-0 ps-0 pe-2">
               <SelectInput
-                label="Template"
                 v-model="form.templateId"
+                label="Template"
                 :options="templateOptions"
-                @input="changeTemplate"
+                @update:model-value="changeTemplate"
               />
             </b-col>
             <b-col xs="6" class="m-0 p-0">
-              <TextInput label="UPC" v-model="form.upc" @input="lookupProduct" v-on:keydown.enter.native.prevent />
+              <TextInput v-model="form.upc" label="UPC" @update:model-value="lookupProduct" @keydown.enter.prevent />
             </b-col>
           </b-row>
         </b-container>
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 pt-2">
-            <b-col xs="6" class="m-0 pl-0 pr-2">
-              <SelectInput label="Listing User" v-model="form.listingUserId" :options="this.users" />
+            <b-col xs="6" class="m-0 ps-0 pe-2">
+              <SelectInput v-model="form.listingUserId" label="Listing User" :options="users" />
             </b-col>
-            <b-col xs="6" class="m-0 pl-0 pr-0">
-              <SelectInput label="Item Owner" v-model="form.ownerId" :options="this.owners" :required="true" />
+            <b-col xs="6" class="m-0 ps-0 pe-0">
+              <SelectInput v-model="form.ownerId" label="Item Owner" :options="owners" :required="true" />
             </b-col>
           </b-row>
         </b-container>
-        <EbayCategoryChooser v-model="form.ebayCategoryId" :key="form.ebayCategoryId" @input="changeCategory" />
+        <EbayCategoryChooser :key="form.ebayCategoryId" v-model="form.ebayCategoryId" @update:model-value="changeCategory" />
 
         <b-container fluid class="p-0">
           <b-row class="m-0 p-0">
-            <b-col xs="3" class="m-0 pl-0 pr-2">
+            <b-col xs="3" class="m-0 ps-0 pe-2">
               <SelectInput
-                label="Condition"
                 v-model="form.ebayConditionId"
+                label="Condition"
                 :options="conditions"
-                @input="changeSpecifics"
+                @update:model-value="changeSpecifics"
               />
             </b-col>
-            <b-col v-if="parseInt(form.ebayConditionId) === 4000" xs="3" class="m-0 pl-0 pr-2">
+            <b-col v-if="parseInt(form.ebayConditionId) === 4000" xs="3" class="m-0 ps-0 pe-2">
               <SelectInput
-                label="Card Condition"
                 v-model="form.ebayCardConditionValueId"
+                label="Card Condition"
                 :options="ebayCardConditionOptions"
               />
             </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Quantity" v-model="form.quantity" />
+            <b-col xs="3" class="m-0 ps-0 pe-2">
+              <TextInput v-model="form.quantity" label="Quantity" />
             </b-col>
-            <b-col xs="3" class="m-0 pl-0 pr-2">
-              <TextInput label="Price" v-model="form.price" />
+            <b-col xs="3" class="m-0 ps-0 pe-2">
+              <TextInput v-model="form.price" label="Price" />
             </b-col>
             <b-col xs="3" class="m-0 p-0">
-              <SelectInput label="Acquisition" v-model="form.acquisitionId" :options="acquisitions" />
+              <SelectInput v-model="form.acquisitionId" label="Acquisition" :options="acquisitions" />
             </b-col>
           </b-row>
         </b-container>
 
-        <SpecificInput v-model="form.specifics" @input="changeSpecifics" />
+        <SpecificInput v-model="form.specifics" @update:model-value="changeSpecifics" />
 
         <b-container fluid class="section">
           <b-row>
@@ -68,18 +68,18 @@
               <b-form-textarea v-model="form.prompt" rows="2" max-rows="10" />
             </b-col>
             <b-col>
-              <b-button @click="generatePrompt" variant="primary" style="margin-top: 10px">Generate</b-button>
+              <b-button variant="primary" style="margin-top: 10px" @click="generatePrompt">Generate</b-button>
             </b-col>
           </b-row>
         </b-container>
 
         <TextInput
-          label="Title"
           v-model="form.title"
+          label="Title"
           :required="true"
-          :maxLength="75"
-          :minLength="50"
-          :checkState="true"
+          :max-length="75"
+          :min-length="50"
+          :check-state="true"
         />
         <b-container fluid class="section">
           <h1>Description</h1>
@@ -88,7 +88,7 @@
 
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
-            <b-col xs="6" class="m-0 pl-0 pr-2">
+            <b-col xs="6" class="m-0 ps-0 pe-2">
               <ShippingInput :weight="form.weight" :size="form.size" />
             </b-col>
 
@@ -96,7 +96,7 @@
               <b-container fluid class="m-0 p-0">
                 <b-row class="m-0">
                   <b-col class="m-0 p-0">
-                    <TextInput label="Location" v-model="form.location" />
+                    <TextInput v-model="form.location" label="Location" />
                   </b-col>
                 </b-row>
               </b-container>
@@ -105,27 +105,27 @@
           <b-row>
             <b-col
               ><SelectInput
-                label="Shipping Type"
                 v-model="form.shippingType"
-                :options="this.shippingTypeOptions"
-                @input="this.changeShippingType"
+                label="Shipping Type"
+                :options="shippingTypeOptions"
+                @update:model-value="changeShippingType"
               />
             </b-col>
-            <b-col><TextInput label="Shipping Price" v-model="form.shippingPrice" :disabled="true" /></b-col>
+            <b-col><TextInput v-model="form.shippingPrice" label="Shipping Price" :disabled="true" /></b-col>
           </b-row>
         </b-container>
 
         <b-row class="m-0 p-0">
-          <b-col xs="5" class="m-0 pl-0 pr-2">
-            <CameraInput @photoTaken="photoTaken" />
+          <b-col xs="5" class="m-0 ps-0 pe-2">
+            <CameraInput @photo-taken="photoTaken" />
           </b-col>
-          <b-col xs="auto" class="m-0 pl-0 pr-0">
+          <b-col xs="auto" class="m-0 ps-0 pe-0">
             <ImageView
               :images="form.images"
-              @deleteImage="deleteImage"
               :edit="true"
-              @moveImageLeft="moveImageLeft"
-              @moveImageRight="moveImageRight"
+              @delete-image="deleteImage"
+              @move-image-left="moveImageLeft"
+              @move-image-right="moveImageRight"
             />
           </b-col>
         </b-row>
@@ -205,6 +205,20 @@ export default {
       },
     };
   },
+  watch: {
+    "form.weight": {
+      handler() {
+        this.updateCalculatedShipping();
+      },
+      deep: true,
+    },
+    "form.size": {
+      handler() {
+        this.updateCalculatedShipping();
+      },
+      deep: true,
+    },
+  },
   async created() {
     const token = this.$cookie.get("token");
     this.token = this.$cookie.get("token");
@@ -232,20 +246,6 @@ export default {
       { value: "400017", text: "Heavily Played" },
     ];
     this.updateCalculatedShipping();
-  },
-  watch: {
-    "form.weight": {
-      handler() {
-        this.updateCalculatedShipping();
-      },
-      deep: true,
-    },
-    "form.size": {
-      handler() {
-        this.updateCalculatedShipping();
-      },
-      deep: true,
-    },
   },
   methods: {
     async generatePrompt() {
@@ -337,11 +337,11 @@ export default {
     },
     swapImages(a, b) {
       const tmp = this.form.images[a];
-      this.$set(this.form.images, a, this.form.images[b]);
-      this.$set(this.form.images, b, tmp);
+      this.form.images[a] = this.form.images[b];
+      this.form.images[b] = tmp;
       const tmpKey = this.imageSortKeys[a];
-      this.$set(this.imageSortKeys, a, this.imageSortKeys[b]);
-      this.$set(this.imageSortKeys, b, tmpKey);
+      this.imageSortKeys[a] = this.imageSortKeys[b];
+      this.imageSortKeys[b] = tmpKey;
     },
     ensureCardConditionSelection() {
       if (parseInt(this.form.ebayConditionId) === 4000) {

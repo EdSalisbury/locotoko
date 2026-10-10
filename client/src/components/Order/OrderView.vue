@@ -1,9 +1,9 @@
 <template>
-  <PackingSlip :order="this.order" />
+  <PackingSlip v-if="order.id" :order="order" />
 </template>
 <script>
 import api from "@/api";
-import PackingSlip from "./PackingSlip";
+import PackingSlip from "./PackingSlip.vue";
 export default {
   components: {
     PackingSlip,

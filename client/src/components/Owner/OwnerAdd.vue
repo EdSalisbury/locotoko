@@ -5,11 +5,11 @@
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
-            <b-col xs="6" class="m-0 pl-0 pr-2">
-              <TextInput label="Name" v-model="form.name" required />
+            <b-col xs="6" class="m-0 ps-0 pe-2">
+              <TextInput v-model="form.name" label="Name" required />
             </b-col>
-            <b-col xs="6" class="m-0 pl-0 pr-0">
-              <TextInput style="margin-top: 10px" label="Rate" v-model="form.rate" required />
+            <b-col xs="6" class="m-0 ps-0 pe-0">
+              <TextInput v-model="form.rate" style="margin-top: 10px" label="Rate" required />
             </b-col>
           </b-row>
         </b-container>
