@@ -347,6 +347,9 @@ const getOrder = async (token, id) => {
 
 const getMetrics = async (token) => {
   const response = await fetch(apiUrl("metrics"), apiHeaders(token));
+  if (!response.ok) {
+    throw new Error(`Metrics request failed (${response.status})`);
+  }
   return await response.json();
 }
 
