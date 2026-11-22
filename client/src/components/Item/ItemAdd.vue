@@ -218,12 +218,18 @@ export default {
       },
       deep: true,
     },
+    // The category can be picked by hand, set by a template or come with a
+    // saved item; the condition choices follow it in every case.
+    "form.ebayCategoryId"(categoryId) {
+      this.loadConditions(categoryId);
+    },
   },
   async created() {
     const token = this.$cookie.get("token");
     this.token = this.$cookie.get("token");
     if (!this.token) {
       this.$router.push({ path: "/login" });
+      return;
     }
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
@@ -282,9 +288,26 @@ export default {
       }
     },
     async changeCategory(event) {
-      this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
       this.form.specifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
       this.ensureCardConditionSelection();
+    },
+    async loadConditions(categoryId) {
+      const id = Number(categoryId) || 0;
+      this.conditionsCategoryId = id;
+      if (!id) {
+        this.conditions = [];
+        return;
+      }
+      try {
+        const conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), id);
+        // Ignore an answer for a category that's no longer the chosen one.
+        if (this.conditionsCategoryId === id) {
+          this.conditions = conditions;
+          this.ensureCardConditionSelection();
+        }
+      } catch (err) {
+        console.error(err);
+      }
     },
     changeShippingType(event) {
       if (parseInt(event) === 1) {

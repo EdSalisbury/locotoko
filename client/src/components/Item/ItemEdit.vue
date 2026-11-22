@@ -242,6 +242,11 @@ export default {
       },
       deep: true,
     },
+    // The category can be picked by hand, set by a template or come with the
+    // saved item; the condition choices follow it in every case.
+    "form.ebayCategoryId"(categoryId) {
+      this.loadConditions(categoryId);
+    },
   },
 
   async created() {
@@ -250,6 +255,7 @@ export default {
     this.token = token;
     if (!this.token) {
       this.$router.push({ path: "/login" });
+      return;
     }
     this.templates = await api.getTemplates(token);
     this.templateOptions = await util.getTemplateOptions(token);
@@ -313,8 +319,25 @@ async generatePrompt() {
         console.error(error);
       }
     },
+    async loadConditions(categoryId) {
+      const id = Number(categoryId) || 0;
+      this.conditionsCategoryId = id;
+      if (!id) {
+        this.conditions = [];
+        return;
+      }
+      try {
+        const conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), id);
+        // Ignore an answer for a category that's no longer the chosen one.
+        if (this.conditionsCategoryId === id) {
+          this.conditions = conditions;
+          this.ensureCardConditionSelection();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
     async changeCategory(event) {
-      this.conditions = await util.getEbayConditionOptions(this.$cookie.get("token"), event);
       const oldSpecifics = this.form.specifics;
       const newSpecifics = await util.getEbaySpecifics(this.$cookie.get("token"), event);
       const combined = [...oldSpecifics, ...newSpecifics];

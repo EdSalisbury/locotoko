@@ -49,6 +49,9 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+// The last 30 points of a metric series; a missing series is empty.
+const last30 = (series) => (Array.isArray(series) ? series.slice(-30) : []);
+
 export default {
   components: { LineChart },
   data() {
@@ -103,9 +106,10 @@ export default {
       this.token = this.$cookie.get("token");
       if (!this.token) {
         this.$router.push({ path: "/login" });
+        return;
       }
       this.metrics = await api.getMetrics(this.token);
-      for (let metric of this.metrics.newSalesAmounts.slice(-30)) {
+      for (let metric of last30(this.metrics.newSalesAmounts)) {
         this.sold30Days += metric.y;
       }
 
@@ -116,7 +120,7 @@ export default {
             backgroundColor: "#457B9D",
             borderColor: "#457B9D",
             pointStyle: false,
-            data: this.metrics.newEbayListings.slice(-30),
+            data: last30(this.metrics.newEbayListings),
           },
         ],
       };
@@ -127,7 +131,7 @@ export default {
             backgroundColor: "#1D3557",
             borderColor: "#1D3557",
             pointStyle: false,
-            data: this.metrics.newSales.slice(-30),
+            data: last30(this.metrics.newSales),
           },
         ],
       };
@@ -138,7 +142,7 @@ export default {
             backgroundColor: "#f33",
             borderColor: "#f33",
             pointStyle: false,
-            data: this.metrics.newDrafts.slice(-30),
+            data: last30(this.metrics.newDrafts),
           },
         ],
       };
@@ -149,7 +153,7 @@ export default {
             backgroundColor: "#457B9D",
             borderColor: "#457B9D",
             pointStyle: false,
-            data: this.metrics.newEbayListingAmounts.slice(-30),
+            data: last30(this.metrics.newEbayListingAmounts),
           },
         ],
       };
