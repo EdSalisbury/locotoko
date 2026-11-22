@@ -6,17 +6,30 @@ set -e
 # Ensure we're in the project root
 cd "$(dirname "$0")"
 
-# Run yarn version interactively (this will prompt you)
-yarn version
+OLD_VERSION=$(grep '"version"' package.json | awk -F '"' '{print $4}')
+
+# With a version argument (./deploy.sh 1.2.3) set it directly, which works
+# without a terminal; otherwise run yarn version interactively (it prompts).
+if [ -n "$1" ]; then
+  yarn version --no-git-tag-version --new-version "$1"
+else
+  yarn version
+fi
 
 # Extract the new version from package.json AFTER yarn version completes
 VERSION=$(grep '"version"' package.json | awk -F '"' '{print $4}')
 
+if [ "$VERSION" = "$OLD_VERSION" ]; then
+  echo "❌ Version is still $VERSION; nothing to deploy." >&2
+  exit 1
+fi
+
 echo "📦 New version selected: $VERSION"
 
-# Update the client package.json with the same version
+# Update the client package.json with the same version. npm, not yarn: the
+# root .yarnrc's relative yarn-path doesn't resolve from inside client/.
 cd client
-yarn version --no-git-tag-version --new-version "$VERSION"
+npm version --no-git-tag-version --allow-same-version "$VERSION"
 cd ..
 
 # Commit and tag the new version
