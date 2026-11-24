@@ -1,11 +1,15 @@
 """Fill a releases folder: Releases\\v<version>\\ per version with notes, screenshot and video.
 
-    python scripts/demo_backfill.py --home <releases folder> [--only 0.58.3 0.58.2] [--limit 10] [--jobs 2]
+    python scripts/demo_backfill.py --home <releases folder> [--only 0.58.3 0.58.2] [--limit 10] [--jobs 2] [--cull]
 
 Every tagged version gets release_notes.md (its date and what changed, from its commits),
-then a screenshot and video made by scripts/demo_capture.py from that version's own code
-with the made-up demo data. A version that can't be built or run gets a line in its notes
-saying why instead. A couple at a time (--jobs), to stay easy on the machine.
+then a screenshot made by scripts/demo_capture.py from that version's own code with the
+made-up demo data. A version that can't be built or run gets a line in its notes saying why
+instead. A couple at a time (--jobs), to stay easy on the machine.
+
+Only versions with something new to see keep a video: those listed in demo/videos.txt,
+plus the first and the newest version. --cull deletes the videos of every other version
+(and their emptied Videos folders), such as the previous newest once a new release lands.
 
 Locotoko's tags: from 0.25.14 to 0.43.x most versions carry two tags, "v0.26.10" (the
 version bump) and "0.26.10" (deploy.sh's commit right after it, which also bumped the
@@ -33,7 +37,49 @@ CAPTURE = REPO / "scripts" / "demo_capture.py"
 NOTE = "Not captured:"
 EMPTY = "Captured as it was:"
 EXTRA = REPO / "demo" / "release_notes"     # hand-written notes for a version, used instead of commits
+VIDEOS = REPO / "demo" / "videos.txt"       # versions with something new to see: they keep a video
 PRINT = threading.Lock()
+
+
+def showable(path: Path = VIDEOS) -> set[str]:
+    """The versions listed in demo/videos.txt (first word of each line; # starts a comment)."""
+    if not path.exists():
+        return set()
+    out = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        word = line.split("#", 1)[0].split()
+        if word:
+            out.add(word[0].lstrip("v"))
+    return out
+
+
+def wants_video(version: str, every: list[str], listed: set[str]) -> bool:
+    """A version keeps a video when it has something to show, or is the first or the newest."""
+    return version in listed or (bool(every) and version in (every[0], every[-1]))
+
+
+def cull(home: Path, every: list[str], listed: set[str]) -> tuple[int, int, int]:
+    """Delete the videos of versions with nothing to show, and their then-empty Videos folders.
+    Returns (kept, removed, bytes freed)."""
+    kept = removed = freed = 0
+    releases = home / "Releases"
+    if not releases.exists():
+        return 0, 0, 0
+    for rel in sorted(releases.iterdir()):
+        videos = rel / "Videos"
+        if not rel.name.startswith("v") or not videos.is_dir():
+            continue
+        if wants_video(rel.name[1:], every, listed):
+            kept += sum(1 for f in videos.iterdir() if f.is_file())
+            continue
+        for f in list(videos.iterdir()):
+            if f.is_file():
+                freed += f.stat().st_size
+                f.unlink()
+                removed += 1
+        if not any(videos.iterdir()):
+            videos.rmdir()
+    return kept, removed, freed
 
 
 def git(*args: str, binary: bool = False):
@@ -191,7 +237,7 @@ def say(msg: str) -> None:
         print(msg, flush=True)
 
 
-def one(home: Path, version: str, tag: str, work: Path) -> None:
+def one(home: Path, version: str, tag: str, work: Path, video: bool = True) -> None:
     rel = home / "Releases" / f"v{version}"
     notes = rel / "release_notes.md"
     shots, videos = rel / "Screenshots", rel / "Videos"
@@ -212,9 +258,10 @@ def one(home: Path, version: str, tag: str, work: Path) -> None:
         text = notes.read_text(encoding="utf-8")
         if ok and png.exists() and mp4.exists():
             shots.mkdir(parents=True, exist_ok=True)
-            videos.mkdir(parents=True, exist_ok=True)
             shutil.move(str(png), shots / png.name)
-            shutil.move(str(mp4), videos / mp4.name)
+            if video:       # otherwise the video goes with the temp folder: nothing new to see
+                videos.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(mp4), videos / mp4.name)
             empty = any(l.startswith("EMPTY:") for l in lines)
             kept = [l for l in text.splitlines() if not l.startswith((f"- {NOTE}", f"- {EMPTY}"))]
             if empty:
@@ -241,8 +288,12 @@ def main() -> None:
     ap.add_argument("--notes", action="store_true", help="rewrite every release_notes.md (keeps 'Not captured' lines)")
     ap.add_argument("--no-capture", action="store_true", help="only write release notes")
     ap.add_argument("--work", type=Path, default=Path(tempfile.gettempdir()))
+    ap.add_argument("--cull", action="store_true",
+                    help="afterwards, delete the videos of versions with nothing to show (see demo/videos.txt)")
     args = ap.parse_args()
     every = versions()
+    names = [v for v, _ in every]
+    listed = showable()
     todo = []
     for i, (version, tag) in enumerate(every):
         if args.only and version not in [o.lstrip("v") for o in args.only]:
@@ -258,7 +309,8 @@ def main() -> None:
             notes.write_text(fresh.rstrip("\n") + ("\n" + "\n".join(keep) if keep else "") + "\n",
                              encoding="utf-8", newline="\n")
         name = f"Locotoko v{version}"
-        if (rel / "Screenshots" / f"{name}.png").exists() and (rel / "Videos" / f"{name}.mp4").exists():
+        if (rel / "Screenshots" / f"{name}.png").exists() and (
+                (rel / "Videos" / f"{name}.mp4").exists() or not wants_video(version, names, listed)):
             continue
         if NOTE in notes.read_text(encoding="utf-8") and not args.retry:
             continue
@@ -270,6 +322,8 @@ def main() -> None:
     say(f"{len(todo)} to capture")
     if not todo:
         update_readme(args.home, every)
+        if args.cull:
+            report_cull(args.home, names, listed)
         return
     args.work.mkdir(parents=True, exist_ok=True)
     # Each worker takes its own stretch of the history, in order: neighbouring versions
@@ -281,12 +335,19 @@ def main() -> None:
 
     def work(stretch):
         for v, t in stretch:
-            one(args.home, v, t, args.work)
+            one(args.home, v, t, args.work, video=wants_video(v, names, listed))
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
         for f in [pool.submit(work, s) for s in stretches]:
             f.result()
     update_readme(args.home, every)
+    if args.cull:
+        report_cull(args.home, names, listed)
+
+
+def report_cull(home: Path, names: list[str], listed: set[str]) -> None:
+    kept, removed, freed = cull(home, names, listed)
+    say(f"videos: {kept} kept, {removed} removed, {freed / 1e6:.1f} MB freed")
 
 
 if __name__ == "__main__":
