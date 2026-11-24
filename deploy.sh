@@ -51,3 +51,15 @@ docker push edsalisbury/locotoko:latest
 ssh 192.168.1.44 "cd /srv/docker/store.bluedragontrading.ltd && docker compose pull && docker compose up -d"
 
 echo "🚀 Deployment successful: Version $VERSION"
+
+# Release notes, screenshot and video for this version (scripts/demo_backfill.py), when
+# this machine keeps a releases folder: .env.release (gitignored) sets RELEASE_HOME and
+# PYTHON. Made with the demo data only; a failure here doesn't undo the deploy.
+if [ -f .env.release ]; then
+  # shellcheck disable=SC1091
+  . ./.env.release
+fi
+if [ -n "$RELEASE_HOME" ]; then
+  "${PYTHON:-python}" scripts/demo_backfill.py --home "$RELEASE_HOME" --only "$VERSION" --jobs 1 \
+    || echo "⚠️ The release capture for $VERSION didn't finish; run scripts/demo_backfill.py again." >&2
+fi
