@@ -40,3 +40,5 @@ lerna-debug.log*
 **.yarn/cache
 client/.yarn
 install-state.gz
+
+__pycache__/

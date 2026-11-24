@@ -30,6 +30,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 CAPTURE = REPO / "scripts" / "demo_capture.py"
 NOTE = "Not captured:"
+EMPTY = "Captured as it was:"
 EXTRA = REPO / "demo" / "release_notes"     # hand-written notes for a version, used instead of commits
 PRINT = threading.Lock()
 
@@ -159,10 +160,14 @@ def one(home: Path, version: str, tag: str, work: Path) -> None:
             videos.mkdir(parents=True, exist_ok=True)
             shutil.move(str(png), shots / png.name)
             shutil.move(str(mp4), videos / mp4.name)
-            if NOTE in text:
-                text = "\n".join(l for l in text.splitlines() if not l.startswith(f"- {NOTE}")) + "\n"
-                notes.write_text(text, encoding="utf-8", newline="\n")
-            say(f"ok   v{version}")
+            empty = any(l.startswith("EMPTY:") for l in lines)
+            kept = [l for l in text.splitlines() if not l.startswith((f"- {NOTE}", f"- {EMPTY}"))]
+            if empty:
+                kept.append(f"- {EMPTY} this version's item list comes up empty with the demo data, so the "
+                            "screenshot and video show an empty list (the version's own behavior, not missing data).")
+            if "\n".join(kept) + "\n" != text:
+                notes.write_text("\n".join(kept) + "\n", encoding="utf-8", newline="\n")
+            say(f"ok   v{version}" + ("  (empty list)" if empty else ""))
         else:
             reason = next((l[len("CANNOT: "):] for l in reversed(lines) if l.startswith("CANNOT: ")),
                           lines[-1] if lines else "no output")
@@ -194,7 +199,7 @@ def main() -> None:
         prev = every[i - 1] if i else (None, None)
         if not notes.exists() or args.notes:
             old = notes.read_text(encoding="utf-8") if notes.exists() else ""
-            keep = [l for l in old.splitlines() if l.startswith(f"- {NOTE}")]
+            keep = [l for l in old.splitlines() if l.startswith((f"- {NOTE}", f"- {EMPTY}"))]
             rel.mkdir(parents=True, exist_ok=True)
             fresh = release_notes(version, tag, prev[1], prev[0])
             notes.write_text(fresh.rstrip("\n") + ("\n" + "\n".join(keep) if keep else "") + "\n",
