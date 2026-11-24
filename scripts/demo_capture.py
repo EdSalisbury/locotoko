@@ -4,7 +4,8 @@
 
 Everything runs in Docker on this machine, never against the live store or its database:
   1. Builds that version's client and server in the Node image its own Dockerfile names,
-     with node_modules kept in Docker volumes per lockfile (versions share them).
+     with node_modules kept in Docker volumes per lockfile (versions share them). Packages its
+     lockfile doesn't pin resolve as they did on --date, its release day (scripts/demo/lockfix.js).
   2. Starts a throwaway Postgres and the server on an internal Docker network with no way
      out to the internet, applies that version's own migrations and fills the database
      with demo/data.json (an invented shop: people, titles and photos are all made up).
@@ -91,9 +92,12 @@ def volume(kind: str, image: str, lock: Path) -> str:
     return f"locotoko-demo-nm-{kind}-{h}"
 
 
+# lockfix.js (scripts/demo) first: installs what the version got when it was released (see there).
 BUILD = r"""
 set -e
 export YARN_IGNORE_PATH=1 CHECKPOINT_DISABLE=1 PRISMA_HIDE_UPDATE_MESSAGE=1 CI=true
+node /demo/lockfix.js /src/client "$DEMO_DATE"
+node /demo/lockfix.js /src "$DEMO_DATE"
 cd /src/client
 yarn install --non-interactive --network-timeout 600000 --ignore-engines
 VUE_APP_API_BASE_URL=http://app:3333 yarn build
@@ -104,10 +108,14 @@ if grep -q '"build:prod"' package.json; then yarn build:prod; else yarn build; f
 """
 
 
-def build(code: Path, image: str, srv: str, cli: str) -> None:
+def build(code: Path, image: str, srv: str, cli: str, date: str) -> None:
     p = run("docker", "run", "--rm", "-v", f"{mount(code)}:/src", "-v", f"{srv}:/src/node_modules",
-            "-v", f"{cli}:/src/client/node_modules", "-w", "/src", image, "sh", "-c", BUILD,
+            "-v", f"{cli}:/src/client/node_modules", "-v", f"{mount(REPO / 'scripts' / 'demo')}:/demo:ro",
+            "-e", f"DEMO_DATE={date}", "-w", "/src", image, "sh", "-c", BUILD,
             check=False, timeout=3600)
+    for l in (p.stdout + p.stderr).splitlines():
+        if l.startswith("lockfix:"):
+            print(l, flush=True)
     if p.returncode != 0:
         tail = [l for l in (p.stdout + p.stderr).splitlines() if l.strip()][-6:]
         fail("it doesn't build anymore: " + " | ".join(tail)[-400:])
@@ -291,7 +299,7 @@ def wait_for_server(app: str, seconds: int = 240) -> None:
     fail("the server didn't answer within 4 minutes")
 
 
-def capture(code: Path, out: Path, version: str) -> None:
+def capture(code: Path, out: Path, version: str, date: str) -> None:
     data = with_ids(json.loads((DEMO / "data.json").read_text(encoding="utf-8")))
     image = base_image(code)
     srv = volume("srv", image, code / "yarn.lock")
@@ -299,7 +307,7 @@ def capture(code: Path, out: Path, version: str) -> None:
     name = f"Locotoko v{version}"
     out.mkdir(parents=True, exist_ok=True)
     with locked(srv), locked(cli):
-        build(code, image, srv, cli)
+        build(code, image, srv, cli, date)
         if not (code / "client" / "dist" / "index.html").exists():
             fail("the client build left no index.html")
         entry = main_js(code)
@@ -323,7 +331,11 @@ def capture(code: Path, out: Path, version: str) -> None:
             env = ["-e", "DATABASE_URL=postgresql://demo:demo@db:5432/locotoko?schema=public",
                    "-e", "JWT_SECRET=demo-only-secret", "-e", "ALLOW_REGISTRATION=false", "-e", "USE_SSL=false",
                    "-e", "NODE_ENV=development", "-e", "CHECKPOINT_DISABLE=1", "-e", "PRISMA_HIDE_UPDATE_MESSAGE=1",
-                   "-e", "TZ=America/Denver"]
+                   "-e", "TZ=America/Denver",
+                   # Versions that make their AI clients at startup stop without a key; the network
+                   # has no way out, so these placeholders never reach anyone.
+                   "-e", "OPENAI_API_KEY=demo-placeholder", "-e", "ANTHROPIC_API_KEY=demo-placeholder",
+                   "-e", "TMDB_API_KEY=demo-placeholder"]
             mig = run("docker", "run", "--rm", "--network", net, *env, "-v", f"{mount(code)}:/src",
                       "-v", f"{srv}:/src/node_modules", "-w", "/src", image,
                       "node", "node_modules/prisma/build/index.js", "migrate", "deploy", check=False, timeout=600)
@@ -380,12 +392,14 @@ def main() -> None:
     ap.add_argument("--code", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--version", required=True)
+    ap.add_argument("--date", default=datetime.now().strftime("%Y-%m-%d"),
+                    help="the version's release day: packages its lockfile doesn't pin resolve as of then")
     args = ap.parse_args()
     if run("docker", "image", "inspect", BROWSER_IMAGE, check=False).returncode != 0:
         run("docker", "build", "-q", "-t", BROWSER_IMAGE, "-f", str(REPO / "scripts" / "demo" / "Dockerfile.browser"),
             str(REPO / "scripts" / "demo"), timeout=1800)
     try:
-        capture(args.code, args.out, args.version.lstrip("v"))
+        capture(args.code, args.out, args.version.lstrip("v"), args.date)
     except subprocess.TimeoutExpired as e:
         fail(f"a step took too long ({' '.join(map(str, e.cmd[:4]))})")
     except RuntimeError as e:

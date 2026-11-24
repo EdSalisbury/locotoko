@@ -199,9 +199,10 @@ def one(home: Path, version: str, tag: str, work: Path) -> None:
     with tempfile.TemporaryDirectory(prefix=f"loco-{version}-", dir=work) as tmp:
         code, out = Path(tmp) / "code", Path(tmp) / "out"
         export(tag, code)
+        day = git("log", "-1", "--format=%ad", "--date=short", tag).strip()
         try:
             run = subprocess.run([sys.executable, str(CAPTURE), "--code", str(code), "--out", str(out),
-                                  "--version", version], capture_output=True, text=True, encoding="utf-8",
+                                  "--version", version, "--date", day], capture_output=True, text=True, encoding="utf-8",
                                  errors="replace", timeout=5400)
             lines = (run.stdout + run.stderr).strip().splitlines()
             ok = run.returncode == 0
