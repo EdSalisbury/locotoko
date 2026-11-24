@@ -84,10 +84,23 @@ def release_notes(version: str, tag: str, prev: str | None, prev_version: str | 
         subj = re.sub(r"\s*\(#\d+\)$", "", subj)
         line = subj[:1].upper() + subj[1:]
         bullets.append(f"- {line}" + ("" if line.endswith((".", "!", "?")) else "."))
+        cur = None      # a body bullet, with its wrapped lines joined on
         for bl in body.splitlines():
             s = bl.strip()
-            if s.startswith(("- ", "* ")) and not s.lower().startswith(("- co-authored", "* co-authored")):
-                bullets.append("  - " + s[2:].strip())
+            if s.lower().startswith(("co-authored-by", "signed-off-by", "\U0001f916")):
+                continue
+            if s.startswith(("- ", "* ")):
+                if cur:
+                    bullets.append(cur)
+                cur = "  - " + s[2:].strip()
+            elif s and cur:
+                cur += " " + s
+            else:
+                if cur:
+                    bullets.append(cur)
+                cur = None
+        if cur:
+            bullets.append(cur)
     if prev is None:
         n = sum(1 for b in bullets if b.startswith("- "))
         intro = (f"The first tagged version. Versions 0.1.0 to 0.11.5 were never tagged in git, so they have no "
@@ -168,6 +181,7 @@ def main() -> None:
     ap.add_argument("--jobs", type=int, default=2)
     ap.add_argument("--retry", action="store_true", help="also try versions marked as not captured")
     ap.add_argument("--notes", action="store_true", help="rewrite every release_notes.md (keeps 'Not captured' lines)")
+    ap.add_argument("--no-capture", action="store_true", help="only write release notes")
     ap.add_argument("--work", type=Path, default=Path(tempfile.gettempdir()))
     args = ap.parse_args()
     every = versions()
@@ -191,6 +205,8 @@ def main() -> None:
         if NOTE in notes.read_text(encoding="utf-8") and not args.retry:
             continue
         todo.append((version, tag))
+    if args.no_capture:
+        todo = []
     if args.limit:
         todo = todo[:args.limit]
     say(f"{len(todo)} to capture")
