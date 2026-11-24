@@ -1,0 +1,4 @@
+# The browser side of the demo captures: Playwright's Chromium plus its Python package.
+# demo_capture.py builds it once as locotoko-demo-browser.
+FROM mcr.microsoft.com/playwright/python:v1.56.0-noble
+RUN pip install --no-cache-dir --break-system-packages playwright==1.56.0
