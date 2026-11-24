@@ -53,8 +53,13 @@ ssh 192.168.1.44 "cd /srv/docker/store.bluedragontrading.ltd && docker compose p
 echo "🚀 Deployment successful: Version $VERSION"
 
 # Release notes, screenshot and video for this version (scripts/demo_backfill.py), when
-# this machine keeps a releases folder: .env.release (gitignored) sets RELEASE_HOME and
-# PYTHON. Made with the demo data only; a failure here doesn't undo the deploy.
+# this machine keeps a releases folder: ~/.config/locotoko/release.env or .env.release
+# (gitignored) sets RELEASE_HOME and PYTHON. Made with the demo data only; a failure
+# here doesn't undo the deploy.
+if [ -f "$HOME/.config/locotoko/release.env" ]; then
+  # shellcheck disable=SC1091
+  . "$HOME/.config/locotoko/release.env"
+fi
 if [ -f .env.release ]; then
   # shellcheck disable=SC1091
   . ./.env.release
