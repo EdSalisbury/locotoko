@@ -211,8 +211,19 @@ def main() -> None:
         todo = todo[:args.limit]
     say(f"{len(todo)} to capture")
     args.work.mkdir(parents=True, exist_ok=True)
-    with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
-        for f in [pool.submit(one, args.home, v, t, args.work) for v, t in todo]:
+    # Each worker takes its own stretch of the history, in order: neighbouring versions
+    # mostly share a lockfile (and a node_modules volume, used by one capture at a time),
+    # so workers on the same stretch would just wait for each other.
+    jobs = max(1, min(args.jobs, len(todo) or 1))
+    size = -(-len(todo) // jobs)
+    stretches = [todo[i:i + size] for i in range(0, len(todo), size)]
+
+    def work(stretch):
+        for v, t in stretch:
+            one(args.home, v, t, args.work)
+
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        for f in [pool.submit(work, s) for s in stretches]:
             f.result()
     update_readme(args.home, every)
 
