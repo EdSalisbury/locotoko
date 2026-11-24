@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import io
+import json
 import re
 import shutil
 import subprocess
@@ -65,6 +66,54 @@ def versions() -> list[tuple[str, str]]:
 
 
 SKIP = re.compile(r"^(Merge |Updated version to |v?\d+\.\d+\.\d+$|Bump version)", re.I)
+NOTE_LINE = re.compile(rf"^- {NOTE} this version couldn't be run with the demo data \((.*)\), so it has no screenshot or video\.$")
+
+
+def plain(reason: str) -> str:
+    """The reason in a few words for the notes: "it doesn't build anymore", not the build log after it."""
+    reason = reason.strip()
+    if reason.startswith("docker "):
+        return "a Docker step failed"
+    for cut in (": ", " ("):
+        reason = reason.split(cut, 1)[0]
+    return reason.rstrip(" .") or "no reason given"
+
+
+def not_captured(reason: str) -> str:
+    return f"- {NOTE} this version couldn't be run with the demo data ({plain(reason)}), so it has no screenshot or video."
+
+
+def tidy(line: str) -> str:
+    """An older "Not captured" line, which carried the raw log, in the plain form."""
+    m = NOTE_LINE.match(line)
+    return not_captured(m.group(1)) if m else line
+
+
+def deps(tag: str) -> dict[str, str]:
+    """Every dependency and its version range, server and client, at a tag."""
+    out: dict[str, str] = {}
+    for path, side in (("package.json", ""), ("client/package.json", " (client)")):
+        try:
+            data = json.loads(git("show", f"{tag}:{path}"))
+        except (subprocess.CalledProcessError, json.JSONDecodeError):
+            continue
+        for section in ("dependencies", "devDependencies"):
+            for name, ver in (data.get(section) or {}).items():
+                out[name + side] = ver
+    return out
+
+
+def dep_changes(prev: str, tag: str) -> list[str]:
+    a, b = deps(prev), deps(tag)
+    changes = []
+    for name in sorted(set(a) | set(b)):
+        if name not in a:
+            changes.append(f"{name} {b[name]} added")
+        elif name not in b:
+            changes.append(f"{name} removed")
+        elif a[name] != b[name]:
+            changes.append(f"{name} {a[name]} → {b[name]}")
+    return changes
 
 
 def release_notes(version: str, tag: str, prev: str | None, prev_version: str | None) -> str:
@@ -107,6 +156,11 @@ def release_notes(version: str, tag: str, prev: str | None, prev_version: str | 
         intro = (f"The first tagged version. Versions 0.1.0 to 0.11.5 were never tagged in git, so they have no "
                  f"folders; everything built since the first commit (April 2022) is listed here, {n} commits.\n\n")
         return head + intro + "\n".join(bullets) + "\n"
+    changes = dep_changes(prev, tag)
+    if changes:
+        more = len(changes) - 12
+        bullets.append("- Dependency versions changed: " + "; ".join(changes[:12])
+                       + (f"; and {more} more." if more > 0 else "."))
     if not bullets:
         bullets = [f"- No changes beyond the version number (the same code as v{prev_version})."]
     return head + "\n".join(bullets) + "\n"
@@ -172,9 +226,7 @@ def one(home: Path, version: str, tag: str, work: Path) -> None:
             reason = next((l[len("CANNOT: "):] for l in reversed(lines) if l.startswith("CANNOT: ")),
                           lines[-1] if lines else "no output")
             text = "\n".join(l for l in text.splitlines() if not l.startswith(f"- {NOTE}")).rstrip("\n")
-            notes.write_text(text + f"\n- {NOTE} this version couldn't be run with the demo data "
-                             f"({reason.strip()[:300]}), so it has no screenshot or video.\n",
-                             encoding="utf-8", newline="\n")
+            notes.write_text(text + "\n" + not_captured(reason) + "\n", encoding="utf-8", newline="\n")
             say(f"FAIL v{version}: {reason}")
 
 
@@ -199,7 +251,7 @@ def main() -> None:
         prev = every[i - 1] if i else (None, None)
         if not notes.exists() or args.notes:
             old = notes.read_text(encoding="utf-8") if notes.exists() else ""
-            keep = [l for l in old.splitlines() if l.startswith((f"- {NOTE}", f"- {EMPTY}"))]
+            keep = [tidy(l) for l in old.splitlines() if l.startswith((f"- {NOTE}", f"- {EMPTY}"))]
             rel.mkdir(parents=True, exist_ok=True)
             fresh = release_notes(version, tag, prev[1], prev[0])
             notes.write_text(fresh.rstrip("\n") + ("\n" + "\n".join(keep) if keep else "") + "\n",
@@ -215,11 +267,14 @@ def main() -> None:
     if args.limit:
         todo = todo[:args.limit]
     say(f"{len(todo)} to capture")
+    if not todo:
+        update_readme(args.home, every)
+        return
     args.work.mkdir(parents=True, exist_ok=True)
     # Each worker takes its own stretch of the history, in order: neighbouring versions
     # mostly share a lockfile (and a node_modules volume, used by one capture at a time),
     # so workers on the same stretch would just wait for each other.
-    jobs = max(1, min(args.jobs, len(todo) or 1))
+    jobs = max(1, min(args.jobs, len(todo)))
     size = -(-len(todo) // jobs)
     stretches = [todo[i:i + size] for i in range(0, len(todo), size)]
 
