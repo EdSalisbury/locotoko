@@ -354,7 +354,7 @@ def capture(code: Path, out: Path, version: str) -> None:
                         "--expect", *[it["title"][:24] for it in data["items"]], "--routes", *routes(code), check=False, timeout=900)
             lines = [l for l in (drive.stdout + drive.stderr).splitlines() if l.strip()]
             for l in lines:
-                if l.startswith("blocked"):
+                if l.startswith(("blocked", "EMPTY:")):
                     print(l, flush=True)
             if drive.returncode != 0:
                 reason = next((l[8:] for l in reversed(lines) if l.startswith("CANNOT: ")), " | ".join(lines[-3:]))

@@ -79,6 +79,17 @@ def glide(page, seconds: float) -> None:
         page.wait_for_timeout(pause)
 
 
+def list_shown(page, expect: list[str], timeout: int) -> bool:
+    """Whether the page shows one of the demo items' titles within `timeout` ms."""
+    try:
+        page.wait_for_function("ts => ts.some(t => document.body.innerText.toLowerCase().includes(t))",
+                               arg=[e.lower() for e in expect], timeout=timeout)
+        page.wait_for_timeout(1500)
+        return True
+    except Exception:
+        return False
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default="http://app:3333")
@@ -158,21 +169,22 @@ def main() -> None:
             except Exception as e:  # noqa: BLE001
                 fail(f"couldn't open {path} ({str(e).splitlines()[0][:120]})")
             settle(page, 1.0)
-            if path == "/items" and not shot.exists():
+            if path == "/items":
                 if "/login" in page.url:
                     fail("the login with the demo user didn't take")
-                try:
-                    page.wait_for_function("ts => ts.some(t => document.body.innerText.toLowerCase().includes(t))",
-                                           arg=[e.lower() for e in args.expect], timeout=30000)
-                    page.wait_for_timeout(1500)
-                except Exception:
-                    pass
-                text = page.inner_text("body")
-                if not any(e.lower() in text.lower() for e in args.expect):
-                    page.screenshot(path=str(out / "debug.png"))
-                    (out / "debug.txt").write_text(page.url + "\n" + text, encoding="utf-8")
-                    fail("the item list didn't show the demo items")
-                page.screenshot(path=str(shot))
+                shown = list_shown(page, args.expect, 15000 if not shot.exists() else 5000)
+                if not shown:
+                    # Some versions (0.31.x) filled the table only after a filter button was clicked
+                    show_all = page.get_by_role("button", name="Show All")
+                    if show_all.count():
+                        show_all.first.click()
+                        shown = list_shown(page, args.expect, 10000)
+                if not shot.exists():
+                    if not shown:
+                        # The version runs, but its item list comes up empty (0.15.1-0.15.9 had a
+                        # server filter that dropped every item): captured as it was, and said so.
+                        print("EMPTY: the item list comes up empty in this version", flush=True)
+                    page.screenshot(path=str(shot))
             if scroll:
                 glide(page, seconds)
             else:
