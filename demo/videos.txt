@@ -20,3 +20,4 @@
 0.41.8  AI prompts on Edit Item
 0.47.0  TMDB lookups and card conditions on the item forms
 0.58.0  Client moved to Vue 3 and bootstrap-vue-next: the new look
+0.59.0  API Keys page; drafts made from photos show Identifying… or why it failed
