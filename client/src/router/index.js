@@ -4,6 +4,7 @@ import LogoutForm from "@/components/LogoutForm.vue";
 import RegisterForm from "@/components/RegisterForm.vue";
 import ChangePasswordForm from "@/components/ChangePasswordForm.vue";
 import HomePage from "@/components/HomePage.vue";
+import ApiKeys from "@/components/ApiKeys.vue";
 import { ItemAdd, ItemEdit, ItemView, ItemList } from "@/components/Item";
 import { TemplateAdd, TemplateEdit, TemplateView, TemplateList } from "@/components/Template";
 import { AcquisitionAdd, AcquisitionEdit, AcquisitionView, AcquisitionList } from "@/components/Acquisition";
@@ -16,6 +17,7 @@ const routes = [
   { path: "/", name: "home", component: HomePage },
   { path: "/register", name: "register", component: RegisterForm },
   { path: "/changePassword", name: "change password", component: ChangePasswordForm },
+  { path: "/apiKeys", name: "api keys", component: ApiKeys },
   { path: "/viewItem/:id", name: "item view", component: ItemView },
   { path: "/editItem/:id", name: "edit item", component: ItemEdit },
   { path: "/items", name: "items", component: ItemList },

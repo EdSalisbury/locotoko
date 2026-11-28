@@ -1,0 +1,53 @@
+{
+  "_about": "Claude's answers for the demo shop's first LP (demo/images/demo-item-01_*.jpg), in the Messages API's response format: the category pick, then the submitted item, then the title and description. Used by the draft tests instead of calling Claude.",
+  "chooseCategory": {
+    "id": "msg_demo_lp_1",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-4-5-20251001",
+    "content": [
+      { "type": "text", "text": "A 12-inch vinyl record in a picture sleeve, so Records." },
+      { "type": "tool_use", "id": "toolu_demo_lp_1", "name": "choose_category", "input": { "categoryId": 176985 } }
+    ],
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "usage": { "input_tokens": 3412, "output_tokens": 61 }
+  },
+  "submitItem": {
+    "id": "msg_demo_lp_2",
+    "type": "message",
+    "role": "assistant",
+    "model": "claude-haiku-4-5-20251001",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "toolu_demo_lp_2",
+        "name": "submit_item",
+        "input": {
+          "item": "The Velvet Tides - Midnight Harbor, 12-inch vinyl LP, 1976 original pressing",
+          "categoryId": 176985,
+          "templateName": null,
+          "conditionId": 3000,
+          "cardConditionId": null,
+          "specifics": [
+            { "key": "Artist", "value": "The Velvet Tides" },
+            { "key": "Release Title", "value": "Midnight Harbor" },
+            { "key": "Release Year", "value": "1976" },
+            { "key": "Genre", "value": "Rock" },
+            { "key": "Pressing Plant", "value": "Harbor Sound" }
+          ],
+          "upc": "036000291452",
+          "unplaced": ["Catalog number VT-1976 on the spine", "Small seam split at the top of the sleeve"]
+        }
+      }
+    ],
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "usage": { "input_tokens": 4120, "output_tokens": 240 }
+  },
+  "generateListing": {
+    "title": "The Velvet Tides Midnight Harbor LP 1976 Original Pressing Vinyl Rock",
+    "description": "🎵 The Velvet Tides - Midnight Harbor\n💿 12\" vinyl LP, 1976 original pressing\n📦 Ships carefully packed",
+    "specifics": [{ "key": "Artist", "value": "The Velvet Tides" }, { "key": "Speed", "value": "33 RPM" }]
+  }
+}

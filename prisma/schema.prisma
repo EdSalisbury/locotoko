@@ -18,8 +18,24 @@ model User {
 
   listedItems Item[] @relation("listingUser")
   shippedItems Item[] @relation("shippingUser")
+  apiKeys ApiKey[]
 
   @@map("users")
+}
+
+// A key another program (Lucida) uses instead of logging in; it acts as its
+// user. Only a SHA-256 of the key is kept: the key itself is shown once.
+model ApiKey {
+  id String @id @default(cuid())
+  createdAt DateTime @default(now())
+  name String
+  hash String @unique
+  lastUsedAt DateTime?
+  revokedAt DateTime?
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("apiKeys")
 }
 
 model Item {
@@ -69,7 +85,15 @@ model Item {
   markdownPct Int? @default(0)
   shippingPrice Decimal? @db.Money @default(0.00)
   shippingType Int?
-  
+  // Drafts made from photos (Lucida): Lucida's own item number, and where
+  // identifying the item stands ("identifying", "ready" or "failed", with
+  // the reason), plus anything Claude read but couldn't place.
+  lucidaItemNumber String?
+  identifyStatus String?
+  identifyError String?
+  identifyNotes String?
+
+  @@index([lucidaItemNumber])
   @@map("items")
 }
 

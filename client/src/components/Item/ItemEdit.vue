@@ -2,6 +2,18 @@
   <b-card>
     <b-card-title>Edit Item</b-card-title>
     <b-card-body>
+      <b-alert :model-value="form.identifyStatus === 'identifying'" variant="info">
+        Identifying this item from its photos… Reload in a minute to see what was filled in.
+      </b-alert>
+      <b-alert :model-value="form.identifyStatus === 'failed'" variant="danger">
+        Identifying from the photos didn't finish: {{ form.identifyError }}. Fill in the rest by hand.
+      </b-alert>
+      <b-alert :model-value="!!form.identifyNotes" variant="secondary">
+        <b>Also read from the photos:</b>
+        <ul class="mb-0">
+          <li v-for="(note, index) in identifyNoteLines" :key="index">{{ note }}</li>
+        </ul>
+      </b-alert>
       <b-form @submit="onSubmit">
         <b-container fluid class="m-0 p-0">
           <b-row class="m-0 p-0">
@@ -228,6 +240,11 @@ export default {
         prompt: "",
       },
     };
+  },
+  computed: {
+    identifyNoteLines() {
+      return (this.form.identifyNotes || "").split("\n").filter((line) => line.trim());
+    },
   },
   watch: {
     "form.weight": {

@@ -20,6 +20,12 @@ export class AnthropicService {
         console.log(`✅ AnthropicService initialized with model: ${this.claudeModel}`);
     }
 
+    // A raw Messages API call on Locotoko's model (identifying drafts from
+    // photos builds its own conversation).
+    createMessage(params: Omit<Anthropic.MessageCreateParamsNonStreaming, "model">): Promise<Anthropic.Message> {
+        return this.anthropic.messages.create({ model: this.claudeModel, ...params });
+    }
+
     async generateListing(prompt: string, existingSpecifics: { key: string; value: string }[]) {
         // 🔥 Ensure existingSpecifics is always an array
         if (!Array.isArray(existingSpecifics)) {

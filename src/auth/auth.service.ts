@@ -7,10 +7,6 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { BruteForceService } from "./brute-force.service";
 
-// Deliberate delay on every wrong password, win or lose on the lockout check -
-// slows brute force even before the lockout threshold hits.
-const FAILED_LOGIN_DELAY_MS = 1000;
-
 @Injectable({})
 export class AuthService {
   constructor(
@@ -31,7 +27,7 @@ export class AuthService {
     // if user does not exist, throw exception
     if (!user) {
       this.bruteForce.recordFailure(address);
-      await this.delay();
+      await this.bruteForce.delay();
       throw new ForbiddenException("Incorrect email or password");
     }
 
@@ -41,7 +37,7 @@ export class AuthService {
     // if password is incorrect, throw exception
     if (!pwMatches) {
       this.bruteForce.recordFailure(address);
-      await this.delay();
+      await this.bruteForce.delay();
       throw new ForbiddenException("Incorrect email or password");
     }
 
@@ -100,7 +96,7 @@ export class AuthService {
 
     if (!pwMatches) {
       this.bruteForce.recordFailure(address);
-      await this.delay();
+      await this.bruteForce.delay();
       throw new ForbiddenException("Current password is incorrect");
     }
 
@@ -115,10 +111,6 @@ export class AuthService {
     this.bruteForce.recordSuccess(address);
 
     return { message: "Password updated successfully" };
-  }
-
-  private delay(ms: number = FAILED_LOGIN_DELAY_MS): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async signToken(

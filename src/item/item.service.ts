@@ -42,6 +42,8 @@ export class ItemService {
     shippingPrice: true,
     shippingType: true,
     currentPrice: true,
+    identifyStatus: true,
+    identifyError: true,
   };
 
   categories = [];
@@ -53,9 +55,10 @@ export class ItemService {
 
   categoryMap = (item) => ({
     ...item,
-    ebayCategoryName: decodeSpecialChars(
+    // Category 0 stands in on a draft from photos that has no category yet.
+    ebayCategoryName: item.ebayCategoryId === 0 ? "" : decodeSpecialChars(
       this.categories.find((category) => item.ebayCategoryId === category.id)
-        .name || "",
+        ?.name || "",
     ),
   });
 
