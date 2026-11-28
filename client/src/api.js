@@ -362,8 +362,35 @@ const generateListing = async (token, payload) => {
   return await response.json();
 }
 
+// API keys: errors come back as { message }, thrown here for the page to show.
+const apiKeyRequest = async (token, method, id = "", body = undefined) => {
+  const response = await fetch(apiUrl("apiKeys", id), {
+    method,
+    ...apiHeaders(token),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!response.ok) {
+    let message = `Request failed (${response.status})`;
+    try {
+      const data = await response.json();
+      message = (Array.isArray(data.message) ? data.message.join(", ") : data.message) || message;
+    } catch {
+      // no JSON body
+    }
+    throw new Error(message);
+  }
+  return response.status === 204 ? null : await response.json();
+};
+
+const getApiKeys = (token) => apiKeyRequest(token, "GET");
+const createApiKey = (token, body) => apiKeyRequest(token, "POST", "", body);
+const revokeApiKey = (token, id) => apiKeyRequest(token, "DELETE", id);
+
 export default {
   login,
+  getApiKeys,
+  createApiKey,
+  revokeApiKey,
   register,
   changePassword,
   getItem,

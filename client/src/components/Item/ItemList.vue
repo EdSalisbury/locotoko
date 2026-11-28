@@ -27,6 +27,16 @@
         <template #shippingPrice="data"> ${{ Number(data.value.shippingPrice).toFixed(2) }} </template>
         <template #totalPrice="data"> ${{ Number(data.value.totalPrice).toFixed(2) }} </template>
 
+        <template #status="data">
+          <span v-if="data.value.identifyStatus === 'identifying'" class="text-info">
+            <b-spinner small class="me-1" />Identifying…
+          </span>
+          <span v-else-if="data.value.identifyStatus === 'failed'" class="text-danger" :title="data.value.identifyError">
+            Identify failed: {{ data.value.identifyError }}
+          </span>
+          <span v-else>{{ data.value.status }}</span>
+        </template>
+
         <template #ebayListingId="data">
           <a :href="'https://www.ebay.com/itm/' + data.value.ebayListingId" target="_blank">
             {{ data.value.ebayListingId }}

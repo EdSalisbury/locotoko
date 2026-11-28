@@ -13,6 +13,7 @@
         </b-navbar-nav>
         <b-navbar-nav v-if="session.loggedIn" class="ms-auto">
           <b-nav-item disabled>{{ session.email }}</b-nav-item>
+          <b-nav-item to="/apiKeys">API Keys</b-nav-item>
           <b-nav-item to="/changePassword">Change Password</b-nav-item>
           <b-nav-item to="/logout">Logout</b-nav-item>
         </b-navbar-nav>

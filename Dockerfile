@@ -21,4 +21,5 @@ RUN yarn install --frozen-lockfile
 RUN yarn build:prod
 COPY --from=client /build/dist/ ./dist/client/
 
-CMD ["yarn", "start:prod"]
+# Database changes (prisma/migrations) are applied before the server starts.
+CMD ["sh", "-c", "npx prisma migrate deploy && yarn start:prod"]
